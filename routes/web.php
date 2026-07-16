@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CounterController;
+use App\Http\Controllers\CourierController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\MarketplaceController;
 use App\Http\Controllers\ProductController;
@@ -31,3 +32,4 @@ Route::apiResource('counters', CounterController::class)->middleware('auth');
 Route::apiResource('products', ProductController::class)->middleware('auth');
 Route::apiResource('customers', CustomerController::class)->middleware('auth');
 Route::apiResource('marketplaces', MarketplaceController::class)->except(['index'])->middleware('auth');
+Route::apiResource('couriers', CourierController::class)->except(['index'])->middleware('auth');
