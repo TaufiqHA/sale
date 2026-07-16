@@ -15,12 +15,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->foreignId('unit_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('counter_id')->constrained()->cascadeOnDelete();
             $table->string('sku')->unique();
             $table->string('barcode')->nullable()->unique();
             $table->string('name');
             $table->text('description')->nullable();
             $table->decimal('buy_price', 15, 2);
             $table->decimal('sell_price', 15, 2);
+            $table->integer('stock')->default(0);
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

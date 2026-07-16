@@ -11,12 +11,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable([
     'category_id',
     'unit_id',
+    'counter_id',
     'sku',
     'barcode',
     'name',
     'description',
     'buy_price',
     'sell_price',
+    'stock',
     'status',
 ])]
 class Product extends Model
@@ -31,6 +33,7 @@ class Product extends Model
      */
     protected $attributes = [
         'status' => true,
+        'stock' => 0,
     ];
 
     /**
@@ -44,6 +47,7 @@ class Product extends Model
             'status' => 'boolean',
             'buy_price' => 'decimal:2',
             'sell_price' => 'decimal:2',
+            'stock' => 'integer',
         ];
     }
 
@@ -61,5 +65,13 @@ class Product extends Model
     public function unit(): BelongsTo
     {
         return $this->belongsTo(Unit::class);
+    }
+
+    /**
+     * Get the counter that owns the product.
+     */
+    public function counter(): BelongsTo
+    {
+        return $this->belongsTo(Counter::class);
     }
 }

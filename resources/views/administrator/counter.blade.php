@@ -38,13 +38,12 @@
 
     <!-- Empty State -->
     <div id="empty-state" class="hidden flex-col items-center justify-center py-16 px-4 bg-white border border-slate-100 rounded-2xl shadow-sm mb-8 text-center">
-        <div class="p-4 bg-slate-50 text-slate-400 rounded-2xl mb-4">
+        <div class="flex items-center justify-center p-4 bg-slate-50 text-slate-400 rounded-2xl mb-4">
             <svg class="w-12 h-12" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"></path>
             </svg>
         </div>
         <h3 class="text-base font-bold text-slate-800">No Counters Created</h3>
-        <p class="text-sm text-slate-500 max-w-sm mt-1">Get started by creating your first register or checkout counter location.</p>
         <button onclick="openAddModal()" class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-[#1e50d0]/10 hover:bg-[#1e50d0]/20 text-[#1e50d0] text-sm font-semibold rounded-xl transition duration-150 cursor-pointer">
             Create Counter
         </button>

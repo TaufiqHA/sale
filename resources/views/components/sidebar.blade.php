@@ -33,8 +33,8 @@
                 </svg>
                 Dashboard
             </a>
-            <a href="#" class="group flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-md text-white/80 hover:bg-[#1641b3] hover:text-white transition-all">
-                <svg class="h-5 w-5 text-white/75 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <a href="{{ route('products.index') }}" class="group flex items-center gap-3 px-3 py-2 text-sm {{ request()->routeIs('products.*') ? 'font-semibold bg-[#1641b3] text-white shadow-sm' : 'font-medium text-white/85 hover:bg-[#1641b3] hover:text-white' }} rounded-md transition-all">
+                <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('products.*') ? 'text-white' : 'text-white/75 group-hover:text-white' }}" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
                 </svg>
                 Products
@@ -101,8 +101,8 @@
             </svg>
             Dashboard
         </a>
-        <a href="#" class="group flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-md text-white/85 hover:bg-[#1641b3] hover:text-white transition-all">
-            <svg class="h-5 w-5 text-white/70 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <a href="{{ route('products.index') }}" class="group flex items-center gap-3 px-4 py-2.5 text-sm {{ request()->routeIs('products.*') ? 'font-semibold bg-[#1641b3] text-white shadow-sm' : 'font-medium text-white/85 hover:bg-[#1641b3] hover:text-white' }} rounded-md transition-all">
+            <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('products.*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
             </svg>
             Products
