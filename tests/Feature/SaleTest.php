@@ -1,0 +1,203 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Counter;
+use App\Models\Courier;
+use App\Models\Customer;
+use App\Models\Expedition;
+use App\Models\Marketplace;
+use App\Models\Sale;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class SaleTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_sale_can_be_created_using_factory(): void
+    {
+        $sale = Sale::factory()->create([
+            'subtotal' => 15000.50,
+            'discount' => 1000.00,
+            'grand_total' => 14000.50,
+        ]);
+
+        $this->assertDatabaseHas('sales', [
+            'id' => $sale->id,
+            'subtotal' => 15000.50,
+            'discount' => 1000.00,
+            'grand_total' => 14000.50,
+        ]);
+
+        $this->assertInstanceOf(Carbon::class, $sale->date);
+    }
+
+    public function test_sale_relations_can_be_resolved(): void
+    {
+        $counter = Counter::factory()->create();
+        $customer = Customer::factory()->create(['counter_id' => $counter->id]);
+        $expedition = Expedition::factory()->create();
+        $marketplace = Marketplace::factory()->create();
+        $courier = Courier::factory()->create();
+
+        $sale = Sale::factory()->create([
+            'counter_id' => $counter->id,
+            'customer_id' => $customer->id,
+            'expedition_id' => $expedition->id,
+            'marketplace_id' => $marketplace->id,
+            'courier_id' => $courier->id,
+        ]);
+
+        $this->assertEquals($counter->id, $sale->counter->id);
+        $this->assertEquals($customer->id, $sale->customer->id);
+        $this->assertEquals($expedition->id, $sale->expedition->id);
+        $this->assertEquals($marketplace->id, $sale->marketplace->id);
+        $this->assertEquals($courier->id, $sale->courier->id);
+    }
+
+    public function test_unauthenticated_user_cannot_access_sales_endpoints(): void
+    {
+        $this->getJson('/sales')->assertStatus(401);
+        $this->postJson('/sales', [])->assertStatus(401);
+        $this->getJson('/sales/1')->assertStatus(401);
+        $this->putJson('/sales/1', [])->assertStatus(401);
+        $this->deleteJson('/sales/1')->assertStatus(401);
+    }
+
+    public function test_authenticated_user_can_view_sales_index_page(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get('/sales');
+
+        $response->assertStatus(200)
+            ->assertViewIs('administrator.sale');
+    }
+
+    public function test_authenticated_user_can_list_sales_as_json(): void
+    {
+        $user = User::factory()->create();
+        $sale = Sale::factory()->create();
+
+        $response = $this->actingAs($user)->getJson('/sales');
+
+        $response->assertStatus(200)
+            ->assertJsonFragment([
+                'id' => $sale->id,
+                'barcode' => $sale->barcode,
+            ]);
+    }
+
+    public function test_authenticated_user_can_create_sale(): void
+    {
+        $user = User::factory()->create();
+        $counter = Counter::factory()->create();
+
+        $response = $this->actingAs($user)->postJson('/sales', [
+            'counter_id' => $counter->id,
+            'barcode' => '1234567890',
+            'type' => 'umum',
+            'date' => now()->toDateTimeString(),
+            'subtotal' => 20000.00,
+            'discount' => 1000.00,
+            'grand_total' => 19000.00,
+            'payment_method' => 'transfer',
+        ]);
+
+        $response->assertStatus(201)
+            ->assertJsonFragment([
+                'barcode' => '1234567890',
+                'subtotal' => '20000.00',
+                'discount' => '1000.00',
+                'grand_total' => '19000.00',
+                'payment_method' => 'transfer',
+            ]);
+
+        $this->assertDatabaseHas('sales', [
+            'barcode' => '1234567890',
+            'subtotal' => 20000.00,
+        ]);
+    }
+
+    public function test_create_sale_validation_errors(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->postJson('/sales', []);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors([
+                'counter_id',
+                'barcode',
+                'type',
+                'date',
+                'subtotal',
+                'grand_total',
+                'payment_method',
+            ]);
+    }
+
+    public function test_authenticated_user_can_show_sale(): void
+    {
+        $user = User::factory()->create();
+        $sale = Sale::factory()->create();
+
+        $response = $this->actingAs($user)->getJson('/sales/'.$sale->id);
+
+        $response->assertStatus(200)
+            ->assertJsonFragment([
+                'id' => $sale->id,
+                'barcode' => $sale->barcode,
+            ]);
+    }
+
+    public function test_authenticated_user_can_update_sale(): void
+    {
+        $user = User::factory()->create();
+        $sale = Sale::factory()->create();
+        $counter = Counter::factory()->create();
+
+        $response = $this->actingAs($user)->putJson('/sales/'.$sale->id, [
+            'counter_id' => $counter->id,
+            'barcode' => '987654321',
+            'type' => 'marketplace',
+            'date' => now()->toDateTimeString(),
+            'subtotal' => 50000.00,
+            'discount' => 5000.00,
+            'grand_total' => 45000.00,
+            'payment_method' => 'tunai',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonFragment([
+                'barcode' => '987654321',
+                'type' => 'marketplace',
+                'subtotal' => '50000.00',
+                'discount' => '5000.00',
+                'grand_total' => '45000.00',
+                'payment_method' => 'tunai',
+            ]);
+
+        $this->assertDatabaseHas('sales', [
+            'id' => $sale->id,
+            'barcode' => '987654321',
+        ]);
+    }
+
+    public function test_authenticated_user_can_delete_sale(): void
+    {
+        $user = User::factory()->create();
+        $sale = Sale::factory()->create();
+
+        $response = $this->actingAs($user)->deleteJson('/sales/'.$sale->id);
+
+        $response->assertStatus(204);
+
+        $this->assertDatabaseMissing('sales', [
+            'id' => $sale->id,
+        ]);
+    }
+}
