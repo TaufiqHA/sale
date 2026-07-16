@@ -9,6 +9,7 @@ use App\Http\Controllers\ExpeditionController;
 use App\Http\Controllers\MarketplaceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SaleController;
+use App\Http\Controllers\SaleItemController;
 use App\Http\Controllers\UnitController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,3 +38,4 @@ Route::apiResource('marketplaces', MarketplaceController::class)->except(['index
 Route::apiResource('couriers', CourierController::class)->except(['index'])->middleware('auth');
 Route::apiResource('expeditions', ExpeditionController::class)->except(['index'])->middleware('auth');
 Route::apiResource('sales', SaleController::class)->middleware('auth');
+Route::apiResource('sale-items', SaleItemController::class)->except(['index'])->middleware('auth');

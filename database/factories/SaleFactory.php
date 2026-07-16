@@ -29,6 +29,7 @@ class SaleFactory extends Factory
             'date' => now(),
             'subtotal' => 10000.00,
             'discount' => 0.00,
+            'shipping_cost' => 0.00,
             'grand_total' => 10000.00,
             'payment_method' => 'tunai',
         ];

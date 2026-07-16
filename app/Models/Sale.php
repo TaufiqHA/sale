@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'counter_id',
@@ -19,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'date',
     'subtotal',
     'discount',
+    'shipping_cost',
     'grand_total',
     'payment_method',
 ])]
@@ -34,6 +36,7 @@ class Sale extends Model
      */
     protected $attributes = [
         'discount' => 0.00,
+        'shipping_cost' => 0.00,
     ];
 
     /**
@@ -47,6 +50,7 @@ class Sale extends Model
             'date' => 'datetime',
             'subtotal' => 'decimal:2',
             'discount' => 'decimal:2',
+            'shipping_cost' => 'decimal:2',
             'grand_total' => 'decimal:2',
         ];
     }
@@ -89,5 +93,15 @@ class Sale extends Model
     public function courier(): BelongsTo
     {
         return $this->belongsTo(Courier::class);
+    }
+
+    /**
+     * Get the items for the sale.
+     *
+     * @return HasMany<SaleItem, $this>
+     */
+    public function items(): HasMany
+    {
+        return $this->hasMany(SaleItem::class);
     }
 }

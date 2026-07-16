@@ -22,14 +22,16 @@ class SaleTest extends TestCase
         $sale = Sale::factory()->create([
             'subtotal' => 15000.50,
             'discount' => 1000.00,
-            'grand_total' => 14000.50,
+            'shipping_cost' => 500.00,
+            'grand_total' => 14500.50,
         ]);
 
         $this->assertDatabaseHas('sales', [
             'id' => $sale->id,
             'subtotal' => 15000.50,
             'discount' => 1000.00,
-            'grand_total' => 14000.50,
+            'shipping_cost' => 500.00,
+            'grand_total' => 14500.50,
         ]);
 
         $this->assertInstanceOf(Carbon::class, $sale->date);
@@ -103,7 +105,8 @@ class SaleTest extends TestCase
             'date' => now()->toDateTimeString(),
             'subtotal' => 20000.00,
             'discount' => 1000.00,
-            'grand_total' => 19000.00,
+            'shipping_cost' => 500.00,
+            'grand_total' => 19500.00,
             'payment_method' => 'transfer',
         ]);
 
@@ -112,7 +115,8 @@ class SaleTest extends TestCase
                 'barcode' => '1234567890',
                 'subtotal' => '20000.00',
                 'discount' => '1000.00',
-                'grand_total' => '19000.00',
+                'shipping_cost' => '500.00',
+                'grand_total' => '19500.00',
                 'payment_method' => 'transfer',
             ]);
 
@@ -167,7 +171,8 @@ class SaleTest extends TestCase
             'date' => now()->toDateTimeString(),
             'subtotal' => 50000.00,
             'discount' => 5000.00,
-            'grand_total' => 45000.00,
+            'shipping_cost' => 1500.00,
+            'grand_total' => 46500.00,
             'payment_method' => 'tunai',
         ]);
 
@@ -177,7 +182,8 @@ class SaleTest extends TestCase
                 'type' => 'marketplace',
                 'subtotal' => '50000.00',
                 'discount' => '5000.00',
-                'grand_total' => '45000.00',
+                'shipping_cost' => '1500.00',
+                'grand_total' => '46500.00',
                 'payment_method' => 'tunai',
             ]);
 

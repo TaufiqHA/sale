@@ -23,6 +23,7 @@ return new class extends Migration
             $table->timestamp('date');
             $table->decimal('subtotal', 15, 2);
             $table->decimal('discount', 15, 2)->default(0);
+            $table->decimal('shipping_cost', 15, 2)->default(0);
             $table->decimal('grand_total', 15, 2);
             $table->enum('payment_method', ['tunai', 'transfer', 'compliment']);
             $table->timestamps();

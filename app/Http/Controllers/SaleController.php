@@ -7,10 +7,13 @@ use App\Models\Courier;
 use App\Models\Customer;
 use App\Models\Expedition;
 use App\Models\Marketplace;
+use App\Models\Product;
 use App\Models\Sale;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class SaleController extends Controller
 {
@@ -20,7 +23,7 @@ class SaleController extends Controller
     public function index(Request $request): JsonResponse|View
     {
         if ($request->wantsJson()) {
-            return response()->json(Sale::with(['counter', 'customer', 'expedition', 'marketplace', 'courier'])->get());
+            return response()->json(Sale::with(['counter', 'customer', 'expedition', 'marketplace', 'courier', 'items.product'])->get());
         }
 
         return view('administrator.sale', [
@@ -29,6 +32,7 @@ class SaleController extends Controller
             'expeditions' => Expedition::all(),
             'marketplaces' => Marketplace::all(),
             'couriers' => Courier::all(),
+            'products' => Product::where('status', true)->get(),
         ]);
     }
 
@@ -48,13 +52,28 @@ class SaleController extends Controller
             'date' => ['required', 'date'],
             'subtotal' => ['required', 'numeric', 'min:0'],
             'discount' => ['nullable', 'numeric', 'min:0'],
+            'shipping_cost' => ['nullable', 'numeric', 'min:0'],
             'grand_total' => ['required', 'numeric', 'min:0'],
             'payment_method' => ['required', 'in:tunai,transfer,compliment'],
+            'items' => ['sometimes', 'array'],
+            'items.*.product_id' => ['required', 'exists:products,id'],
+            'items.*.qty' => ['required', 'integer', 'min:1'],
+            'items.*.price' => ['required', 'numeric', 'min:0'],
+            'items.*.subtotal' => ['required', 'numeric', 'min:0'],
         ]);
 
-        $sale = Sale::create($validated);
+        $sale = DB::transaction(function () use ($validated) {
+            $sale = Sale::create(Arr::except($validated, ['items']));
+            if (! empty($validated['items'])) {
+                foreach ($validated['items'] as $item) {
+                    $sale->items()->create($item);
+                }
+            }
 
-        return response()->json($sale->load(['counter', 'customer', 'expedition', 'marketplace', 'courier']), 201);
+            return $sale;
+        });
+
+        return response()->json($sale->load(['counter', 'customer', 'expedition', 'marketplace', 'courier', 'items.product']), 201);
     }
 
     /**
@@ -70,7 +89,7 @@ class SaleController extends Controller
      */
     public function show(Sale $sale): JsonResponse
     {
-        return response()->json($sale->load(['counter', 'customer', 'expedition', 'marketplace', 'courier']));
+        return response()->json($sale->load(['counter', 'customer', 'expedition', 'marketplace', 'courier', 'items.product']));
     }
 
     /**
@@ -89,13 +108,27 @@ class SaleController extends Controller
             'date' => ['required', 'date'],
             'subtotal' => ['required', 'numeric', 'min:0'],
             'discount' => ['nullable', 'numeric', 'min:0'],
+            'shipping_cost' => ['nullable', 'numeric', 'min:0'],
             'grand_total' => ['required', 'numeric', 'min:0'],
             'payment_method' => ['required', 'in:tunai,transfer,compliment'],
+            'items' => ['sometimes', 'array'],
+            'items.*.product_id' => ['required', 'exists:products,id'],
+            'items.*.qty' => ['required', 'integer', 'min:1'],
+            'items.*.price' => ['required', 'numeric', 'min:0'],
+            'items.*.subtotal' => ['required', 'numeric', 'min:0'],
         ]);
 
-        $sale->update($validated);
+        DB::transaction(function () use ($sale, $validated) {
+            $sale->update(Arr::except($validated, ['items']));
+            if (isset($validated['items'])) {
+                $sale->items()->delete();
+                foreach ($validated['items'] as $item) {
+                    $sale->items()->create($item);
+                }
+            }
+        });
 
-        return response()->json($sale->load(['counter', 'customer', 'expedition', 'marketplace', 'courier']));
+        return response()->json($sale->load(['counter', 'customer', 'expedition', 'marketplace', 'courier', 'items.product']));
     }
 
     /**
