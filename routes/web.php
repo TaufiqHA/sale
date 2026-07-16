@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -18,3 +19,5 @@ Route::get('/administrator/dashboard', function () {
 
     return view('administrator.dashboard');
 })->middleware('auth')->name('administrator.dashboard');
+
+Route::apiResource('categories', CategoryController::class)->middleware('auth');
