@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CounterController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UnitController;
 use Illuminate\Support\Facades\Route;
@@ -27,3 +28,4 @@ Route::apiResource('categories', CategoryController::class)->middleware('auth');
 Route::apiResource('units', UnitController::class)->middleware('auth');
 Route::apiResource('counters', CounterController::class)->middleware('auth');
 Route::apiResource('products', ProductController::class)->middleware('auth');
+Route::apiResource('customers', CustomerController::class)->middleware('auth');

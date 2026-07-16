@@ -65,10 +65,10 @@
                     <label for="password" class="block mb-2.5 text-sm font-medium text-white">Your password</label>
                     <input type="password" name="password" id="password" class="bg-transparent border border-[#4882fc] text-white text-sm rounded-md focus:ring-2 focus:ring-white/50 focus:border-transparent block w-full px-3 py-2.5 shadow-xs placeholder:text-white/60" placeholder="••••••••" required />
                 </div>
-                <label for="remember" class="flex items-center mb-5 cursor-pointer">
+                {{-- <label for="remember" class="flex items-center mb-5 cursor-pointer">
                     <input id="remember" name="remember" type="checkbox" value="1" class="w-4 h-4 border border-[#4882fc] rounded-xs bg-transparent focus:ring-2 focus:ring-white/50 cursor-pointer" required />
                     <p class="ms-2 text-sm font-medium text-white select-none">I agree with the <a href="#" class="text-white hover:underline font-semibold">terms and conditions</a>.</p>
-                </label>
+                </label> --}}
                 <button type="submit" class="w-full text-[#1e50d0] bg-white box-border border border-transparent hover:bg-blue-50 focus:ring-4 focus:ring-white/50 shadow-xs font-semibold leading-5 rounded-md text-sm px-4 py-3 focus:outline-none cursor-pointer uppercase tracking-widest transition-all duration-150">Submit</button>
             </form>
 
