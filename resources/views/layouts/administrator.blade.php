@@ -8,14 +8,14 @@
 </head>
 <body class="h-full text-slate-800 antialiased selection:bg-[#1e50d0] selection:text-white">
 
-    <div class="flex h-full min-h-screen overflow-hidden">
-        
+    <div class="min-h-screen bg-slate-50">
+
         <!-- Sidebar component -->
         <x-sidebar />
 
         <!-- Main Body Wrapper -->
-        <div class="flex flex-col flex-1 overflow-y-auto bg-white min-h-screen">
-            
+        <div class="sm:ml-64 flex flex-col min-h-screen bg-white">
+
             <!-- Headbar component -->
             <x-headbar />
 
@@ -28,28 +28,8 @@
 
     </div>
 
-    <!-- Toggle Script for Mobile Sidebar Drawer -->
-    <script>
-        function toggleMobileSidebar() {
-            const sidebar = document.getElementById('mobile-sidebar');
-            const backdrop = document.getElementById('mobile-sidebar-backdrop');
-            const panel = document.getElementById('mobile-sidebar-panel');
-            
-            if (sidebar.classList.contains('hidden')) {
-                sidebar.classList.remove('hidden');
-                setTimeout(() => {
-                    backdrop.classList.replace('opacity-0', 'opacity-100');
-                    panel.classList.replace('-translate-x-full', 'translate-x-0');
-                }, 20);
-            } else {
-                backdrop.classList.replace('opacity-100', 'opacity-0');
-                panel.classList.replace('translate-x-0', '-translate-x-full');
-                setTimeout(() => {
-                    sidebar.classList.add('hidden');
-                }, 300);
-            }
-        }
-    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@4.0.1/dist/flowbite.min.js"></script>
 
 </body>
 </html>

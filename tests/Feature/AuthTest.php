@@ -18,8 +18,8 @@ class AuthTest extends TestCase
         $response = $this->get('/');
 
         $response->assertStatus(200);
-        $response->assertSee('EMAIL');
-        $response->assertSee('PASSWORD');
+        $response->assertSee('Your email');
+        $response->assertSee('Your password');
     }
 
     /**

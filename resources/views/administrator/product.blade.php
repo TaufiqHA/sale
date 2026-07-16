@@ -18,23 +18,29 @@
                 <input type="text" id="search-input" oninput="handleSearchFilterChange()" placeholder="Search product name, SKU or barcode..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm bg-white placeholder:text-slate-400">
             </div>
 
-            <!-- Counter Filter -->
+            <!-- Counter Filter Dropdown -->
             <div class="relative shrink-0">
-                <select id="filter-counter-id" onchange="handleSearchFilterChange()" class="w-full sm:w-48 pl-4 pr-10 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm bg-white appearance-none cursor-pointer">
-                    <option value="">All Counters</option>
-                </select>
-                <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"></path>
-                    </svg>
+                <input type="hidden" id="filter-counter-id" value="">
+                <button id="dropdownFilterButton" data-dropdown-toggle="dropdown-filter-counter" class="w-full sm:w-48 inline-flex items-center justify-between text-body bg-neutral-secondary-medium border border-default-medium hover:bg-neutral-tertiary focus:ring-4 focus:ring-neutral-tertiary-medium font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer" type="button">
+                    <span id="selected-counter-label">All Counters</span>
+                    <svg class="w-4 h-4 ms-1.5 -me-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/></svg>
+                </button>
+                <div id="dropdown-filter-counter" class="z-10 hidden bg-neutral-primary-soft border border-default rounded-base shadow-lg w-48">
+                    <ul class="p-2 text-sm text-body font-medium" aria-labelledby="dropdownFilterButton" id="filter-counter-options">
+                        <li>
+                            <button type="button" onclick="selectCounterFilter('', 'All Counters')" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary hover:text-heading rounded text-left cursor-pointer">
+                                All Counters
+                            </button>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
 
         <!-- Add Button -->
-        <button onclick="openAddModal()" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#1e50d0] hover:bg-[#1641b3] active:scale-[0.98] text-white text-sm font-semibold rounded-xl transition duration-200 shadow-sm shadow-[#1e50d0]/20 cursor-pointer shrink-0">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+        <button onclick="openAddModal()" class="inline-flex items-center justify-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer shrink-0 gap-1.5">
+            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
             </svg>
             Add Product
         </button>
@@ -68,34 +74,35 @@
             </svg>
         </div>
         <h3 class="text-base font-bold text-slate-800">No Products Registered</h3>
-        <button onclick="openAddModal()" class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-[#1e50d0]/10 hover:bg-[#1e50d0]/20 text-[#1e50d0] text-sm font-semibold rounded-xl transition duration-150 cursor-pointer">
+        <button onclick="openAddModal()" class="mt-4 inline-flex items-center justify-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer gap-1.5">
+            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
+            </svg>
             Add Product
         </button>
     </div>
 
     <!-- Product Table -->
-    <div id="product-table-wrapper" class="hidden bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden mb-8">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-400 border-b border-slate-100">
-                        <th class="px-6 py-4">SKU / Barcode</th>
-                        <th class="px-6 py-4">Product Name</th>
-                        <th class="px-6 py-4">Category</th>
-                        <th class="px-6 py-4">Unit</th>
-                        <th class="px-6 py-4">Counter</th>
-                        <th class="px-6 py-4">Stock</th>
-                        <th class="px-6 py-4">Buy Price</th>
-                        <th class="px-6 py-4">Sell Price</th>
-                        <th class="px-6 py-4">Status</th>
-                        <th class="px-6 py-4 text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="product-table-body" class="divide-y divide-slate-100 text-sm text-slate-600">
-                    <!-- Rendered dynamically -->
-                </tbody>
-            </table>
-        </div>
+    <div id="product-table-wrapper" class="hidden relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default mb-8">
+        <table class="w-full text-sm text-left rtl:text-right text-body">
+            <thead class="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
+                <tr>
+                    <th scope="col" class="px-6 py-3 font-medium">SKU / Barcode</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Product Name</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Category</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Unit</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Counter</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Stock</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Buy Price</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Sell Price</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Status</th>
+                    <th scope="col" class="px-6 py-3 font-medium text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="product-table-body">
+                <!-- Rendered dynamically -->
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -104,134 +111,134 @@
     <!-- Backdrop with blur -->
     <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="modal-backdrop" onclick="closeModal()"></div>
     
-    <!-- Modal content -->
-    <div class="relative w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden transform scale-95 opacity-0 transition-all duration-300 flex flex-col max-h-[90vh]" id="modal-panel">
-        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between shrink-0">
-            <h3 id="modal-title" class="text-lg font-bold text-slate-800">Add Product</h3>
-            <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition p-1.5 rounded-lg hover:bg-slate-50 cursor-pointer">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-        
-        <form id="product-form" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4 overflow-y-auto flex-1">
-            <input type="hidden" id="product-id" name="id">
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- Name -->
-                <div class="space-y-1.5 md:col-span-2">
-                    <label for="input-name" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Product Name</label>
-                    <input type="text" id="input-name" name="name" placeholder="e.g. Coca-Cola 330ml" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm placeholder:text-slate-400" required>
-                    <p id="error-name" class="text-xs font-medium text-rose-500 hidden"></p>
-                </div>
-
-                <!-- SKU -->
-                <div class="space-y-1.5">
-                    <label for="input-sku" class="text-xs font-semibold uppercase tracking-wider text-slate-400">SKU</label>
-                    <input type="text" id="input-sku" name="sku" placeholder="e.g. SKU-DRK-COCA" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm placeholder:text-slate-400" required>
-                    <p id="error-sku" class="text-xs font-medium text-rose-500 hidden"></p>
-                </div>
-
-                <!-- Barcode -->
-                <div class="space-y-1.5">
-                    <label for="input-barcode" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Barcode</label>
-                    <input type="text" id="input-barcode" name="barcode" placeholder="e.g. 8886007810123" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm placeholder:text-slate-400">
-                    <p id="error-barcode" class="text-xs font-medium text-rose-500 hidden"></p>
-                </div>
-
-                <!-- Category -->
-                <div>
-                    <div class="flex items-end gap-2">
-                        <div class="flex-1 space-y-1.5">
-                            <label for="input-category_id" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Category</label>
-                            <select id="input-category_id" name="category_id" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm bg-white" required>
-                                <option value="" disabled selected>Select Category</option>
-                            </select>
-                        </div>
-                        <button type="button" onclick="openCategoryManageModal()" class="px-3.5 py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-800 text-sm font-semibold rounded-xl border border-slate-200 transition duration-150 inline-flex items-center gap-1.5 shrink-0 cursor-pointer" title="Manage Categories">
-                            Kelola
-                        </button>
+    <!-- Modal content wrapper (Flowbite style max-w-2xl) -->
+    <div class="relative w-full max-w-2xl max-h-[95vh] flex flex-col transform scale-95 opacity-0 transition-all duration-300" id="modal-panel">
+        <div class="relative bg-neutral-primary-soft border border-default rounded-base shadow-sm p-4 md:p-6 flex flex-col overflow-hidden max-h-full">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between border-b border-default pb-4 md:pb-5 shrink-0">
+                <h3 id="modal-title" class="text-lg font-medium text-heading">
+                    Add Product
+                </h3>
+                <button type="button" onclick="closeModal()" class="text-body bg-transparent hover:bg-neutral-tertiary hover:text-heading rounded-base text-sm w-9 h-9 ms-auto inline-flex justify-center items-center cursor-pointer">
+                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <form id="product-form" onsubmit="handleFormSubmit(event)" class="overflow-y-auto flex-1 pr-1">
+                <input type="hidden" id="product-id" name="id">
+                
+                <div class="grid gap-4 grid-cols-2 py-4 md:py-6">
+                    <!-- Name -->
+                    <div class="col-span-2">
+                        <label for="input-name" class="block mb-2.5 text-sm font-medium text-heading">Product Name</label>
+                        <input type="text" id="input-name" name="name" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. Coca-Cola 330ml" required>
+                        <p id="error-name" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
-                    <p id="error-category_id" class="text-xs font-medium text-rose-500 hidden mt-1.5"></p>
-                </div>
 
-                <!-- Unit -->
-                <div>
-                    <div class="flex items-end gap-2">
-                        <div class="flex-1 space-y-1.5">
-                            <label for="input-unit_id" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Unit</label>
-                            <select id="input-unit_id" name="unit_id" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm bg-white" required>
-                                <option value="" disabled selected>Select Unit</option>
-                            </select>
-                        </div>
-                        <button type="button" onclick="openUnitManageModal()" class="px-3.5 py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-800 text-sm font-semibold rounded-xl border border-slate-200 transition duration-150 inline-flex items-center gap-1.5 shrink-0 cursor-pointer" title="Manage Units">
-                            Kelola
-                        </button>
+                    <!-- SKU -->
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="input-sku" class="block mb-2.5 text-sm font-medium text-heading">SKU</label>
+                        <input type="text" id="input-sku" name="sku" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. SKU-DRK-COCA" required>
+                        <p id="error-sku" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
-                    <p id="error-unit_id" class="text-xs font-medium text-rose-500 hidden mt-1.5"></p>
-                </div>
 
-                <!-- Counter -->
-                <div>
-                    <div class="space-y-1.5">
-                        <label for="input-counter_id" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Counter</label>
-                        <select id="input-counter_id" name="counter_id" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm bg-white" required>
+                    <!-- Barcode -->
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="input-barcode" class="block mb-2.5 text-sm font-medium text-heading">Barcode</label>
+                        <input type="text" id="input-barcode" name="barcode" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. 8886007810123">
+                        <p id="error-barcode" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="col-span-2 sm:col-span-1">
+                        <div class="flex items-end gap-2">
+                            <div class="flex-1">
+                                <label for="input-category_id" class="block mb-2.5 text-sm font-medium text-heading">Category</label>
+                                <select id="input-category_id" name="category_id" class="block w-full px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" required>
+                                    <option value="" disabled selected>Select Category</option>
+                                </select>
+                            </div>
+                            <button type="button" onclick="openCategoryManageModal()" class="px-3.5 py-2.5 bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading rounded-base text-sm font-medium focus:outline-none transition duration-150 inline-flex items-center gap-1.5 shrink-0 cursor-pointer" title="Manage Categories">
+                                Kelola
+                            </button>
+                        </div>
+                        <p id="error-category_id" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+
+                    <!-- Unit -->
+                    <div class="col-span-2 sm:col-span-1">
+                        <div class="flex items-end gap-2">
+                            <div class="flex-1">
+                                <label for="input-unit_id" class="block mb-2.5 text-sm font-medium text-heading">Unit</label>
+                                <select id="input-unit_id" name="unit_id" class="block w-full px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" required>
+                                    <option value="" disabled selected>Select Unit</option>
+                                </select>
+                            </div>
+                            <button type="button" onclick="openUnitManageModal()" class="px-3.5 py-2.5 bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading rounded-base text-sm font-medium focus:outline-none transition duration-150 inline-flex items-center gap-1.5 shrink-0 cursor-pointer" title="Manage Units">
+                                Kelola
+                            </button>
+                        </div>
+                        <p id="error-unit_id" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+
+                    <!-- Counter -->
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="input-counter_id" class="block mb-2.5 text-sm font-medium text-heading">Counter</label>
+                        <select id="input-counter_id" name="counter_id" class="block w-full px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" required>
                             <option value="" disabled selected>Select Counter</option>
                         </select>
+                        <p id="error-counter_id" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
-                    <p id="error-counter_id" class="text-xs font-medium text-rose-500 hidden mt-1.5"></p>
+
+                    <!-- Stock -->
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="input-stock" class="block mb-2.5 text-sm font-medium text-heading">Stock</label>
+                        <input type="number" id="input-stock" name="stock" min="0" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. 10" required>
+                        <p id="error-stock" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+
+                    <!-- Buy Price -->
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="input-buy_price" class="block mb-2.5 text-sm font-medium text-heading">Buy Price (Rp)</label>
+                        <input type="text" id="input-buy_price" name="buy_price" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. 5.000" required>
+                        <p id="error-buy_price" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+
+                    <!-- Sell Price -->
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="input-sell_price" class="block mb-2.5 text-sm font-medium text-heading">Sell Price (Rp)</label>
+                        <input type="text" id="input-sell_price" name="sell_price" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. 7.000" required>
+                        <p id="error-sell_price" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-span-2">
+                        <label for="input-description" class="block mb-2.5 text-sm font-medium text-heading">Product Description</label>
+                        <textarea id="input-description" name="description" rows="3" class="block bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full p-3.5 shadow-xs placeholder:text-body" placeholder="Product details or notes..."></textarea>
+                        <p id="error-description" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+
+                    <!-- Status Checkbox -->
+                    <div class="col-span-2 flex items-center gap-3 py-2">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="input-status" name="status" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#1e50d0]/10 rounded-full peer peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1e50d0]"></div>
+                            <span class="ml-3 text-sm font-semibold text-slate-700">Active</span>
+                        </label>
+                        <p id="error-status" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
                 </div>
-
-                <!-- Stock -->
-                <div class="space-y-1.5">
-                    <label for="input-stock" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Stock</label>
-                    <input type="number" id="input-stock" name="stock" min="0" placeholder="e.g. 10" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm placeholder:text-slate-400" required>
-                    <p id="error-stock" class="text-xs font-medium text-rose-500 hidden"></p>
+                
+                <div class="flex items-center space-x-4 border-t border-default pt-4 md:pt-6">
+                    <button type="submit" id="btn-save" class="inline-flex items-center text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">
+                        <svg class="w-4 h-4 me-1.5 -ms-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/></svg>
+                        Save Product
+                    </button>
+                    <button type="button" onclick="closeModal()" class="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">Cancel</button>
                 </div>
-
-                <!-- Buy Price -->
-                <div class="space-y-1.5">
-                    <label for="input-buy_price" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Buy Price (Rp)</label>
-                    <input type="text" id="input-buy_price" name="buy_price" placeholder="e.g. 5.000" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm placeholder:text-slate-400" required>
-                    <p id="error-buy_price" class="text-xs font-medium text-rose-500 hidden"></p>
-                </div>
-
-                <!-- Sell Price -->
-                <div class="space-y-1.5">
-                    <label for="input-sell_price" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Sell Price (Rp)</label>
-                    <input type="text" id="input-sell_price" name="sell_price" placeholder="e.g. 7.000" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm placeholder:text-slate-400" required>
-                    <p id="error-sell_price" class="text-xs font-medium text-rose-500 hidden"></p>
-                </div>
-            </div>
-
-            <!-- Description -->
-            <div class="space-y-1.5">
-                <label for="input-description" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Description</label>
-                <textarea id="input-description" name="description" rows="2" placeholder="Product details or notes..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm placeholder:text-slate-400 resize-none"></textarea>
-                <p id="error-description" class="text-xs font-medium text-rose-500 hidden"></p>
-            </div>
-
-            <!-- Status Checkbox -->
-            <div class="flex items-center gap-3 py-2">
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="input-status" name="status" class="sr-only peer" checked>
-                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#1e50d0]/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1e50d0]"></div>
-                    <span class="ml-3 text-sm font-semibold text-slate-700">Active</span>
-                </label>
-                <p id="error-status" class="text-xs font-medium text-rose-500 hidden"></p>
-            </div>
-
-            <!-- Actions -->
-            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-                <button type="button" onclick="closeModal()" class="px-4 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition duration-150">
-                    Cancel
-                </button>
-                <button type="submit" id="btn-save" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#1e50d0] hover:bg-[#1641b3] text-white text-sm font-semibold rounded-xl transition duration-150">
-                    Save Product
-                </button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -269,46 +276,48 @@
     <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="category-manage-backdrop" onclick="closeCategoryManageModal()"></div>
     
     <!-- Modal content -->
-    <div class="relative w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden transform scale-95 opacity-0 transition-all duration-300" id="category-manage-panel">
-        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
-            <h3 class="text-lg font-bold text-slate-800">Manage Categories</h3>
-            <button onclick="closeCategoryManageModal()" class="text-slate-400 hover:text-slate-600 transition p-1.5 rounded-lg hover:bg-slate-50">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-        
-        <div class="p-6 space-y-6">
-            <!-- Add Category Inline Form -->
-            <form id="inline-category-form" onsubmit="handleInlineCategorySubmit(event)" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500">Quick Add Category</h4>
-                <div class="space-y-1.5">
-                    <input type="text" id="inline-cat-name" placeholder="Category Name (e.g. Beverages)" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-xs placeholder:text-slate-400 bg-white" required>
-                </div>
-                <div class="space-y-1.5">
-                    <input type="text" id="inline-cat-desc" placeholder="Short Description (optional)" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-xs placeholder:text-slate-400 bg-white">
-                </div>
-                <button type="submit" id="btn-inline-cat-save" class="w-full py-2 bg-[#1e50d0] hover:bg-[#1641b3] text-white text-xs font-semibold rounded-xl transition duration-150">
-                    Add Category
+    <div class="relative w-full max-w-md flex flex-col transform scale-95 opacity-0 transition-all duration-300" id="category-manage-panel">
+        <div class="relative bg-neutral-primary-soft border border-default rounded-base shadow-sm p-4 md:p-6 flex flex-col overflow-hidden max-h-full">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between border-b border-default pb-4 md:pb-5">
+                <h3 class="text-lg font-medium text-heading">Manage Categories</h3>
+                <button onclick="closeCategoryManageModal()" class="text-body bg-transparent hover:bg-neutral-tertiary hover:text-heading rounded-base text-sm w-9 h-9 ms-auto inline-flex justify-center items-center cursor-pointer">
+                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
+                    <span class="sr-only">Close modal</span>
                 </button>
-            </form>
+            </div>
+            
+            <div class="py-4 md:py-6 space-y-6">
+                <!-- Add Category Inline Form -->
+                <form id="inline-category-form" onsubmit="handleInlineCategorySubmit(event)" class="space-y-3 bg-neutral-secondary-soft p-4 rounded-base border border-default">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-heading">Quick Add Category</h4>
+                    <div class="space-y-1.5">
+                        <input type="text" id="inline-cat-name" placeholder="Category Name (e.g. Beverages)" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body" required>
+                    </div>
+                    <div class="space-y-1.5">
+                        <input type="text" id="inline-cat-desc" placeholder="Short Description (optional)" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body">
+                    </div>
+                    <button type="submit" id="btn-inline-cat-save" class="w-full text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2 focus:outline-none cursor-pointer">
+                        Add Category
+                    </button>
+                </form>
 
-            <!-- Scrollable Category List -->
-            <div class="space-y-2">
-                <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Existing Categories</h4>
-                <div class="max-h-60 overflow-y-auto divide-y divide-slate-100 border border-slate-100 rounded-xl pr-1">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-400 border-b border-slate-100">
-                                <th class="p-3">Name</th>
-                                <th class="p-3 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="inline-category-list-body" class="divide-y divide-slate-50 text-slate-600">
-                            <!-- Rendered dynamically -->
-                        </tbody>
-                    </table>
+                <!-- Scrollable Category List -->
+                <div class="space-y-2">
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-heading opacity-80">Existing Categories</h4>
+                    <div class="max-h-60 overflow-y-auto divide-y divide-default border border-default rounded-base pr-1 bg-neutral-secondary-soft">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-neutral-secondary-medium text-heading border-b border-default font-semibold">
+                                    <th class="p-3">Name</th>
+                                    <th class="p-3 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inline-category-list-body" class="divide-y divide-default text-body">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -321,49 +330,51 @@
     <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="unit-manage-backdrop" onclick="closeUnitManageModal()"></div>
     
     <!-- Modal content -->
-    <div class="relative w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden transform scale-95 opacity-0 transition-all duration-300" id="unit-manage-panel">
-        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
-            <h3 class="text-lg font-bold text-slate-800">Manage Units</h3>
-            <button onclick="closeUnitManageModal()" class="text-slate-400 hover:text-slate-600 transition p-1.5 rounded-lg hover:bg-slate-50">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
-        
-        <div class="p-6 space-y-6">
-            <!-- Add Unit Inline Form -->
-            <form id="inline-unit-form" onsubmit="handleInlineUnitSubmit(event)" class="space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500">Quick Add Unit</h4>
-                <div class="grid grid-cols-2 gap-2">
-                    <div class="space-y-1.5">
-                        <input type="text" id="inline-unit-name" placeholder="Name (e.g. Pieces)" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-xs placeholder:text-slate-400 bg-white" required>
-                    </div>
-                    <div class="space-y-1.5">
-                        <input type="text" id="inline-unit-code" placeholder="Code (e.g. PCS)" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-xs placeholder:text-slate-400 bg-white" required>
-                    </div>
-                </div>
-                <button type="submit" id="btn-inline-unit-save" class="w-full py-2 bg-[#1e50d0] hover:bg-[#1641b3] text-white text-xs font-semibold rounded-xl transition duration-150">
-                    Add Unit
+    <div class="relative w-full max-w-md flex flex-col transform scale-95 opacity-0 transition-all duration-300" id="unit-manage-panel">
+        <div class="relative bg-neutral-primary-soft border border-default rounded-base shadow-sm p-4 md:p-6 flex flex-col overflow-hidden max-h-full">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between border-b border-default pb-4 md:pb-5">
+                <h3 class="text-lg font-medium text-heading">Manage Units</h3>
+                <button onclick="closeUnitManageModal()" class="text-body bg-transparent hover:bg-neutral-tertiary hover:text-heading rounded-base text-sm w-9 h-9 ms-auto inline-flex justify-center items-center cursor-pointer">
+                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
+                    <span class="sr-only">Close modal</span>
                 </button>
-            </form>
+            </div>
+            
+            <div class="py-4 md:py-6 space-y-6">
+                <!-- Add Unit Inline Form -->
+                <form id="inline-unit-form" onsubmit="handleInlineUnitSubmit(event)" class="space-y-3 bg-neutral-secondary-soft p-4 rounded-base border border-default">
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-heading">Quick Add Unit</h4>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="space-y-1.5">
+                            <input type="text" id="inline-unit-name" placeholder="Name (e.g. Pieces)" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body" required>
+                        </div>
+                        <div class="space-y-1.5">
+                            <input type="text" id="inline-unit-code" placeholder="Code (e.g. PCS)" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body" required>
+                        </div>
+                    </div>
+                    <button type="submit" id="btn-inline-unit-save" class="w-full text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2 focus:outline-none cursor-pointer">
+                        Add Unit
+                    </button>
+                </form>
 
-            <!-- Scrollable Unit List -->
-            <div class="space-y-2">
-                <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Existing Units</h4>
-                <div class="max-h-60 overflow-y-auto divide-y divide-slate-100 border border-slate-100 rounded-xl pr-1">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-400 border-b border-slate-100">
-                                <th class="p-3">Name</th>
-                                <th class="p-3">Code</th>
-                                <th class="p-3 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="inline-unit-list-body" class="divide-y divide-slate-50 text-slate-600">
-                            <!-- Rendered dynamically -->
-                        </tbody>
-                    </table>
+                <!-- Scrollable Unit List -->
+                <div class="space-y-2">
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-heading opacity-80">Existing Units</h4>
+                    <div class="max-h-60 overflow-y-auto divide-y divide-default border border-default rounded-base pr-1 bg-neutral-secondary-soft">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="bg-neutral-secondary-medium text-heading border-b border-default font-semibold">
+                                    <th class="p-3">Name</th>
+                                    <th class="p-3">Code</th>
+                                    <th class="p-3 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inline-unit-list-body" class="divide-y divide-default text-body">
+                                <!-- Rendered dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -484,11 +495,7 @@
                 select.innerHTML += `<option value="${counter.id}">${escapeHtml(counter.name)}</option>`;
             });
 
-            const filterSelect = document.getElementById("filter-counter-id");
-            filterSelect.innerHTML = '<option value="">All Counters</option>';
-            countersList.forEach(counter => {
-                filterSelect.innerHTML += `<option value="${counter.id}">${escapeHtml(counter.name)}</option>`;
-            });
+            populateCounterFilter();
         } catch (e) {
             showToast("Failed loading counters.", "error");
         }
@@ -572,7 +579,7 @@
 
         filteredProducts.forEach(product => {
             const row = document.createElement("tr");
-            row.className = "hover:bg-slate-50/50 transition-colors duration-150";
+            row.className = "bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium transition-colors duration-150";
             
             const badgeClass = product.status 
                 ? "bg-emerald-50 text-emerald-700 font-semibold" 
@@ -585,33 +592,25 @@
 
             row.innerHTML = `
                 <td class="px-6 py-4">
-                    <div class="font-bold text-slate-800">${escapeHtml(product.sku)}</div>
-                    <div class="text-xs text-slate-400 mt-0.5">${product.barcode ? escapeHtml(product.barcode) : '<span class="text-slate-300">No Barcode</span>'}</div>
+                    <div class="font-bold text-body">${escapeHtml(product.sku)}</div>
+                    <div class="text-xs text-body opacity-60 mt-0.5">${product.barcode ? escapeHtml(product.barcode) : '<span class="text-body opacity-40">No Barcode</span>'}</div>
                 </td>
-                <td class="px-6 py-4 font-bold text-slate-800">${escapeHtml(product.name)}</td>
-                <td class="px-6 py-4 text-xs font-semibold text-slate-600">${escapeHtml(catName)}</td>
-                <td class="px-6 py-4 text-xs font-medium text-slate-500">${escapeHtml(unitName)}</td>
-                <td class="px-6 py-4 text-xs font-semibold text-slate-600">${escapeHtml(counterName)}</td>
-                <td class="px-6 py-4 text-xs font-bold text-slate-700">${product.stock}</td>
-                <td class="px-6 py-4 font-semibold text-slate-700">${formatRupiah(product.buy_price)}</td>
-                <td class="px-6 py-4 font-semibold text-[#1e50d0]">${formatRupiah(product.sell_price)}</td>
+                <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap text-left">${escapeHtml(product.name)}</th>
+                <td class="px-6 py-4 text-xs font-semibold text-body">${escapeHtml(catName)}</td>
+                <td class="px-6 py-4 text-xs font-medium text-body opacity-80">${escapeHtml(unitName)}</td>
+                <td class="px-6 py-4 text-xs font-semibold text-body">${escapeHtml(counterName)}</td>
+                <td class="px-6 py-4 text-xs font-bold text-body">${product.stock}</td>
+                <td class="px-6 py-4 font-semibold text-body">${formatRupiah(product.buy_price)}</td>
+                <td class="px-6 py-4 font-semibold text-fg-brand">${formatRupiah(product.sell_price)}</td>
                 <td class="px-6 py-4">
                     <span class="px-2.5 py-1 text-[11px] rounded-full ${badgeClass}">
                         ${badgeText}
                     </span>
                 </td>
                 <td class="px-6 py-4 text-right">
-                    <div class="flex items-center justify-end gap-1.5">
-                        <button onclick="openEditModal(${product.id})" class="inline-flex items-center justify-center p-2 text-[#1e50d0] hover:bg-[#1e50d0]/5 rounded-xl transition duration-150 cursor-pointer" title="Edit">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
-                            </svg>
-                        </button>
-                        <button onclick="openDeleteModal(${product.id}, '${escapeQuote(product.name)}')" class="inline-flex items-center justify-center p-2 text-rose-600 hover:bg-rose-50 rounded-xl transition duration-150 cursor-pointer" title="Delete">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path>
-                            </svg>
-                        </button>
+                    <div class="flex items-center justify-end gap-3">
+                        <button onclick="openEditModal(${product.id})" class="font-medium text-fg-brand hover:underline cursor-pointer" title="Edit">Edit</button>
+                        <button onclick="openDeleteModal(${product.id}, '${escapeQuote(product.name)}')" class="font-medium text-fg-danger hover:underline cursor-pointer" title="Delete">Delete</button>
                     </div>
                 </td>
             `;
@@ -1076,6 +1075,45 @@
             btnDelete.disabled = false;
             btnDelete.innerText = originalText;
         }
+    }
+
+    function populateCounterFilter() {
+        const optionsList = document.getElementById("filter-counter-options");
+        if (!optionsList) {
+            return;
+        }
+
+        let html = `
+            <li>
+                <button type="button" onclick="selectCounterFilter('', 'All Counters')" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary hover:text-heading rounded text-left cursor-pointer">
+                    All Counters
+                </button>
+            </li>
+        `;
+
+        countersList.forEach(counter => {
+            html += `
+                <li>
+                    <button type="button" onclick="selectCounterFilter('${counter.id}', '${escapeHtml(counter.name)}')" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary hover:text-heading rounded text-left cursor-pointer">
+                        ${escapeHtml(counter.name)}
+                    </button>
+                </li>
+            `;
+        });
+
+        optionsList.innerHTML = html;
+    }
+
+    function selectCounterFilter(id, name) {
+        document.getElementById("filter-counter-id").value = id;
+        document.getElementById("selected-counter-label").innerText = name;
+        
+        const button = document.getElementById("dropdownFilterButton");
+        if (button) {
+            button.click();
+        }
+
+        handleSearchFilterChange();
     }
 
     // Toast System

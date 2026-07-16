@@ -5,14 +5,24 @@
 @section('content')
 <div class="relative min-h-[calc(100vh-8rem)]">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-        {{-- <div>
-            <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Counter Management</h1>
-            <p class="text-sm text-slate-500 font-medium mt-1">Manage physical registers, checkout desks, and their operational status.</p>
-        </div> --}}
-        <button onclick="openAddModal()" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#1e50d0] hover:bg-[#1641b3] active:scale-[0.98] text-white text-sm font-semibold rounded-xl transition duration-200 shadow-sm shadow-[#1e50d0]/20 cursor-pointer">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <!-- Search Form -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1 max-w-md">
+            <form id="search-form" onsubmit="event.preventDefault(); handleSearchChange();" class="relative flex-1">
+                <label for="search-input" class="block mb-2.5 text-sm font-medium text-heading sr-only">Search</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                        <svg class="w-4 h-4 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
+                    </div>
+                    <input type="search" id="search-input" oninput="handleSearchChange()" class="block w-full p-3 ps-9 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" placeholder="Search Counter..." />
+                    <!--<button type="submit" class="absolute end-1.5 bottom-1.5 text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded text-xs px-3 py-1.5 focus:outline-none">Search</button>-->
+                </div>
+            </form>
+        </div>
+
+        <button onclick="openAddModal()" class="inline-flex items-center justify-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer shrink-0 gap-1.5">
+            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
             </svg>
             Add Counter
         </button>
@@ -44,31 +54,32 @@
             </svg>
         </div>
         <h3 class="text-base font-bold text-slate-800">No Counters Created</h3>
-        <button onclick="openAddModal()" class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-[#1e50d0]/10 hover:bg-[#1e50d0]/20 text-[#1e50d0] text-sm font-semibold rounded-xl transition duration-150 cursor-pointer">
+        <button onclick="openAddModal()" class="mt-4 inline-flex items-center justify-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer gap-1.5">
+            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
+            </svg>
             Create Counter
         </button>
     </div>
 
     <!-- Counter Table -->
-    <div id="counter-table-wrapper" class="hidden bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden mb-8">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-400 border-b border-slate-100">
-                        <th class="px-6 py-4">ID</th>
-                        <th class="px-6 py-4">Counter Name</th>
-                        <th class="px-6 py-4">Location / Address</th>
-                        <th class="px-6 py-4">Phone</th>
-                        <th class="px-6 py-4">Description</th>
-                        <th class="px-6 py-4">Status</th>
-                        <th class="px-6 py-4 text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="counter-table-body" class="divide-y divide-slate-100 text-sm text-slate-600">
-                    <!-- Rendered dynamically -->
-                </tbody>
-            </table>
-        </div>
+    <div id="counter-table-wrapper" class="hidden relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default mb-8">
+        <table class="w-full text-sm text-left rtl:text-right text-body">
+            <thead class="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
+                <tr>
+                    <th scope="col" class="px-6 py-3 font-medium">ID</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Counter Name</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Location / Address</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Phone</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Description</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Status</th>
+                    <th scope="col" class="px-6 py-3 font-medium text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="counter-table-body">
+                <!-- Rendered dynamically -->
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -76,76 +87,81 @@
 <div id="counter-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true">
     <!-- Backdrop with blur -->
     <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="modal-backdrop" onclick="closeModal()"></div>
-    
-    <!-- Modal content -->
-    <div class="relative w-full max-w-lg bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden transform scale-95 opacity-0 transition-all duration-300" id="modal-panel">
-        <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
-            <h3 id="modal-title" class="text-lg font-bold text-slate-800">Add Counter</h3>
-            <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 transition p-1.5 rounded-lg hover:bg-slate-50">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
+
+    <!-- Modal content wrapper (Flowbite style max-w-lg) -->
+    <div class="relative w-full max-w-lg max-h-[95vh] flex flex-col transform scale-95 opacity-0 transition-all duration-300" id="modal-panel">
+        <div class="relative bg-neutral-primary-soft border border-default rounded-base shadow-sm p-4 md:p-6 flex flex-col overflow-hidden max-h-full">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between border-b border-default pb-4 md:pb-5 shrink-0">
+                <h3 id="modal-title" class="text-lg font-medium text-heading">
+                    Add Counter
+                </h3>
+                <button type="button" onclick="closeModal()" class="text-body bg-transparent hover:bg-neutral-tertiary hover:text-heading rounded-base text-sm w-9 h-9 ms-auto inline-flex justify-center items-center cursor-pointer">
+                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <form id="counter-form" onsubmit="handleFormSubmit(event)" class="overflow-y-auto flex-1 pr-1">
+                <input type="hidden" id="counter-id" name="id">
+
+                <div class="grid gap-4 grid-cols-2 py-4 md:py-6">
+                    <!-- Name -->
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="input-name" class="block mb-2.5 text-sm font-medium text-heading">Counter Name</label>
+                        <input type="text" id="input-name" name="name" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. Cashier 1" required>
+                        <p id="error-name" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+
+                    <!-- Phone -->
+                    <div class="col-span-2 sm:col-span-1">
+                        <label for="input-phone" class="block mb-2.5 text-sm font-medium text-heading">Phone</label>
+                        <input type="text" id="input-phone" name="phone" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. 08123456789">
+                        <p id="error-phone" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="col-span-2">
+                        <label for="input-address" class="block mb-2.5 text-sm font-medium text-heading">Address / Location</label>
+                        <textarea id="input-address" name="address" rows="2" class="block bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full p-3.5 shadow-xs placeholder:text-body" placeholder="e.g. 1st Floor, Main Hall"></textarea>
+                        <p id="error-address" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-span-2">
+                        <label for="input-description" class="block mb-2.5 text-sm font-medium text-heading">Description</label>
+                        <textarea id="input-description" name="description" rows="2" class="block bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full p-3.5 shadow-xs placeholder:text-body" placeholder="Describe register purpose, layout, or restrictions..."></textarea>
+                        <p id="error-description" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+
+                    <!-- Status Checkbox -->
+                    <div class="col-span-2 flex items-center gap-3 py-2">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="input-status" name="status" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#1e50d0]/10 rounded-full peer peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1e50d0]"></div>
+                            <span class="ml-3 text-sm font-semibold text-slate-700">Active</span>
+                        </label>
+                        <p id="error-status" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="flex items-center space-x-4 border-t border-default pt-4 md:pt-6">
+                    <button type="submit" id="btn-save" class="inline-flex items-center text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">
+                        <svg class="w-4 h-4 me-1.5 -ms-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/></svg>
+                        Save Counter
+                    </button>
+                    <button type="button" onclick="closeModal()" class="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">Cancel</button>
+                </div>
+            </form>
         </div>
-        
-        <form id="counter-form" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4">
-            <input type="hidden" id="counter-id" name="id">
-            
-            <!-- Name -->
-            <div class="space-y-1.5">
-                <label for="input-name" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Counter Name</label>
-                <input type="text" id="input-name" name="name" placeholder="e.g. Cashier 1" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm placeholder:text-slate-400" required>
-                <p id="error-name" class="text-xs font-medium text-rose-500 hidden"></p>
-            </div>
-
-            <!-- Phone -->
-            <div class="space-y-1.5">
-                <label for="input-phone" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Phone</label>
-                <input type="text" id="input-phone" name="phone" placeholder="e.g. 08123456789" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm placeholder:text-slate-400">
-                <p id="error-phone" class="text-xs font-medium text-rose-500 hidden"></p>
-            </div>
-
-            <!-- Address -->
-            <div class="space-y-1.5">
-                <label for="input-address" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Address / Location</label>
-                <textarea id="input-address" name="address" rows="2" placeholder="e.g. 1st Floor, Main Hall" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm placeholder:text-slate-400 resize-none"></textarea>
-                <p id="error-address" class="text-xs font-medium text-rose-500 hidden"></p>
-            </div>
-
-            <!-- Description -->
-            <div class="space-y-1.5">
-                <label for="input-description" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Description</label>
-                <textarea id="input-description" name="description" rows="2" placeholder="Describe register purpose, layout, or restrictions..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm placeholder:text-slate-400 resize-none"></textarea>
-                <p id="error-description" class="text-xs font-medium text-rose-500 hidden"></p>
-            </div>
-
-            <!-- Status Checkbox -->
-            <div class="flex items-center gap-3 py-2">
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="input-status" name="status" class="sr-only peer" checked>
-                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#1e50d0]/10 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1e50d0]"></div>
-                    <span class="ml-3 text-sm font-semibold text-slate-700">Active</span>
-                </label>
-                <p id="error-status" class="text-xs font-medium text-rose-500 hidden"></p>
-            </div>
-
-            <!-- Actions -->
-            <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
-                <button type="button" onclick="closeModal()" class="px-4 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition duration-150">
-                    Cancel
-                </button>
-                <button type="submit" id="btn-save" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#1e50d0] hover:bg-[#1641b3] text-white text-sm font-semibold rounded-xl transition duration-150">
-                    Save Counter
-                </button>
-            </div>
-        </form>
     </div>
 </div>
 
 <!-- Modal (Delete Confirmation) -->
 <div id="delete-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true">
     <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="delete-backdrop" onclick="closeDeleteModal()"></div>
-    
+
     <div class="relative w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 p-6 transform scale-95 opacity-0 transition-all duration-300" id="delete-panel">
         <div class="flex items-start gap-4 mb-4">
             <div class="p-3 bg-rose-50 text-rose-600 rounded-xl">
@@ -158,7 +174,7 @@
                 <p class="text-sm text-slate-500 mt-1">Are you sure you want to delete <span id="delete-counter-name" class="font-semibold text-slate-700"></span>? This action cannot be undone.</p>
             </div>
         </div>
-        
+
         <div class="flex items-center justify-end gap-3 pt-2">
             <button onclick="closeDeleteModal()" class="px-4 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition duration-150">
                 Cancel
@@ -214,8 +230,25 @@
         const emptyState = document.getElementById("empty-state");
         const tableWrapper = document.getElementById("counter-table-wrapper");
         const tbody = document.getElementById("counter-table-body");
-        
+
         tbody.innerHTML = "";
+
+        const searchInput = document.getElementById("search-input");
+        const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : "";
+
+        // Filter counters
+        const filteredCounters = activeCounters.filter(counter => {
+            if (searchQuery) {
+                const nameMatch = counter.name ? counter.name.toLowerCase().includes(searchQuery) : false;
+                const addressMatch = counter.address ? counter.address.toLowerCase().includes(searchQuery) : false;
+                const descMatch = counter.description ? counter.description.toLowerCase().includes(searchQuery) : false;
+                const phoneMatch = counter.phone ? counter.phone.toLowerCase().includes(searchQuery) : false;
+                if (!nameMatch && !addressMatch && !descMatch && !phoneMatch) {
+                    return false;
+                }
+            }
+            return true;
+        });
 
         if (activeCounters.length === 0) {
             emptyState.classList.remove("hidden");
@@ -226,26 +259,42 @@
         emptyState.classList.add("hidden");
         tableWrapper.classList.remove("hidden");
 
-        activeCounters.forEach(counter => {
+        if (filteredCounters.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center text-body opacity-60">
+                        <div class="flex flex-col items-center justify-center gap-2">
+                            <svg class="w-8 h-8 opacity-40 text-body" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <span class="text-sm font-semibold">No counters match your criteria.</span>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        filteredCounters.forEach(counter => {
             const row = document.createElement("tr");
-            row.className = "hover:bg-slate-50/50 transition-colors duration-150";
-            
-            const badgeClass = counter.status 
-                ? "bg-emerald-50 text-emerald-700 font-semibold" 
+            row.className = "bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium transition-colors duration-150";
+
+            const badgeClass = counter.status
+                ? "bg-emerald-50 text-emerald-700 font-semibold"
                 : "bg-slate-100 text-slate-500 font-medium";
             const badgeText = counter.status ? "Active" : "Inactive";
 
             row.innerHTML = `
-                <td class="px-6 py-4 font-semibold text-slate-400">#${counter.id}</td>
-                <td class="px-6 py-4 font-bold text-slate-800">${escapeHtml(counter.name)}</td>
+                <td class="px-6 py-4 font-semibold text-body">#${counter.id}</td>
+                <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap text-left">${escapeHtml(counter.name)}</th>
                 <td class="px-6 py-4 text-xs max-w-[200px] truncate" title="${escapeHtml(counter.address || '')}">
-                    ${counter.address ? escapeHtml(counter.address) : '<span class="text-slate-300 font-normal">No address</span>'}
+                    ${counter.address ? escapeHtml(counter.address) : '<span class="text-body opacity-50 font-normal">No address</span>'}
                 </td>
-                <td class="px-6 py-4 text-xs font-semibold text-slate-600">
-                    ${counter.phone ? escapeHtml(counter.phone) : '<span class="text-slate-300 font-normal">No phone</span>'}
+                <td class="px-6 py-4 text-xs font-semibold text-body">
+                    ${counter.phone ? escapeHtml(counter.phone) : '<span class="text-body opacity-50 font-normal">No phone</span>'}
                 </td>
                 <td class="px-6 py-4 text-xs max-w-[250px] truncate" title="${escapeHtml(counter.description || '')}">
-                    ${counter.description ? escapeHtml(counter.description) : '<span class="text-slate-300 font-normal">No description</span>'}
+                    ${counter.description ? escapeHtml(counter.description) : '<span class="text-body opacity-50 font-normal">No description</span>'}
                 </td>
                 <td class="px-6 py-4">
                     <span class="px-2.5 py-1 text-[11px] rounded-full ${badgeClass}">
@@ -253,22 +302,18 @@
                     </span>
                 </td>
                 <td class="px-6 py-4 text-right">
-                    <div class="flex items-center justify-end gap-1.5">
-                        <button onclick="openEditModal(${counter.id})" class="inline-flex items-center justify-center p-2 text-[#1e50d0] hover:bg-[#1e50d0]/5 rounded-xl transition duration-150 cursor-pointer" title="Edit">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
-                            </svg>
-                        </button>
-                        <button onclick="openDeleteModal(${counter.id}, '${escapeQuote(counter.name)}')" class="inline-flex items-center justify-center p-2 text-rose-600 hover:bg-rose-50 rounded-xl transition duration-150 cursor-pointer" title="Delete">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"></path>
-                            </svg>
-                        </button>
+                    <div class="flex items-center justify-end gap-3">
+                        <button onclick="openEditModal(${counter.id})" class="font-medium text-fg-brand hover:underline cursor-pointer" title="Edit">Edit</button>
+                        <button onclick="openDeleteModal(${counter.id}, '${escapeQuote(counter.name)}')" class="font-medium text-fg-danger hover:underline cursor-pointer" title="Delete">Delete</button>
                     </div>
                 </td>
             `;
             tbody.appendChild(row);
         });
+    }
+
+    function handleSearchChange() {
+        renderCounters();
     }
 
     // Modal Helpers
@@ -277,7 +322,7 @@
         document.getElementById("counter-id").value = "";
         document.getElementById("counter-form").reset();
         document.getElementById("input-status").checked = true;
-        
+
         clearValidationErrors();
         showModal();
     }
@@ -319,7 +364,7 @@
         backdrop.classList.replace("opacity-100", "opacity-0");
         panel.classList.replace("scale-100", "scale-95");
         panel.classList.replace("opacity-100", "opacity-0");
-        
+
         setTimeout(() => {
             modal.classList.add("hidden");
         }, 300);
@@ -481,9 +526,9 @@
         const container = document.getElementById("toast-container");
         const toast = document.createElement("div");
         toast.className = "flex items-center gap-3 px-4 py-3 bg-white border border-slate-100 rounded-xl shadow-lg pointer-events-auto transform translate-y-2 opacity-0 transition-all duration-300 max-w-sm";
-        
+
         const iconColor = type === "success" ? "text-emerald-500" : "text-rose-500";
-        const iconSvg = type === "success" 
+        const iconSvg = type === "success"
             ? `<svg class="w-5 h-5 ${iconColor}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`
             : `<svg class="w-5 h-5 ${iconColor}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
 
@@ -498,7 +543,7 @@
         `;
 
         container.appendChild(toast);
-        
+
         // Trigger entrance
         setTimeout(() => {
             toast.classList.replace("translate-y-2", "translate-y-0");
