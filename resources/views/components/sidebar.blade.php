@@ -27,7 +27,7 @@
 
         <!-- Navigation Links -->
         <nav class="flex-1 space-y-1 px-4 py-4 overflow-y-auto">
-            <a href="#" class="group flex items-center gap-3 px-3 py-2 text-sm font-semibold rounded-md bg-[#1641b3] text-white">
+            <a href="{{ route('administrator.dashboard') }}" class="group flex items-center gap-3 px-3 py-2 text-sm {{ request()->routeIs('administrator.dashboard') ? 'font-semibold bg-[#1641b3] text-white shadow-sm' : 'font-medium text-white/85 hover:bg-[#1641b3] hover:text-white' }} rounded-md transition-all">
                 <svg class="h-5 w-5 shrink-0 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                 </svg>
@@ -44,6 +44,12 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" />
                 </svg>
                 Sales
+            </a>
+            <a href="{{ route('counters.index') }}" class="group flex items-center gap-3 px-3 py-2 text-sm {{ request()->routeIs('counters.*') ? 'font-semibold bg-[#1641b3] text-white shadow-sm' : 'font-medium text-white/85 hover:bg-[#1641b3] hover:text-white' }} rounded-md transition-all">
+                <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('counters.*') ? 'text-white' : 'text-white/75 group-hover:text-white' }}" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25M18.75 3H5.25A2.25 2.25 0 003 5.25" />
+                </svg>
+                Counters
             </a>
         </nav>
 
@@ -89,8 +95,8 @@
 
     <!-- Navigation Links -->
     <nav class="flex-1 space-y-1 px-4 py-6">
-        <a href="#" class="group flex items-center gap-3 px-4 py-2.5 text-sm font-semibold rounded-md bg-[#1641b3] text-white shadow-sm">
-            <svg class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <a href="{{ route('administrator.dashboard') }}" class="group flex items-center gap-3 px-4 py-2.5 text-sm {{ request()->routeIs('administrator.dashboard') ? 'font-semibold bg-[#1641b3] text-white shadow-sm' : 'font-medium text-white/85 hover:bg-[#1641b3] hover:text-white' }} rounded-md transition-all">
+            <svg class="h-5 w-5 shrink-0 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
             </svg>
             Dashboard
@@ -103,9 +109,15 @@
         </a>
         <a href="#" class="group flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-md text-white/85 hover:bg-[#1641b3] hover:text-white transition-all">
             <svg class="h-5 w-5 text-white/70 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12a2.25 2.25 0 0020.25-18V6a2.25 2.25 0 00-18-2.25H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z" />
             </svg>
             Sales
+        </a>
+        <a href="{{ route('counters.index') }}" class="group flex items-center gap-3 px-4 py-2.5 text-sm {{ request()->routeIs('counters.*') ? 'font-semibold bg-[#1641b3] text-white shadow-sm' : 'font-medium text-white/85 hover:bg-[#1641b3] hover:text-white' }} rounded-md transition-all">
+            <svg class="h-5 w-5 shrink-0 {{ request()->routeIs('counters.*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25M18.75 3H5.25A2.25 2.25 0 003 5.25" />
+            </svg>
+            Counters
         </a>
     </nav>
 
