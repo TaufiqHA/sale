@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\UnitController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -21,3 +22,4 @@ Route::get('/administrator/dashboard', function () {
 })->middleware('auth')->name('administrator.dashboard');
 
 Route::apiResource('categories', CategoryController::class)->middleware('auth');
+Route::apiResource('units', UnitController::class)->middleware('auth');
