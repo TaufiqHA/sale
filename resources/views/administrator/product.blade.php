@@ -1,6 +1,6 @@
 @extends('layouts.administrator')
 
-@section('title', 'Product Management')
+@section('title', 'Manajemen Produk')
 
 @section('content')
 <div class="relative min-h-[calc(100vh-8rem)]">
@@ -15,21 +15,21 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
-                <input type="text" id="search-input" oninput="handleSearchFilterChange()" placeholder="Search product name, SKU or barcode..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm bg-white placeholder:text-slate-400">
+                <input type="text" id="search-input" oninput="handleSearchFilterChange()" placeholder="Cari nama produk, SKU atau barcode..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm bg-white placeholder:text-slate-400">
             </div>
 
             <!-- Counter Filter Dropdown -->
             <div class="relative shrink-0">
                 <input type="hidden" id="filter-counter-id" value="">
                 <button id="dropdownFilterButton" data-dropdown-toggle="dropdown-filter-counter" class="w-full sm:w-48 inline-flex items-center justify-between text-body bg-neutral-secondary-medium border border-default-medium hover:bg-neutral-tertiary focus:ring-4 focus:ring-neutral-tertiary-medium font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer" type="button">
-                    <span id="selected-counter-label">All Counters</span>
+                    <span id="selected-counter-label">Semua Counter</span>
                     <svg class="w-4 h-4 ms-1.5 -me-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7"/></svg>
                 </button>
                 <div id="dropdown-filter-counter" class="z-10 hidden bg-neutral-primary-soft border border-default rounded-base shadow-lg w-48">
                     <ul class="p-2 text-sm text-body font-medium" aria-labelledby="dropdownFilterButton" id="filter-counter-options">
                         <li>
-                            <button type="button" onclick="selectCounterFilter('', 'All Counters')" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary hover:text-heading rounded text-left cursor-pointer">
-                                All Counters
+                            <button type="button" onclick="selectCounterFilter('', 'Semua Counter')" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary hover:text-heading rounded text-left cursor-pointer">
+                                Semua Counter
                             </button>
                         </li>
                     </ul>
@@ -42,7 +42,7 @@
             <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
             </svg>
-            Add Product
+            Tambah Produk
         </button>
     </div>
 
@@ -73,12 +73,12 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"></path>
             </svg>
         </div>
-        <h3 class="text-base font-bold text-slate-800">No Products Registered</h3>
+        <h3 class="text-base font-bold text-slate-800">Tidak Ada Produk Terdaftar</h3>
         <button onclick="openAddModal()" class="mt-4 inline-flex items-center justify-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer gap-1.5">
             <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
             </svg>
-            Add Product
+            Tambah Produk
         </button>
     </div>
 
@@ -88,15 +88,15 @@
             <thead class="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
                 <tr>
                     <th scope="col" class="px-6 py-3 font-medium">SKU / Barcode</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Product Name</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Category</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Unit</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Nama Produk</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Kategori</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Satuan</th>
                     <th scope="col" class="px-6 py-3 font-medium">Counter</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Stock</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Buy Price</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Sell Price</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Stok</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Harga Beli</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Harga Jual</th>
                     <th scope="col" class="px-6 py-3 font-medium">Status</th>
-                    <th scope="col" class="px-6 py-3 font-medium text-right">Actions</th>
+                    <th scope="col" class="px-6 py-3 font-medium text-right">Aksi</th>
                 </tr>
             </thead>
             <tbody id="product-table-body">
@@ -117,11 +117,11 @@
             <!-- Modal header -->
             <div class="flex items-center justify-between border-b border-default pb-4 md:pb-5 shrink-0">
                 <h3 id="modal-title" class="text-lg font-medium text-heading">
-                    Add Product
+                    Tambah Produk
                 </h3>
                 <button type="button" onclick="closeModal()" class="text-body bg-transparent hover:bg-neutral-tertiary hover:text-heading rounded-base text-sm w-9 h-9 ms-auto inline-flex justify-center items-center cursor-pointer">
                     <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
-                    <span class="sr-only">Close modal</span>
+                    <span class="sr-only">Tutup modal</span>
                 </button>
             </div>
             <!-- Modal body -->
@@ -131,22 +131,22 @@
                 <div class="grid gap-4 grid-cols-2 py-4 md:py-6">
                     <!-- Name -->
                     <div class="col-span-2">
-                        <label for="input-name" class="block mb-2.5 text-sm font-medium text-heading">Product Name</label>
-                        <input type="text" id="input-name" name="name" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. Coca-Cola 330ml" required>
+                        <label for="input-name" class="block mb-2.5 text-sm font-medium text-heading">Nama Produk</label>
+                        <input type="text" id="input-name" name="name" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="contoh: Coca-Cola 330ml" required>
                         <p id="error-name" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
                     <!-- SKU -->
                     <div class="col-span-2 sm:col-span-1">
                         <label for="input-sku" class="block mb-2.5 text-sm font-medium text-heading">SKU</label>
-                        <input type="text" id="input-sku" name="sku" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. SKU-DRK-COCA" required>
+                        <input type="text" id="input-sku" name="sku" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="contoh: SKU-DRK-COCA" required>
                         <p id="error-sku" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
                     <!-- Barcode -->
                     <div class="col-span-2 sm:col-span-1">
                         <label for="input-barcode" class="block mb-2.5 text-sm font-medium text-heading">Barcode</label>
-                        <input type="text" id="input-barcode" name="barcode" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. 8886007810123">
+                        <input type="text" id="input-barcode" name="barcode" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="contoh: 8886007810123">
                         <p id="error-barcode" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
@@ -154,12 +154,12 @@
                     <div class="col-span-2 sm:col-span-1">
                         <div class="flex items-end gap-2">
                             <div class="flex-1">
-                                <label for="input-category_id" class="block mb-2.5 text-sm font-medium text-heading">Category</label>
+                                <label for="input-category_id" class="block mb-2.5 text-sm font-medium text-heading">Kategori</label>
                                 <select id="input-category_id" name="category_id" class="block w-full px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" required>
-                                    <option value="" disabled selected>Select Category</option>
+                                    <option value="" disabled selected>Pilih Kategori</option>
                                 </select>
                             </div>
-                            <button type="button" onclick="openCategoryManageModal()" class="px-3.5 py-2.5 bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading rounded-base text-sm font-medium focus:outline-none transition duration-150 inline-flex items-center gap-1.5 shrink-0 cursor-pointer" title="Manage Categories">
+                            <button type="button" onclick="openCategoryManageModal()" class="px-3.5 py-2.5 bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading rounded-base text-sm font-medium focus:outline-none transition duration-150 inline-flex items-center gap-1.5 shrink-0 cursor-pointer" title="Kelola Kategori">
                                 Kelola
                             </button>
                         </div>
@@ -170,12 +170,12 @@
                     <div class="col-span-2 sm:col-span-1">
                         <div class="flex items-end gap-2">
                             <div class="flex-1">
-                                <label for="input-unit_id" class="block mb-2.5 text-sm font-medium text-heading">Unit</label>
+                                <label for="input-unit_id" class="block mb-2.5 text-sm font-medium text-heading">Satuan</label>
                                 <select id="input-unit_id" name="unit_id" class="block w-full px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" required>
-                                    <option value="" disabled selected>Select Unit</option>
+                                    <option value="" disabled selected>Pilih Satuan</option>
                                 </select>
                             </div>
-                            <button type="button" onclick="openUnitManageModal()" class="px-3.5 py-2.5 bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading rounded-base text-sm font-medium focus:outline-none transition duration-150 inline-flex items-center gap-1.5 shrink-0 cursor-pointer" title="Manage Units">
+                            <button type="button" onclick="openUnitManageModal()" class="px-3.5 py-2.5 bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading rounded-base text-sm font-medium focus:outline-none transition duration-150 inline-flex items-center gap-1.5 shrink-0 cursor-pointer" title="Kelola Satuan">
                                 Kelola
                             </button>
                         </div>
@@ -186,36 +186,36 @@
                     <div class="col-span-2 sm:col-span-1">
                         <label for="input-counter_id" class="block mb-2.5 text-sm font-medium text-heading">Counter</label>
                         <select id="input-counter_id" name="counter_id" class="block w-full px-3 py-2.5 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" required>
-                            <option value="" disabled selected>Select Counter</option>
+                            <option value="" disabled selected>Pilih Counter</option>
                         </select>
                         <p id="error-counter_id" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
                     <!-- Stock -->
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="input-stock" class="block mb-2.5 text-sm font-medium text-heading">Stock</label>
-                        <input type="number" id="input-stock" name="stock" min="0" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. 10" required>
+                        <label for="input-stock" class="block mb-2.5 text-sm font-medium text-heading">Stok</label>
+                        <input type="number" id="input-stock" name="stock" min="0" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="contoh: 10" required>
                         <p id="error-stock" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
                     <!-- Buy Price -->
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="input-buy_price" class="block mb-2.5 text-sm font-medium text-heading">Buy Price (Rp)</label>
-                        <input type="text" id="input-buy_price" name="buy_price" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. 5.000" required>
+                        <label for="input-buy_price" class="block mb-2.5 text-sm font-medium text-heading">Harga Beli (Rp)</label>
+                        <input type="text" id="input-buy_price" name="buy_price" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="contoh: 5.000" required>
                         <p id="error-buy_price" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
                     <!-- Sell Price -->
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="input-sell_price" class="block mb-2.5 text-sm font-medium text-heading">Sell Price (Rp)</label>
-                        <input type="text" id="input-sell_price" name="sell_price" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. 7.000" required>
+                        <label for="input-sell_price" class="block mb-2.5 text-sm font-medium text-heading">Harga Jual (Rp)</label>
+                        <input type="text" id="input-sell_price" name="sell_price" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="contoh: 7.000" required>
                         <p id="error-sell_price" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
                     <!-- Description -->
                     <div class="col-span-2">
-                        <label for="input-description" class="block mb-2.5 text-sm font-medium text-heading">Product Description</label>
-                        <textarea id="input-description" name="description" rows="3" class="block bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full p-3.5 shadow-xs placeholder:text-body" placeholder="Product details or notes..."></textarea>
+                        <label for="input-description" class="block mb-2.5 text-sm font-medium text-heading">Deskripsi Produk</label>
+                        <textarea id="input-description" name="description" rows="3" class="block bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full p-3.5 shadow-xs placeholder:text-body" placeholder="Detail produk atau catatan..."></textarea>
                         <p id="error-description" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
@@ -224,7 +224,7 @@
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="input-status" name="status" class="sr-only peer" checked>
                             <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#1e50d0]/10 rounded-full peer peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1e50d0]"></div>
-                            <span class="ml-3 text-sm font-semibold text-slate-700">Active</span>
+                            <span class="ml-3 text-sm font-semibold text-slate-700">Aktif</span>
                         </label>
                         <p id="error-status" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
@@ -233,9 +233,9 @@
                 <div class="flex items-center space-x-4 border-t border-default pt-4 md:pt-6">
                     <button type="submit" id="btn-save" class="inline-flex items-center text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">
                         <svg class="w-4 h-4 me-1.5 -ms-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/></svg>
-                        Save Product
+                        Simpan Produk
                     </button>
-                    <button type="button" onclick="closeModal()" class="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">Cancel</button>
+                    <button type="button" onclick="closeModal()" class="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">Batal</button>
                 </div>
             </form>
         </div>
@@ -254,17 +254,17 @@
                 </svg>
             </div>
             <div>
-                <h3 class="text-base font-bold text-slate-800">Delete Product</h3>
-                <p class="text-sm text-slate-500 mt-1">Are you sure you want to delete <span id="delete-product-name" class="font-semibold text-slate-700"></span>? This will remove the item permanently.</p>
+                <h3 class="text-base font-bold text-slate-800">Hapus Produk</h3>
+                <p class="text-sm text-slate-500 mt-1">Apakah Anda yakin ingin menghapus <span id="delete-product-name" class="font-semibold text-slate-700"></span>? Tindakan ini akan menghapus produk secara permanen.</p>
             </div>
         </div>
         
         <div class="flex items-center justify-end gap-3 pt-2">
             <button onclick="closeDeleteModal()" class="px-4 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition duration-150">
-                Cancel
+                Batal
             </button>
             <button onclick="handleDeleteConfirm()" id="btn-delete" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold rounded-xl transition duration-150">
-                Delete
+                Hapus
             </button>
         </div>
     </div>
@@ -280,37 +280,37 @@
         <div class="relative bg-neutral-primary-soft border border-default rounded-base shadow-sm p-4 md:p-6 flex flex-col overflow-hidden max-h-full">
             <!-- Modal header -->
             <div class="flex items-center justify-between border-b border-default pb-4 md:pb-5">
-                <h3 class="text-lg font-medium text-heading">Manage Categories</h3>
+                <h3 class="text-lg font-medium text-heading">Kelola Kategori</h3>
                 <button onclick="closeCategoryManageModal()" class="text-body bg-transparent hover:bg-neutral-tertiary hover:text-heading rounded-base text-sm w-9 h-9 ms-auto inline-flex justify-center items-center cursor-pointer">
                     <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
-                    <span class="sr-only">Close modal</span>
+                    <span class="sr-only">Tutup modal</span>
                 </button>
             </div>
             
             <div class="py-4 md:py-6 space-y-6">
                 <!-- Add Category Inline Form -->
                 <form id="inline-category-form" onsubmit="handleInlineCategorySubmit(event)" class="space-y-3 bg-neutral-secondary-soft p-4 rounded-base border border-default">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-heading">Quick Add Category</h4>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-heading">Tambah Kategori Cepat</h4>
                     <div class="space-y-1.5">
-                        <input type="text" id="inline-cat-name" placeholder="Category Name (e.g. Beverages)" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body" required>
+                        <input type="text" id="inline-cat-name" placeholder="Nama Kategori (contoh: Minuman)" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body" required>
                     </div>
                     <div class="space-y-1.5">
-                        <input type="text" id="inline-cat-desc" placeholder="Short Description (optional)" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body">
+                        <input type="text" id="inline-cat-desc" placeholder="Deskripsi Singkat (opsional)" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body">
                     </div>
                     <button type="submit" id="btn-inline-cat-save" class="w-full text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2 focus:outline-none cursor-pointer">
-                        Add Category
+                        Tambah Kategori
                     </button>
                 </form>
 
                 <!-- Scrollable Category List -->
                 <div class="space-y-2">
-                    <h4 class="text-xs font-semibold uppercase tracking-wider text-heading opacity-80">Existing Categories</h4>
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-heading opacity-80">Kategori yang Ada</h4>
                     <div class="max-h-60 overflow-y-auto divide-y divide-default border border-default rounded-base pr-1 bg-neutral-secondary-soft">
                         <table class="w-full text-left text-xs border-collapse">
                             <thead>
                                 <tr class="bg-neutral-secondary-medium text-heading border-b border-default font-semibold">
-                                    <th class="p-3">Name</th>
-                                    <th class="p-3 text-right">Action</th>
+                                    <th class="p-3">Nama</th>
+                                    <th class="p-3 text-right">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="inline-category-list-body" class="divide-y divide-default text-body">
@@ -334,40 +334,40 @@
         <div class="relative bg-neutral-primary-soft border border-default rounded-base shadow-sm p-4 md:p-6 flex flex-col overflow-hidden max-h-full">
             <!-- Modal header -->
             <div class="flex items-center justify-between border-b border-default pb-4 md:pb-5">
-                <h3 class="text-lg font-medium text-heading">Manage Units</h3>
+                <h3 class="text-lg font-medium text-heading">Kelola Satuan</h3>
                 <button onclick="closeUnitManageModal()" class="text-body bg-transparent hover:bg-neutral-tertiary hover:text-heading rounded-base text-sm w-9 h-9 ms-auto inline-flex justify-center items-center cursor-pointer">
                     <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
-                    <span class="sr-only">Close modal</span>
+                    <span class="sr-only">Tutup modal</span>
                 </button>
             </div>
             
             <div class="py-4 md:py-6 space-y-6">
                 <!-- Add Unit Inline Form -->
                 <form id="inline-unit-form" onsubmit="handleInlineUnitSubmit(event)" class="space-y-3 bg-neutral-secondary-soft p-4 rounded-base border border-default">
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-heading">Quick Add Unit</h4>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-heading">Tambah Satuan Cepat</h4>
                     <div class="grid grid-cols-2 gap-2">
                         <div class="space-y-1.5">
-                            <input type="text" id="inline-unit-name" placeholder="Name (e.g. Pieces)" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body" required>
+                            <input type="text" id="inline-unit-name" placeholder="Nama (contoh: Pieces)" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body" required>
                         </div>
                         <div class="space-y-1.5">
-                            <input type="text" id="inline-unit-code" placeholder="Code (e.g. PCS)" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body" required>
+                            <input type="text" id="inline-unit-code" placeholder="Kode (contoh: PCS)" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body" required>
                         </div>
                     </div>
                     <button type="submit" id="btn-inline-unit-save" class="w-full text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2 focus:outline-none cursor-pointer">
-                        Add Unit
+                        Tambah Satuan
                     </button>
                 </form>
 
                 <!-- Scrollable Unit List -->
                 <div class="space-y-2">
-                    <h4 class="text-xs font-semibold uppercase tracking-wider text-heading opacity-80">Existing Units</h4>
+                    <h4 class="text-xs font-semibold uppercase tracking-wider text-heading opacity-80">Satuan yang Ada</h4>
                     <div class="max-h-60 overflow-y-auto divide-y divide-default border border-default rounded-base pr-1 bg-neutral-secondary-soft">
                         <table class="w-full text-left text-xs border-collapse">
                             <thead>
                                 <tr class="bg-neutral-secondary-medium text-heading border-b border-default font-semibold">
-                                    <th class="p-3">Name</th>
-                                    <th class="p-3">Code</th>
-                                    <th class="p-3 text-right">Action</th>
+                                    <th class="p-3">Nama</th>
+                                    <th class="p-3">Kode</th>
+                                    <th class="p-3 text-right">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="inline-unit-list-body" class="divide-y divide-default text-body">
@@ -454,12 +454,12 @@
             categoriesList = await response.json();
             
             const select = document.getElementById("input-category_id");
-            select.innerHTML = '<option value="" disabled selected>Select Category</option>';
+            select.innerHTML = '<option value="" disabled selected>Pilih Kategori</option>';
             categoriesList.forEach(cat => {
                 select.innerHTML += `<option value="${cat.id}">${escapeHtml(cat.name)}</option>`;
             });
         } catch (e) {
-            showToast("Failed loading categories.", "error");
+            showToast("Gagal memuat kategori.", "error");
         }
     }
 
@@ -472,12 +472,12 @@
             unitsList = await response.json();
             
             const select = document.getElementById("input-unit_id");
-            select.innerHTML = '<option value="" disabled selected>Select Unit</option>';
+            select.innerHTML = '<option value="" disabled selected>Pilih Satuan</option>';
             unitsList.forEach(unit => {
                 select.innerHTML += `<option value="${unit.id}">${escapeHtml(unit.name)} (${escapeHtml(unit.code)})</option>`;
             });
         } catch (e) {
-            showToast("Failed loading units.", "error");
+            showToast("Gagal memuat satuan.", "error");
         }
     }
 
@@ -490,14 +490,14 @@
             countersList = await response.json();
             
             const select = document.getElementById("input-counter_id");
-            select.innerHTML = '<option value="" disabled selected>Select Counter</option>';
+            select.innerHTML = '<option value="" disabled selected>Pilih Counter</option>';
             countersList.forEach(counter => {
                 select.innerHTML += `<option value="${counter.id}">${escapeHtml(counter.name)}</option>`;
             });
 
             populateCounterFilter();
         } catch (e) {
-            showToast("Failed loading counters.", "error");
+            showToast("Gagal memuat counter.", "error");
         }
     }
 
@@ -515,12 +515,12 @@
                 headers: { "Accept": "application/json" }
             });
 
-            if (!response.ok) throw new Error("Failed to fetch products.");
+            if (!response.ok) throw new Error("Gagal mengambil produk.");
 
             activeProducts = await response.json();
             renderProducts();
         } catch (error) {
-            showToast("Failed loading products. Please try again.", "error");
+            showToast("Gagal memuat produk. Silakan coba lagi.", "error");
         } finally {
             skeleton.classList.add("hidden");
         }
@@ -569,7 +569,7 @@
                             <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
-                            <span class="text-sm font-semibold">No products match your criteria.</span>
+                            <span class="text-sm font-semibold">Tidak ada produk yang cocok dengan kriteria Anda.</span>
                         </div>
                     </td>
                 </tr>
@@ -584,16 +584,16 @@
             const badgeClass = product.status 
                 ? "bg-emerald-50 text-emerald-700 font-semibold" 
                 : "bg-slate-100 text-slate-500 font-medium";
-            const badgeText = product.status ? "Active" : "Inactive";
+            const badgeText = product.status ? "Aktif" : "Tidak Aktif";
 
-            const catName = product.category ? product.category.name : 'Uncategorized';
+            const catName = product.category ? product.category.name : 'Tanpa Kategori';
             const unitName = product.unit ? `${product.unit.name} (${product.unit.code})` : '-';
             const counterName = product.counter ? product.counter.name : '-';
 
             row.innerHTML = `
                 <td class="px-6 py-4">
                     <div class="font-bold text-body">${escapeHtml(product.sku)}</div>
-                    <div class="text-xs text-body opacity-60 mt-0.5">${product.barcode ? escapeHtml(product.barcode) : '<span class="text-body opacity-40">No Barcode</span>'}</div>
+                    <div class="text-xs text-body opacity-60 mt-0.5">${product.barcode ? escapeHtml(product.barcode) : '<span class="text-body opacity-40">Tanpa Barcode</span>'}</div>
                 </td>
                 <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap text-left">${escapeHtml(product.name)}</th>
                 <td class="px-6 py-4 text-xs font-semibold text-body">${escapeHtml(catName)}</td>
@@ -609,8 +609,8 @@
                 </td>
                 <td class="px-6 py-4 text-right">
                     <div class="flex items-center justify-end gap-3">
-                        <button onclick="openEditModal(${product.id})" class="font-medium text-fg-brand hover:underline cursor-pointer" title="Edit">Edit</button>
-                        <button onclick="openDeleteModal(${product.id}, '${escapeQuote(product.name)}')" class="font-medium text-fg-danger hover:underline cursor-pointer" title="Delete">Delete</button>
+                        <button onclick="openEditModal(${product.id})" class="font-medium text-fg-brand hover:underline cursor-pointer" title="Ubah">Ubah</button>
+                        <button onclick="openDeleteModal(${product.id}, '${escapeQuote(product.name)}')" class="font-medium text-fg-danger hover:underline cursor-pointer" title="Hapus">Hapus</button>
                     </div>
                 </td>
             `;
@@ -624,7 +624,7 @@
 
     // Modal Helpers
     function openAddModal() {
-        document.getElementById("modal-title").innerText = "Add Product";
+        document.getElementById("modal-title").innerText = "Tambah Produk";
         document.getElementById("product-id").value = "";
         document.getElementById("product-form").reset();
         document.getElementById("input-status").checked = true;
@@ -641,7 +641,7 @@
         const product = activeProducts.find(p => p.id === id);
         if (!product) return;
 
-        document.getElementById("modal-title").innerText = "Edit Product";
+        document.getElementById("modal-title").innerText = "Ubah Produk";
         document.getElementById("product-id").value = product.id;
         document.getElementById("input-name").value = product.name;
         document.getElementById("input-sku").value = product.sku;
@@ -721,7 +721,7 @@
         tbody.innerHTML = "";
 
         if (categoriesList.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="2" class="p-4 text-center text-slate-300">No categories found.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="2" class="p-4 text-center text-slate-300">Kategori tidak ditemukan.</td></tr>`;
             return;
         }
 
@@ -771,19 +771,19 @@
 
             if (!response.ok) throw new Error();
 
-            showToast(`Category "${name}" added successfully!`);
+            showToast(`Kategori "${name}" berhasil ditambahkan!`);
             document.getElementById("inline-category-form").reset();
             await fetchCategories();
             renderInlineCategories();
         } catch (e) {
-            showToast("Failed to create category.", "error");
+            showToast("Gagal membuat kategori.", "error");
         } finally {
             btn.disabled = false;
         }
     }
 
     async function deleteInlineCategory(id) {
-        if (!confirm("Are you sure? Products belonging to this category will be deleted.")) return;
+        if (!confirm("Apakah Anda yakin? Produk yang termasuk dalam kategori ini juga akan dihapus.")) return;
 
         try {
             const response = await fetch(`/categories/${id}`, {
@@ -796,12 +796,12 @@
 
             if (!response.ok) throw new Error();
 
-            showToast("Category deleted successfully.");
+            showToast("Kategori berhasil dihapus.");
             await fetchCategories();
             renderInlineCategories();
             fetchProducts();
         } catch (e) {
-            showToast("Failed to delete category.", "error");
+            showToast("Gagal menghapus kategori.", "error");
         }
     }
 
@@ -840,7 +840,7 @@
         tbody.innerHTML = "";
 
         if (unitsList.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-300">No units found.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-300">Satuan tidak ditemukan.</td></tr>`;
             return;
         }
 
@@ -888,19 +888,19 @@
 
             if (!response.ok) throw new Error();
 
-            showToast(`Unit "${name}" added successfully!`);
+            showToast(`Satuan "${name}" berhasil ditambahkan!`);
             document.getElementById("inline-unit-form").reset();
             await fetchUnits();
             renderInlineUnits();
         } catch (e) {
-            showToast("Failed to create unit.", "error");
+            showToast("Gagal membuat satuan.", "error");
         } finally {
             btn.disabled = false;
         }
     }
 
     async function deleteInlineUnit(id) {
-        if (!confirm("Are you sure? Products belonging to this unit will be deleted.")) return;
+        if (!confirm("Apakah Anda yakin? Produk yang menggunakan satuan ini juga akan dihapus.")) return;
 
         try {
             const response = await fetch(`/units/${id}`, {
@@ -913,12 +913,12 @@
 
             if (!response.ok) throw new Error();
 
-            showToast("Unit deleted successfully.");
+            showToast("Satuan berhasil dihapus.");
             await fetchUnits();
             renderInlineUnits();
             fetchProducts();
         } catch (e) {
-            showToast("Failed to delete unit.", "error");
+            showToast("Gagal menghapus satuan.", "error");
         }
     }
 
@@ -953,7 +953,7 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            Saving...
+            Menyimpan...
         `;
 
         try {
@@ -974,9 +974,9 @@
                 return;
             }
 
-            if (!response.ok) throw new Error("Could not save product details.");
+            if (!response.ok) throw new Error("Gagal menyimpan detail produk.");
 
-            showToast(`Product "${name}" successfully ${isEdit ? 'updated' : 'created'}!`, "success");
+            showToast(`Produk "${name}" berhasil ${isEdit ? 'diperbarui' : 'dibuat'}!`, "success");
             closeModal();
             fetchProducts();
         } catch (error) {
@@ -1053,7 +1053,7 @@
         const btnDelete = document.getElementById("btn-delete");
         const originalText = btnDelete.innerText;
         btnDelete.disabled = true;
-        btnDelete.innerText = "Deleting...";
+        btnDelete.innerText = "Menghapus...";
 
         try {
             const response = await fetch(`/products/${productToDelete}`, {
@@ -1064,9 +1064,9 @@
                 }
             });
 
-            if (!response.ok) throw new Error("Failed to delete product.");
+            if (!response.ok) throw new Error("Gagal menghapus produk.");
 
-            showToast("Product successfully deleted.", "success");
+            showToast("Produk berhasil dihapus.", "success");
             closeDeleteModal();
             fetchProducts();
         } catch (error) {
@@ -1085,8 +1085,8 @@
 
         let html = `
             <li>
-                <button type="button" onclick="selectCounterFilter('', 'All Counters')" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary hover:text-heading rounded text-left cursor-pointer">
-                    All Counters
+                <button type="button" onclick="selectCounterFilter('', 'Semua Counter')" class="inline-flex items-center w-full p-2 hover:bg-neutral-tertiary hover:text-heading rounded text-left cursor-pointer">
+                    Semua Counter
                 </button>
             </li>
         `;

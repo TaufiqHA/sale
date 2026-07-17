@@ -1,6 +1,6 @@
 @extends('layouts.administrator')
 
-@section('title', 'Counter Management')
+@section('title', 'Data Counter')
 
 @section('content')
 <div class="relative min-h-[calc(100vh-8rem)]">
@@ -9,12 +9,12 @@
         <!-- Search Form -->
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1 max-w-md">
             <form id="search-form" onsubmit="event.preventDefault(); handleSearchChange();" class="relative flex-1">
-                <label for="search-input" class="block mb-2.5 text-sm font-medium text-heading sr-only">Search</label>
+                <label for="search-input" class="block mb-2.5 text-sm font-medium text-heading sr-only">Cari</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                         <svg class="w-4 h-4 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
                     </div>
-                    <input type="search" id="search-input" oninput="handleSearchChange()" class="block w-full p-3 ps-9 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" placeholder="Search Counter..." />
+                    <input type="search" id="search-input" oninput="handleSearchChange()" class="block w-full p-3 ps-9 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" placeholder="Cari Counter..." />
                     <!--<button type="submit" class="absolute end-1.5 bottom-1.5 text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded text-xs px-3 py-1.5 focus:outline-none">Search</button>-->
                 </div>
             </form>
@@ -24,7 +24,7 @@
             <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
             </svg>
-            Add Counter
+            Tambah Counter
         </button>
     </div>
 
@@ -53,12 +53,12 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25"></path>
             </svg>
         </div>
-        <h3 class="text-base font-bold text-slate-800">No Counters Created</h3>
+        <h3 class="text-base font-bold text-slate-800">Tidak Ada Counter Dibuat</h3>
         <button onclick="openAddModal()" class="mt-4 inline-flex items-center justify-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer gap-1.5">
             <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
             </svg>
-            Create Counter
+            Tambah Counter
         </button>
     </div>
 
@@ -68,12 +68,12 @@
             <thead class="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
                 <tr>
                     <th scope="col" class="px-6 py-3 font-medium">ID</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Counter Name</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Location / Address</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Phone</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Description</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Nama Counter</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Lokasi / Alamat</th>
+                    <th scope="col" class="px-6 py-3 font-medium">No Telepon</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Deskripsi</th>
                     <th scope="col" class="px-6 py-3 font-medium">Status</th>
-                    <th scope="col" class="px-6 py-3 font-medium text-right">Actions</th>
+                    <th scope="col" class="px-6 py-3 font-medium text-right">Aksi</th>
                 </tr>
             </thead>
             <tbody id="counter-table-body">
@@ -94,11 +94,11 @@
             <!-- Modal header -->
             <div class="flex items-center justify-between border-b border-default pb-4 md:pb-5 shrink-0">
                 <h3 id="modal-title" class="text-lg font-medium text-heading">
-                    Add Counter
+                    Tambah Counter
                 </h3>
                 <button type="button" onclick="closeModal()" class="text-body bg-transparent hover:bg-neutral-tertiary hover:text-heading rounded-base text-sm w-9 h-9 ms-auto inline-flex justify-center items-center cursor-pointer">
                     <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
-                    <span class="sr-only">Close modal</span>
+                    <span class="sr-only">Tutup modal</span>
                 </button>
             </div>
             <!-- Modal body -->
@@ -108,29 +108,29 @@
                 <div class="grid gap-4 grid-cols-2 py-4 md:py-6">
                     <!-- Name -->
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="input-name" class="block mb-2.5 text-sm font-medium text-heading">Counter Name</label>
-                        <input type="text" id="input-name" name="name" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. Cashier 1" required>
+                        <label for="input-name" class="block mb-2.5 text-sm font-medium text-heading">Nama Counter</label>
+                        <input type="text" id="input-name" name="name" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="contoh: Kasir 1" required>
                         <p id="error-name" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
                     <!-- Phone -->
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="input-phone" class="block mb-2.5 text-sm font-medium text-heading">Phone</label>
-                        <input type="text" id="input-phone" name="phone" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. 08123456789">
+                        <label for="input-phone" class="block mb-2.5 text-sm font-medium text-heading">No Telepon</label>
+                        <input type="text" id="input-phone" name="phone" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="contoh: 08123456789">
                         <p id="error-phone" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
                     <!-- Address -->
                     <div class="col-span-2">
-                        <label for="input-address" class="block mb-2.5 text-sm font-medium text-heading">Address / Location</label>
-                        <textarea id="input-address" name="address" rows="2" class="block bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full p-3.5 shadow-xs placeholder:text-body" placeholder="e.g. 1st Floor, Main Hall"></textarea>
+                        <label for="input-address" class="block mb-2.5 text-sm font-medium text-heading">Alamat / Lokasi</label>
+                        <textarea id="input-address" name="address" rows="2" class="block bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full p-3.5 shadow-xs placeholder:text-body" placeholder="contoh: Lantai 1, Aula Utama"></textarea>
                         <p id="error-address" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
                     <!-- Description -->
                     <div class="col-span-2">
-                        <label for="input-description" class="block mb-2.5 text-sm font-medium text-heading">Description</label>
-                        <textarea id="input-description" name="description" rows="2" class="block bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full p-3.5 shadow-xs placeholder:text-body" placeholder="Describe register purpose, layout, or restrictions..."></textarea>
+                        <label for="input-description" class="block mb-2.5 text-sm font-medium text-heading">Deskripsi</label>
+                        <textarea id="input-description" name="description" rows="2" class="block bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full p-3.5 shadow-xs placeholder:text-body" placeholder="Jelaskan tujuan register, tata letak, atau batasan..."></textarea>
                         <p id="error-description" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
@@ -139,7 +139,7 @@
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="input-status" name="status" class="sr-only peer" checked>
                             <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#1e50d0]/10 rounded-full peer peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1e50d0]"></div>
-                            <span class="ml-3 text-sm font-semibold text-slate-700">Active</span>
+                            <span class="ml-3 text-sm font-semibold text-slate-700">Aktif</span>
                         </label>
                         <p id="error-status" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
@@ -149,9 +149,9 @@
                 <div class="flex items-center space-x-4 border-t border-default pt-4 md:pt-6">
                     <button type="submit" id="btn-save" class="inline-flex items-center text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">
                         <svg class="w-4 h-4 me-1.5 -ms-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/></svg>
-                        Save Counter
+                        Simpan Counter
                     </button>
-                    <button type="button" onclick="closeModal()" class="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">Cancel</button>
+                    <button type="button" onclick="closeModal()" class="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">Batal</button>
                 </div>
             </form>
         </div>
@@ -170,17 +170,17 @@
                 </svg>
             </div>
             <div>
-                <h3 class="text-base font-bold text-slate-800">Delete Counter</h3>
-                <p class="text-sm text-slate-500 mt-1">Are you sure you want to delete <span id="delete-counter-name" class="font-semibold text-slate-700"></span>? This action cannot be undone.</p>
+                <h3 class="text-base font-bold text-slate-800">Hapus Counter</h3>
+                <p class="text-sm text-slate-500 mt-1">Apakah Anda yakin ingin menghapus counter <span id="delete-counter-name" class="font-semibold text-slate-700"></span>? Tindakan ini tidak dapat dibatalkan.</p>
             </div>
         </div>
 
         <div class="flex items-center justify-end gap-3 pt-2">
             <button onclick="closeDeleteModal()" class="px-4 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition duration-150">
-                Cancel
+                Batal
             </button>
             <button onclick="handleDeleteConfirm()" id="btn-delete" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold rounded-xl transition duration-150">
-                Delete
+                Hapus
             </button>
         </div>
     </div>
@@ -215,12 +215,12 @@
                 }
             });
 
-            if (!response.ok) throw new Error("Failed to fetch counters.");
+            if (!response.ok) throw new Error("Gagal mengambil data counter.");
 
             activeCounters = await response.json();
             renderCounters();
         } catch (error) {
-            showToast("Failed loading counters. Please try again.", "error");
+            showToast("Gagal memuat counter. Silakan coba lagi.", "error");
         } finally {
             skeleton.classList.add("hidden");
         }
@@ -267,7 +267,7 @@
                             <svg class="w-8 h-8 opacity-40 text-body" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
-                            <span class="text-sm font-semibold">No counters match your criteria.</span>
+                            <span class="text-sm font-semibold">Tidak ada counter yang cocok dengan kriteria Anda.</span>
                         </div>
                     </td>
                 </tr>
@@ -282,19 +282,19 @@
             const badgeClass = counter.status
                 ? "bg-emerald-50 text-emerald-700 font-semibold"
                 : "bg-slate-100 text-slate-500 font-medium";
-            const badgeText = counter.status ? "Active" : "Inactive";
+            const badgeText = counter.status ? "Aktif" : "Tidak Aktif";
 
             row.innerHTML = `
                 <td class="px-6 py-4 font-semibold text-body">#${counter.id}</td>
                 <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap text-left">${escapeHtml(counter.name)}</th>
                 <td class="px-6 py-4 text-xs max-w-[200px] truncate" title="${escapeHtml(counter.address || '')}">
-                    ${counter.address ? escapeHtml(counter.address) : '<span class="text-body opacity-50 font-normal">No address</span>'}
+                    ${counter.address ? escapeHtml(counter.address) : '<span class="text-body opacity-50 font-normal">Tanpa alamat</span>'}
                 </td>
                 <td class="px-6 py-4 text-xs font-semibold text-body">
-                    ${counter.phone ? escapeHtml(counter.phone) : '<span class="text-body opacity-50 font-normal">No phone</span>'}
+                    ${counter.phone ? escapeHtml(counter.phone) : '<span class="text-body opacity-50 font-normal">Tanpa no telepon</span>'}
                 </td>
                 <td class="px-6 py-4 text-xs max-w-[250px] truncate" title="${escapeHtml(counter.description || '')}">
-                    ${counter.description ? escapeHtml(counter.description) : '<span class="text-body opacity-50 font-normal">No description</span>'}
+                    ${counter.description ? escapeHtml(counter.description) : '<span class="text-body opacity-50 font-normal">Tanpa deskripsi</span>'}
                 </td>
                 <td class="px-6 py-4">
                     <span class="px-2.5 py-1 text-[11px] rounded-full ${badgeClass}">
@@ -303,8 +303,8 @@
                 </td>
                 <td class="px-6 py-4 text-right">
                     <div class="flex items-center justify-end gap-3">
-                        <button onclick="openEditModal(${counter.id})" class="font-medium text-fg-brand hover:underline cursor-pointer" title="Edit">Edit</button>
-                        <button onclick="openDeleteModal(${counter.id}, '${escapeQuote(counter.name)}')" class="font-medium text-fg-danger hover:underline cursor-pointer" title="Delete">Delete</button>
+                        <button onclick="openEditModal(${counter.id})" class="font-medium text-fg-brand hover:underline cursor-pointer" title="Ubah">Ubah</button>
+                        <button onclick="openDeleteModal(${counter.id}, '${escapeQuote(counter.name)}')" class="font-medium text-fg-danger hover:underline cursor-pointer" title="Hapus">Hapus</button>
                     </div>
                 </td>
             `;
@@ -318,7 +318,7 @@
 
     // Modal Helpers
     function openAddModal() {
-        document.getElementById("modal-title").innerText = "Add New Counter";
+        document.getElementById("modal-title").innerText = "Tambah Counter Baru";
         document.getElementById("counter-id").value = "";
         document.getElementById("counter-form").reset();
         document.getElementById("input-status").checked = true;
@@ -331,7 +331,7 @@
         const counter = activeCounters.find(c => c.id === id);
         if (!counter) return;
 
-        document.getElementById("modal-title").innerText = "Edit Counter";
+        document.getElementById("modal-title").innerText = "Ubah Counter";
         document.getElementById("counter-id").value = counter.id;
         document.getElementById("input-name").value = counter.name;
         document.getElementById("input-phone").value = counter.phone || "";
@@ -395,7 +395,7 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            Saving...
+            Menyimpan...
         `;
 
         try {
@@ -417,9 +417,9 @@
                 return;
             }
 
-            if (!response.ok) throw new Error("Could not save counter details.");
+            if (!response.ok) throw new Error("Gagal menyimpan detail counter.");
 
-            showToast(`Counter "${name}" successfully ${isEdit ? 'updated' : 'created'}!`, "success");
+            showToast(`Counter "${name}" berhasil ${isEdit ? 'diperbarui' : 'dibuat'}!`, "success");
             closeModal();
             fetchCounters();
         } catch (error) {
@@ -497,7 +497,7 @@
         const btnDelete = document.getElementById("btn-delete");
         const originalText = btnDelete.innerText;
         btnDelete.disabled = true;
-        btnDelete.innerText = "Deleting...";
+        btnDelete.innerText = "Menghapus...";
 
         try {
             const response = await fetch(`/counters/${counterToDelete}`, {
@@ -508,9 +508,9 @@
                 }
             });
 
-            if (!response.ok) throw new Error("Failed to delete counter.");
+            if (!response.ok) throw new Error("Gagal menghapus counter.");
 
-            showToast("Counter successfully deleted.", "success");
+            showToast("Counter berhasil dihapus.", "success");
             closeDeleteModal();
             fetchCounters();
         } catch (error) {

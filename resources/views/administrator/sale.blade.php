@@ -1,6 +1,6 @@
 @extends('layouts.administrator')
 
-@section('title', 'Sales Management')
+@section('title', 'Manajemen Penjualan')
 
 @section('content')
 <div class="relative min-h-[calc(100vh-8rem)]">
@@ -14,7 +14,7 @@
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                         <svg class="w-4 h-4 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
                     </div>
-                    <input type="search" id="search-input" oninput="handleSearchChange()" class="block w-full p-3 ps-9 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" placeholder="Search Sales (Barcode, Customer, Counter...)" />
+                    <input type="search" id="search-input" oninput="handleSearchChange()" class="block w-full p-3 ps-9 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" placeholder="Cari Penjualan (Barcode, Pelanggan, Counter...)" />
                 </div>
             </form>
         </div>
@@ -23,7 +23,7 @@
             <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
             </svg>
-            Add Sale
+            Tambah Penjualan
         </button>
     </div>
 
@@ -51,12 +51,12 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5h.007m-.007 3h.007m-.007 3h.007m-2.25 9H22.5M12 15.75h.007m-.007 3h.007m-.007 3h.007m0-6.75H12M3.75 4.5V18M20.25 4.5V18M3.75 4.5h16.5M12 3v12.75"></path>
             </svg>
         </div>
-        <h3 class="text-base font-bold text-slate-800">No Sales Created</h3>
+        <h3 class="text-base font-bold text-slate-800">Tidak Ada Penjualan Dibuat</h3>
         <button onclick="openAddModal()" class="mt-4 inline-flex items-center justify-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer gap-1.5">
             <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
             </svg>
-            Create Sale
+            Tambah Penjualan
         </button>
     </div>
 
@@ -67,13 +67,13 @@
                 <tr>
                     <th scope="col" class="px-6 py-3 font-medium">ID</th>
                     <th scope="col" class="px-6 py-3 font-medium">Counter</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Customer</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Pelanggan</th>
                     <th scope="col" class="px-6 py-3 font-medium">Barcode</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Type</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Date</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Grand Total</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Payment</th>
-                    <th scope="col" class="px-6 py-3 font-medium text-right">Actions</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Tipe</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Tanggal</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Total Akhir</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Pembayaran</th>
+                    <th scope="col" class="px-6 py-3 font-medium text-right">Aksi</th>
                 </tr>
             </thead>
             <tbody id="sales-table-body">
@@ -101,7 +101,7 @@
                 </div>
                 <button type="button" onclick="closeModal()" class="text-body bg-transparent hover:bg-neutral-tertiary hover:text-heading rounded-base text-sm w-9 h-9 ms-auto inline-flex justify-center items-center cursor-pointer">
                     <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
-                    <span class="sr-only">Close modal</span>
+                    <span class="sr-only">Tutup modal</span>
                 </button>
             </div>
             <!-- Modal body -->
@@ -133,7 +133,7 @@
 
                     <!-- Type (Enum: umum, marketplace) -->
                     <div class="col-span-3 sm:col-span-1">
-                        <label for="input-type" class="block mb-2 text-sm font-medium text-heading">Type</label>
+                        <label for="input-type" class="block mb-2 text-sm font-medium text-heading">Tipe</label>
                         <select id="input-type" name="type" onchange="onTypeChange()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs" required>
                             <option value="umum">UMUM</option>
                             <option value="marketplace">MARKETPLACE</option>
@@ -168,10 +168,10 @@
 
                         <!-- Expedition Select -->
                         <div class="col-span-2 sm:col-span-1">
-                            <label for="input-expedition-id" class="block mb-2 text-sm font-medium text-heading">EXPEDISI</label>
+                            <label for="input-expedition-id" class="block mb-2 text-sm font-medium text-heading">EKSPEDISI</label>
                             <div class="flex gap-2">
                                 <select id="input-expedition-id" name="expedition_id" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs">
-                                    <option value="">Select Expedisi...</option>
+                                    <option value="">Pilih Ekspedisi...</option>
                                     @foreach($expeditions as $expedition)
                                         <option value="{{ $expedition->id }}">{{ $expedition->name }}</option>
                                     @endforeach
@@ -189,7 +189,7 @@
                         <!-- Left Side: Barcode -->
                         <div class="col-span-2 sm:col-span-1 flex flex-col justify-between">
                             <div>
-                                <label for="input-barcode" class="block mb-2 text-sm font-medium text-heading">Input Code Barcode</label>
+                                <label for="input-barcode" class="block mb-2 text-sm font-medium text-heading">Masukkan Kode Barcode</label>
                                 <input type="text" id="input-barcode" name="barcode" oninput="onBarcodeChange()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="Masukkan Barcode">
                                 <p id="error-barcode" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                             </div>
@@ -207,7 +207,7 @@
                             <div>
                                 <label for="input-marketplace-id" class="block mb-2 text-sm font-medium text-heading">Marketplace</label>
                                 <select id="input-marketplace-id" name="marketplace_id" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs">
-                                    <option value="">Select Marketplace...</option>
+                                    <option value="">Pilih Marketplace...</option>
                                     @foreach($marketplaces as $marketplace)
                                         <option value="{{ $marketplace->id }}">{{ $marketplace->name }}</option>
                                     @endforeach
@@ -217,10 +217,10 @@
 
                             <!-- Courier Select -->
                             <div>
-                                <label for="input-courier-id" class="block mb-2 text-sm font-medium text-heading">KURIR</label>
+                                <label for="input-courier-id" class="block mb-2 text-sm font-medium text-heading">Kurir</label>
                                 <div class="flex gap-2">
                                     <select id="input-courier-id" name="courier_id" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs">
-                                        <option value="">Select Kurir...</option>
+                                        <option value="">Pilih Kurir...</option>
                                         @foreach($couriers as $courier)
                                             <option value="{{ $courier->id }}">{{ $courier->name }} ({{ $courier->type }})</option>
                                         @endforeach
@@ -333,9 +333,9 @@
                 <div class="flex items-center space-x-4 border-t border-default pt-4 md:pt-6">
                     <button type="submit" id="btn-save" class="inline-flex items-center text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">
                         <svg class="w-4 h-4 me-1.5 -ms-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/></svg>
-                        Save Sale
+                        Simpan Penjualan
                     </button>
-                    <button type="button" onclick="closeModal()" class="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">Cancel</button>
+                    <button type="button" onclick="closeModal()" class="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">Batal</button>
                 </div>
             </form>
         </div>
@@ -370,15 +370,15 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div class="col-span-2 sm:col-span-1">
                         <label for="inline-customer-name" class="block mb-1 text-xs font-medium text-heading">Nama Pelanggan *</label>
-                        <input type="text" id="inline-customer-name" required class="bg-neutral-primary-soft border border-default text-heading text-xs rounded-base block w-full px-2.5 py-2 placeholder:text-body" placeholder="e.g. John Doe">
+                        <input type="text" id="inline-customer-name" required class="bg-neutral-primary-soft border border-default text-heading text-xs rounded-base block w-full px-2.5 py-2 placeholder:text-body" placeholder="contoh: John Doe">
                     </div>
                     <div class="col-span-2 sm:col-span-1">
                         <label for="inline-customer-phone" class="block mb-1 text-xs font-medium text-heading">No Telepon *</label>
-                        <input type="text" id="inline-customer-phone" required class="bg-neutral-primary-soft border border-default text-heading text-xs rounded-base block w-full px-2.5 py-2 placeholder:text-body" placeholder="e.g. 08123456789">
+                        <input type="text" id="inline-customer-phone" required class="bg-neutral-primary-soft border border-default text-heading text-xs rounded-base block w-full px-2.5 py-2 placeholder:text-body" placeholder="contoh: 08123456789">
                     </div>
                     <div class="col-span-2">
                         <label for="inline-customer-address" class="block mb-1 text-xs font-medium text-heading">Alamat *</label>
-                        <textarea id="inline-customer-address" required rows="2" class="bg-neutral-primary-soft border border-default text-heading text-xs rounded-base block w-full p-2.5 placeholder:text-body" placeholder="e.g. 123 Main Street"></textarea>
+                        <textarea id="inline-customer-address" required rows="2" class="bg-neutral-primary-soft border border-default text-heading text-xs rounded-base block w-full p-2.5 placeholder:text-body" placeholder="contoh: Jl. Raya No. 1"></textarea>
                     </div>
                 </div>
                 <div class="text-right">
@@ -435,7 +435,7 @@
                 <div class="flex gap-3 items-end">
                     <div class="flex-1">
                         <label for="inline-expedition-name" class="block mb-1 text-xs font-medium text-heading">Nama Ekspedisi *</label>
-                        <input type="text" id="inline-expedition-name" required class="bg-neutral-primary-soft border border-default text-heading text-xs rounded-base block w-full px-2.5 py-2 placeholder:text-body" placeholder="e.g. JNE, J&T">
+                        <input type="text" id="inline-expedition-name" required class="bg-neutral-primary-soft border border-default text-heading text-xs rounded-base block w-full px-2.5 py-2 placeholder:text-body" placeholder="contoh: JNE, J&T">
                     </div>
                     <button type="submit" class="inline-flex items-center text-white bg-brand hover:bg-brand-strong font-medium rounded-base text-xs px-3.5 py-2 cursor-pointer shadow-xs h-[34px]">
                         <svg class="w-3.5 h-3.5 me-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
@@ -489,7 +489,7 @@
                 <div class="grid grid-cols-2 gap-3 items-end">
                     <div class="col-span-2 sm:col-span-1">
                         <label for="inline-courier-name" class="block mb-1 text-xs font-medium text-heading">Nama Kurir *</label>
-                        <input type="text" id="inline-courier-name" required class="bg-neutral-primary-soft border border-default text-heading text-xs rounded-base block w-full px-2.5 py-2 placeholder:text-body" placeholder="e.g. Sicepat, GrabExpress">
+                        <input type="text" id="inline-courier-name" required class="bg-neutral-primary-soft border border-default text-heading text-xs rounded-base block w-full px-2.5 py-2 placeholder:text-body" placeholder="contoh: Sicepat, GrabExpress">
                     </div>
                     <div class="col-span-2 sm:col-span-1">
                         <label for="inline-courier-type" class="block mb-1 text-xs font-medium text-heading">Tipe Kurir *</label>
@@ -541,17 +541,17 @@
                 </svg>
             </div>
             <div>
-                <h3 class="text-base font-bold text-slate-800">Delete Sale</h3>
-                <p class="text-sm text-slate-500 mt-1">Are you sure you want to delete sale with Barcode <span id="delete-sale-barcode" class="font-semibold text-slate-700"></span>? This action cannot be undone.</p>
+                <h3 class="text-base font-bold text-slate-800">Hapus Penjualan</h3>
+                <p class="text-sm text-slate-500 mt-1">Apakah Anda yakin ingin menghapus penjualan dengan Barcode <span id="delete-sale-barcode" class="font-semibold text-slate-700"></span>? Tindakan ini tidak dapat dibatalkan.</p>
             </div>
         </div>
 
         <div class="flex items-center justify-end gap-3 pt-2">
             <button onclick="closeDeleteModal()" class="px-4 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition duration-150">
-                Cancel
+                Batal
             </button>
             <button onclick="handleDeleteConfirm()" id="btn-delete" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold rounded-xl transition duration-150">
-                Delete
+                Hapus
             </button>
         </div>
     </div>
@@ -592,12 +592,12 @@
                 }
             });
 
-            if (!response.ok) throw new Error("Failed to fetch sales.");
+            if (!response.ok) throw new Error("Gagal mengambil data penjualan.");
 
             activeSales = await response.json();
             renderSales();
         } catch (error) {
-            showToast("Failed loading sales. Please try again.", "error");
+            showToast("Gagal memuat penjualan. Silakan coba lagi.", "error");
         } finally {
             skeleton.classList.add("hidden");
         }
@@ -654,7 +654,7 @@
                             <svg class="w-8 h-8 opacity-40 text-body" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
-                            <span class="text-sm font-semibold">No sales match your criteria.</span>
+                            <span class="text-sm font-semibold">Tidak ada data penjualan yang cocok dengan kriteria Anda.</span>
                         </div>
                     </td>
                 </tr>
@@ -666,8 +666,8 @@
             const row = document.createElement("tr");
             row.className = "bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium transition-colors duration-150";
 
-            const counterName = sale.counter ? escapeHtml(sale.counter.name) : '<span class="text-body opacity-50 font-normal">None</span>';
-            const customerName = sale.customer ? escapeHtml(sale.customer.name) : '<span class="text-body opacity-50 font-normal">None (Umum)</span>';
+            const counterName = sale.counter ? escapeHtml(sale.counter.name) : '<span class="text-body opacity-50 font-normal">Tanpa Counter</span>';
+            const customerName = sale.customer ? escapeHtml(sale.customer.name) : '<span class="text-body opacity-50 font-normal">Umum</span>';
             
             // Format date
             let formattedDate = '-';
@@ -702,8 +702,8 @@
                 <td class="px-6 py-4">${paymentBadge}</td>
                 <td class="px-6 py-4 text-right">
                     <div class="flex items-center justify-end gap-3">
-                        <button onclick="openEditModal(${sale.id})" class="font-medium text-fg-brand hover:underline cursor-pointer" title="Edit">Edit</button>
-                        <button onclick="openDeleteModal(${sale.id}, '${escapeQuote(sale.barcode)}')" class="font-medium text-fg-danger hover:underline cursor-pointer" title="Delete">Delete</button>
+                        <button onclick="openEditModal(${sale.id})" class="font-medium text-fg-brand hover:underline cursor-pointer" title="Ubah">Ubah</button>
+                        <button onclick="openDeleteModal(${sale.id}, '${escapeQuote(sale.barcode)}')" class="font-medium text-fg-danger hover:underline cursor-pointer" title="Hapus">Hapus</button>
                     </div>
                 </td>
             `;
@@ -738,7 +738,7 @@
         const currentSelectedVal = customerSelect.value;
         
         // Save None option
-        customerSelect.innerHTML = '<option value="">None (Umum)</option>';
+        customerSelect.innerHTML = '<option value="">Umum</option>';
         
         // Filter customers based on selectedCounterId - return empty list if no counter is selected
         const filtered = selectedCounterId ? activeCustomers.filter(c => String(c.counter_id) === String(selectedCounterId)) : [];
@@ -1274,7 +1274,7 @@
         const expeditionSelect = document.getElementById("input-expedition-id");
         const currentSelectedVal = expeditionSelect.value;
         
-        expeditionSelect.innerHTML = '<option value="">Select Expedisi...</option>';
+        expeditionSelect.innerHTML = '<option value="">Pilih Ekspedisi...</option>';
         activeExpeditions.forEach(e => {
             const opt = document.createElement("option");
             opt.value = e.id;
@@ -1384,7 +1384,7 @@
         const courierSelect = document.getElementById("input-courier-id");
         const currentSelectedVal = courierSelect.value;
         
-        courierSelect.innerHTML = '<option value="">Select Kurir...</option>';
+        courierSelect.innerHTML = '<option value="">Pilih Kurir...</option>';
         activeCouriers.forEach(c => {
             const opt = document.createElement("option");
             opt.value = c.id;
@@ -1431,7 +1431,7 @@
          const sale = activeSales.find(s => s.id === id);
          if (!sale) return;
  
-         document.getElementById("modal-title").innerText = "Edit Penjualan";
+         document.getElementById("modal-title").innerText = "Ubah Penjualan";
          document.getElementById("sale-id").value = sale.id;
          document.getElementById("input-counter-id").value = sale.counter_id;
          selectedCounterId = sale.counter_id;
@@ -1571,7 +1571,7 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            Saving...
+            Menyimpan...
         `;
 
         try {
@@ -1592,9 +1592,9 @@
                 return;
             }
 
-            if (!response.ok) throw new Error("Could not save sale details.");
+            if (!response.ok) throw new Error("Gagal menyimpan detail penjualan.");
 
-            showToast(`Sale successfully ${isEdit ? 'updated' : 'created'}!`, "success");
+            showToast(`Penjualan berhasil ${isEdit ? 'diperbarui' : 'dibuat'}!`, "success");
             closeModal();
             fetchSales();
         } catch (error) {
@@ -1672,7 +1672,7 @@
         const btnDelete = document.getElementById("btn-delete");
         const originalText = btnDelete.innerText;
         btnDelete.disabled = true;
-        btnDelete.innerText = "Deleting...";
+        btnDelete.innerText = "Menghapus...";
 
         try {
             const response = await fetch(`/sales/${saleToDelete}`, {
@@ -1683,9 +1683,9 @@
                 }
             });
 
-            if (!response.ok) throw new Error("Failed to delete sale.");
+            if (!response.ok) throw new Error("Gagal menghapus penjualan.");
 
-            showToast("Sale successfully deleted.", "success");
+            showToast("Penjualan berhasil dihapus.", "success");
             closeDeleteModal();
             fetchSales();
         } catch (error) {

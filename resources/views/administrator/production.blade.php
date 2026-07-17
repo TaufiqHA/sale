@@ -1,6 +1,6 @@
 @extends('layouts.administrator')
 
-@section('title', 'Production Management')
+@section('title', 'Manajemen Produksi')
 
 @section('content')
 <div class="relative min-h-[calc(100vh-8rem)]">
@@ -9,12 +9,12 @@
         <!-- Search Form -->
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1 max-w-md">
             <form id="search-form" onsubmit="event.preventDefault(); handleSearchChange();" class="relative flex-1">
-                <label for="search-input" class="block mb-2.5 text-sm font-medium sr-only">Search</label>
+                <label for="search-input" class="block mb-2.5 text-sm font-medium sr-only">Cari</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                         <svg class="w-4 h-4 text-slate-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
                     </div>
-                    <input type="search" id="search-input" oninput="handleSearchChange()" class="block w-full p-3 ps-9 bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 shadow-sm placeholder:text-slate-400" placeholder="Search Productions (Product, Counter...)" />
+                    <input type="search" id="search-input" oninput="handleSearchChange()" class="block w-full p-3 ps-9 bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 shadow-sm placeholder:text-slate-400" placeholder="Cari Produksi (Produk, Counter...)" />
                 </div>
             </form>
         </div>
@@ -23,7 +23,7 @@
             <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
             </svg>
-            Add Production
+            Tambah Produksi
         </button>
     </div>
 
@@ -51,12 +51,12 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5h.007m-.007 3h.007m-.007 3h.007m-2.25 9H22.5M12 15.75h.007m-.007 3h.007m-.007 3h.007m0-6.75H12M3.75 4.5V18M20.25 4.5V18M3.75 4.5h16.5M12 3v12.75"></path>
             </svg>
         </div>
-        <h3 class="text-base font-bold text-slate-800">No Productions Created</h3>
+        <h3 class="text-base font-bold text-slate-800">Tidak Ada Produksi Dibuat</h3>
         <button onclick="openAddModal()" class="mt-4 inline-flex items-center justify-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer gap-1.5 transition-colors duration-150">
             <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
             </svg>
-            Create Production
+            Tambah Produksi
         </button>
     </div>
 
@@ -66,16 +66,16 @@
             <thead class="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
                 <tr>
                     <th scope="col" class="px-6 py-4 font-semibold">ID</th>
-                    <th scope="col" class="px-6 py-4 font-semibold">Date</th>
+                    <th scope="col" class="px-6 py-4 font-semibold">Tanggal</th>
                     <th scope="col" class="px-6 py-4 font-semibold">Counter</th>
-                    <th scope="col" class="px-6 py-4 font-semibold">Product</th>
-                    <th scope="col" class="px-6 py-4 font-semibold text-right">Total Cost</th>
-                    <th scope="col" class="px-6 py-4 font-semibold text-center">Result Qty</th>
+                    <th scope="col" class="px-6 py-4 font-semibold">Produk</th>
+                    <th scope="col" class="px-6 py-4 font-semibold text-right">Total Biaya</th>
+                    <th scope="col" class="px-6 py-4 font-semibold text-center">Qty Hasil</th>
                     <th scope="col" class="px-6 py-4 font-semibold text-right">HPP</th>
-                    <th scope="col" class="px-6 py-4 font-semibold text-right">Selling Price</th>
-                    <th scope="col" class="px-6 py-4 font-semibold text-right">Estimated Profit</th>
+                    <th scope="col" class="px-6 py-4 font-semibold text-right">Harga Jual</th>
+                    <th scope="col" class="px-6 py-4 font-semibold text-right">Perkiraan Profit</th>
                     <th scope="col" class="px-6 py-4 font-semibold text-center">Status</th>
-                    <th scope="col" class="px-6 py-4 font-semibold text-right">Actions</th>
+                    <th scope="col" class="px-6 py-4 font-semibold text-right">Aksi</th>
                 </tr>
             </thead>
             <tbody id="table-body">
@@ -103,7 +103,7 @@
             </div>
             <button type="button" onclick="closeModal()" class="text-body bg-transparent hover:bg-neutral-tertiary hover:text-heading rounded-base text-sm w-9 h-9 ms-auto inline-flex justify-center items-center cursor-pointer">
                 <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
-                <span class="sr-only">Close modal</span>
+                <span class="sr-only">Tutup modal</span>
             </button>
         </div>
 
@@ -148,8 +148,8 @@
                     <label for="input-status" class="block mb-2 text-sm font-medium text-heading">Status *</label>
                     <select id="input-status" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs cursor-pointer" required>
                         <option value="draft">Draft</option>
-                        <option value="completed">Completed</option>
-                        <option value="cancelled">Cancelled</option>
+                        <option value="completed">Selesai</option>
+                        <option value="cancelled">Dibatalkan</option>
                     </select>
                     <p id="error-status" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                 </div>
@@ -238,7 +238,7 @@
             <div class="flex items-center space-x-4 border-t border-default pt-4 md:pt-6 mt-6">
                 <button type="submit" id="btn-save" class="inline-flex items-center text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">
                     <svg class="w-4 h-4 me-1.5 -ms-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/></svg>
-                    Simpan Penjualan
+                    Simpan Produksi
                 </button>
                 <button type="button" onclick="closeModal()" class="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">Batal</button>
             </div>
@@ -250,14 +250,14 @@
 <div id="delete-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true">
     <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="delete-backdrop" onclick="closeDeleteModal()"></div>
     <div class="relative w-full max-w-md bg-white border border-slate-100 rounded-2xl shadow-xl p-6 flex flex-col transform scale-95 opacity-0 transition-all duration-300" id="delete-panel">
-        <h3 class="text-lg font-bold text-slate-800 mb-2">Delete Production</h3>
-        <p class="text-sm text-slate-600 mb-6">Are you sure you want to delete production ID <span id="delete-production-id" class="font-bold text-slate-850"></span>? This action cannot be undone.</p>
+        <h3 class="text-lg font-bold text-slate-800 mb-2">Hapus Produksi</h3>
+        <p class="text-sm text-slate-600 mb-6">Apakah Anda yakin ingin menghapus produksi ID <span id="delete-production-id" class="font-bold text-slate-850"></span>? Tindakan ini tidak dapat dibatalkan.</p>
         <div class="flex justify-end gap-3">
             <button onclick="closeDeleteModal()" class="px-4 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition duration-150 cursor-pointer">
-                Cancel
+                Batal
             </button>
             <button onclick="handleDeleteConfirm()" id="btn-delete" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold rounded-xl transition duration-150 cursor-pointer">
-                Delete
+                Hapus
             </button>
         </div>
     </div>
@@ -342,12 +342,12 @@
                 }
             });
 
-            if (!response.ok) throw new Error("Failed to fetch production records.");
+            if (!response.ok) throw new Error("Gagal mengambil data produksi.");
 
             activeProductions = await response.json();
             renderProductions();
         } catch (error) {
-            showToast("Failed loading production records. Please try again.", "error");
+            showToast("Gagal memuat catatan produksi. Silakan coba lagi.", "error");
         } finally {
             skeleton.classList.add("hidden");
         }
@@ -417,7 +417,7 @@
                             <svg class="w-8 h-8 opacity-45 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
-                            <span class="text-sm font-semibold">No records match your search criteria.</span>
+                            <span class="text-sm font-semibold">Tidak ada data yang cocok dengan kriteria pencarian Anda.</span>
                         </div>
                     </td>
                 </tr>
@@ -429,8 +429,8 @@
             const row = document.createElement("tr");
             row.className = "bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium transition-colors duration-150";
 
-            const counterName = prod.counter ? escapeHtml(prod.counter.name) : '<span class="text-body opacity-50 font-normal">None</span>';
-            const productName = prod.product ? escapeHtml(prod.product.name) : '<span class="text-body opacity-50 font-normal">None</span>';
+            const counterName = prod.counter ? escapeHtml(prod.counter.name) : '<span class="text-body opacity-50 font-normal">Tanpa Counter</span>';
+            const productName = prod.product ? escapeHtml(prod.product.name) : '<span class="text-body opacity-50 font-normal">Tanpa Produk</span>';
             
             let formattedDate = '-';
             if (prod.production_date) {
@@ -441,9 +441,9 @@
             // Status Badge
             let statusBadge = `<span class="px-2.5 py-1 text-xs font-semibold text-slate-700 bg-slate-100 rounded-full">Draft</span>`;
             if (prod.status === 'completed') {
-                statusBadge = `<span class="px-2.5 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 rounded-full">Completed</span>`;
+                statusBadge = `<span class="px-2.5 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 rounded-full">Selesai</span>`;
             } else if (prod.status === 'cancelled') {
-                statusBadge = `<span class="px-2.5 py-1 text-xs font-semibold text-rose-700 bg-rose-50 rounded-full">Cancelled</span>`;
+                statusBadge = `<span class="px-2.5 py-1 text-xs font-semibold text-rose-700 bg-rose-50 rounded-full">Dibatalkan</span>`;
             }
 
             row.innerHTML = `
@@ -459,8 +459,8 @@
                 <td class="px-6 py-4 text-center">${statusBadge}</td>
                 <td class="px-6 py-4 text-right">
                     <div class="flex items-center justify-end gap-3">
-                        <button onclick="openEditModal(${prod.id})" class="font-medium text-fg-brand hover:underline cursor-pointer" title="Edit">Edit</button>
-                        <button onclick="openDeleteModal(${prod.id})" class="font-medium text-fg-danger hover:underline cursor-pointer" title="Delete">Delete</button>
+                        <button onclick="openEditModal(${prod.id})" class="font-medium text-fg-brand hover:underline cursor-pointer" title="Ubah">Ubah</button>
+                        <button onclick="openDeleteModal(${prod.id})" class="font-medium text-fg-danger hover:underline cursor-pointer" title="Hapus">Hapus</button>
                     </div>
                 </td>
             `;
@@ -617,7 +617,7 @@
                 }
             });
 
-            if (!response.ok) throw new Error("Could not retrieve production record details.");
+            if (!response.ok) throw new Error("Gagal mengambil detail catatan produksi.");
 
             const prod = await response.json();
             
@@ -738,7 +738,7 @@
         const btnSave = document.getElementById("btn-save");
         const originalText = btnSave.innerHTML;
         btnSave.disabled = true;
-        btnSave.innerHTML = `Saving...`;
+        btnSave.innerHTML = `Menyimpan...`;
 
         try {
             const response = await fetch(url, {
@@ -758,9 +758,9 @@
                 return;
             }
 
-            if (!response.ok) throw new Error("Could not save production details.");
+            if (!response.ok) throw new Error("Gagal menyimpan detail produksi.");
 
-            showToast(`Production successfully ${isEdit ? 'updated' : 'created'}!`, "success");
+            showToast(`Produksi berhasil ${isEdit ? 'diperbarui' : 'dibuat'}!`, "success");
             closeModal();
             fetchProductions();
         } catch (error) {
@@ -838,7 +838,7 @@
         const btnDelete = document.getElementById("btn-delete");
         const originalText = btnDelete.innerText;
         btnDelete.disabled = true;
-        btnDelete.innerText = "Deleting...";
+        btnDelete.innerText = "Menghapus...";
 
         try {
             const response = await fetch(`/productions/${productionToDelete}`, {
@@ -849,9 +849,9 @@
                 }
             });
 
-            if (!response.ok) throw new Error("Failed to delete production record.");
+            if (!response.ok) throw new Error("Gagal menghapus catatan produksi.");
 
-            showToast("Production record successfully deleted.", "success");
+            showToast("Catatan produksi berhasil dihapus.", "success");
             closeDeleteModal();
             fetchProductions();
         } catch (error) {

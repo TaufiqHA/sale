@@ -15,6 +15,9 @@
          </div>
 
          <ul class="space-y-1 font-medium">
+            <li class="pb-1.5 px-3">
+               <span class="text-[10px] font-bold text-white/40 tracking-wider uppercase">Utama</span>
+            </li>
             <li>
                <a href="{{ route('administrator.dashboard') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('administrator.dashboard') ? 'bg-[#1641b3] text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-[#1641b3] hover:text-white font-medium' }}">
                   <svg class="w-5 h-5 transition duration-75 {{ request()->routeIs('administrator.dashboard') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -24,20 +27,16 @@
                   <span class="ms-3">Dashboard</span>
                </a>
             </li>
-            <li>
-               <a href="{{ route('counters.index') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('counters.*') ? 'bg-[#1641b3] text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-[#1641b3] hover:text-white font-medium' }}">
-                  <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('counters.*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v14M9 5v14M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
-                  </svg>
-                  <span class="flex-1 ms-3 whitespace-nowrap">Counters</span>
-               </a>
+            
+            <li class="pt-4 pb-1.5 px-3 mt-4 border-t border-white/10">
+               <span class="text-[10px] font-bold text-white/40 tracking-wider uppercase">Produk & Stok</span>
             </li>
             <li>
                <a href="{{ route('products.index') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('products.*') ? 'bg-[#1641b3] text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-[#1641b3] hover:text-white font-medium' }}">
                   <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('products.*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10V6a3 3 0 0 1 3-3v0a3 3 0 0 1 3 3v4m3-2 .917 11.923A1 1 0 0 1 17.92 21H6.08a1 1 0 0 1-.997-1.077L6 8h12Z"/>
                   </svg>
-                  <span class="flex-1 ms-3 whitespace-nowrap">Products</span>
+                  <span class="flex-1 ms-3 whitespace-nowrap">Daftar Produk</span>
                </a>
             </li>
             <li>
@@ -45,23 +44,19 @@
                   <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('administrator.stock-monitor') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M7 17V13m4 4V9m4 8V11m4 6V7"/>
                   </svg>
-                  <span class="flex-1 ms-3 whitespace-nowrap">Stock Monitor</span>
+                  <span class="flex-1 ms-3 whitespace-nowrap">Monitoring Stok</span>
                </a>
             </li>
-            <li>
-               <a href="{{ route('customers.index') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('customers.*') ? 'bg-[#1641b3] text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-[#1641b3] hover:text-white font-medium' }}">
-                  <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('customers.*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
-                  </svg>
-                  <span class="flex-1 ms-3 whitespace-nowrap">Customers</span>
-               </a>
+
+            <li class="pt-4 pb-1.5 px-3 mt-4 border-t border-white/10">
+               <span class="text-[10px] font-bold text-white/40 tracking-wider uppercase">Operasional</span>
             </li>
             <li>
                <a href="{{ route('sales.index') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('sales.*') ? 'bg-[#1641b3] text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-[#1641b3] hover:text-white font-medium' }}">
                   <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('sales.*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M6 14h2m3 0h4m3 0h2M3 6h18a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Z"/>
                   </svg>
-                  <span class="flex-1 ms-3 whitespace-nowrap">Sales</span>
+                  <span class="flex-1 ms-3 whitespace-nowrap">Penjualan</span>
                </a>
             </li>
             <li>
@@ -69,7 +64,27 @@
                   <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('productions.*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h8m-8 6h8m-8 6h8M4 6h4v4H4V6Zm0 6h4v4H4v-4Zm0 6h4v4H4v-4Z"/>
                   </svg>
-                  <span class="flex-1 ms-3 whitespace-nowrap">Production</span>
+                  <span class="flex-1 ms-3 whitespace-nowrap">Produksi</span>
+               </a>
+            </li>
+
+            <li class="pt-4 pb-1.5 px-3 mt-4 border-t border-white/10">
+               <span class="text-[10px] font-bold text-white/40 tracking-wider uppercase">Data Master</span>
+            </li>
+            <li>
+               <a href="{{ route('customers.index') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('customers.*') ? 'bg-[#1641b3] text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-[#1641b3] hover:text-white font-medium' }}">
+                  <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('customers.*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                  </svg>
+                  <span class="flex-1 ms-3 whitespace-nowrap">Data customer</span>
+               </a>
+            </li>
+            <li>
+               <a href="{{ route('counters.index') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('counters.*') ? 'bg-[#1641b3] text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-[#1641b3] hover:text-white font-medium' }}">
+                  <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('counters.*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v14M9 5v14M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z"/>
+                  </svg>
+                  <span class="flex-1 ms-3 whitespace-nowrap">Data Counter</span>
                </a>
             </li>
          </ul>

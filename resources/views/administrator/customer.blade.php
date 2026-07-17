@@ -1,6 +1,6 @@
 @extends('layouts.administrator')
 
-@section('title', 'Customer Management')
+@section('title', 'Data Pelanggan')
 
 @section('content')
 <div class="relative min-h-[calc(100vh-8rem)]">
@@ -9,12 +9,12 @@
         <!-- Search Form -->
         <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1 max-w-md">
             <form id="search-form" onsubmit="event.preventDefault(); handleSearchChange();" class="relative flex-1">
-                <label for="search-input" class="block mb-2.5 text-sm font-medium text-heading sr-only">Search</label>
+                <label for="search-input" class="block mb-2.5 text-sm font-medium text-heading sr-only">Cari</label>
                 <div class="relative">
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                         <svg class="w-4 h-4 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
                     </div>
-                    <input type="search" id="search-input" oninput="handleSearchChange()" class="block w-full p-3 ps-9 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" placeholder="Search Customer..." />
+                    <input type="search" id="search-input" oninput="handleSearchChange()" class="block w-full p-3 ps-9 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" placeholder="Cari Pelanggan..." />
                 </div>
             </form>
         </div>
@@ -23,7 +23,7 @@
             <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
             </svg>
-            Add Customer
+            Tambah Pelanggan
         </button>
     </div>
 
@@ -51,12 +51,12 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"></path>
             </svg>
         </div>
-        <h3 class="text-base font-bold text-slate-800">No Customers Created</h3>
+        <h3 class="text-base font-bold text-slate-800">Tidak Ada Pelanggan Dibuat</h3>
         <button onclick="openAddModal()" class="mt-4 inline-flex items-center justify-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer gap-1.5">
             <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
             </svg>
-            Create Customer
+            Tambah Pelanggan
         </button>
     </div>
 
@@ -66,11 +66,11 @@
             <thead class="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
                 <tr>
                     <th scope="col" class="px-6 py-3 font-medium">ID</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Customer Name</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Nama Pelanggan</th>
                     <th scope="col" class="px-6 py-3 font-medium">Counter</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Phone</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Address</th>
-                    <th scope="col" class="px-6 py-3 font-medium text-right">Actions</th>
+                    <th scope="col" class="px-6 py-3 font-medium">No Telepon</th>
+                    <th scope="col" class="px-6 py-3 font-medium">Alamat</th>
+                    <th scope="col" class="px-6 py-3 font-medium text-right">Aksi</th>
                 </tr>
             </thead>
             <tbody id="customer-table-body">
@@ -91,11 +91,11 @@
             <!-- Modal header -->
             <div class="flex items-center justify-between border-b border-default pb-4 md:pb-5 shrink-0">
                 <h3 id="modal-title" class="text-lg font-medium text-heading">
-                    Add Customer
+                    Tambah Pelanggan
                 </h3>
                 <button type="button" onclick="closeModal()" class="text-body bg-transparent hover:bg-neutral-tertiary hover:text-heading rounded-base text-sm w-9 h-9 ms-auto inline-flex justify-center items-center cursor-pointer">
                     <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
-                    <span class="sr-only">Close modal</span>
+                    <span class="sr-only">Tutup modal</span>
                 </button>
             </div>
             <!-- Modal body -->
@@ -107,29 +107,29 @@
                     <div class="col-span-2">
                         <label for="input-counter-id" class="block mb-2.5 text-sm font-medium text-heading">Counter</label>
                         <select id="input-counter-id" name="counter_id" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs" required>
-                            <option value="">Select Counter...</option>
+                            <option value="">Pilih Counter...</option>
                         </select>
                         <p id="error-counter_id" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
                     <!-- Name -->
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="input-name" class="block mb-2.5 text-sm font-medium text-heading">Customer Name</label>
-                        <input type="text" id="input-name" name="name" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. John Doe" required>
+                        <label for="input-name" class="block mb-2.5 text-sm font-medium text-heading">Nama Pelanggan</label>
+                        <input type="text" id="input-name" name="name" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="contoh: John Doe" required>
                         <p id="error-name" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
                     <!-- Phone -->
                     <div class="col-span-2 sm:col-span-1">
-                        <label for="input-phone" class="block mb-2.5 text-sm font-medium text-heading">Phone</label>
-                        <input type="text" id="input-phone" name="phone" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="e.g. 08123456789" required>
+                        <label for="input-phone" class="block mb-2.5 text-sm font-medium text-heading">No Telepon</label>
+                        <input type="text" id="input-phone" name="phone" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="contoh: 08123456789" required>
                         <p id="error-phone" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
                     <!-- Address -->
                     <div class="col-span-2">
-                        <label for="input-address" class="block mb-2.5 text-sm font-medium text-heading">Address</label>
-                        <textarea id="input-address" name="address" rows="3" class="block bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full p-3.5 shadow-xs placeholder:text-body" placeholder="e.g. 123 Main Street" required></textarea>
+                        <label for="input-address" class="block mb-2.5 text-sm font-medium text-heading">Alamat</label>
+                        <textarea id="input-address" name="address" rows="3" class="block bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full p-3.5 shadow-xs placeholder:text-body" placeholder="contoh: Jl. Raya No. 1" required></textarea>
                         <p id="error-address" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
                 </div>
@@ -138,9 +138,9 @@
                 <div class="flex items-center space-x-4 border-t border-default pt-4 md:pt-6">
                     <button type="submit" id="btn-save" class="inline-flex items-center text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">
                         <svg class="w-4 h-4 me-1.5 -ms-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/></svg>
-                        Save Customer
+                        Simpan Pelanggan
                     </button>
-                    <button type="button" onclick="closeModal()" class="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">Cancel</button>
+                    <button type="button" onclick="closeModal()" class="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">Batal</button>
                 </div>
             </form>
         </div>
@@ -159,17 +159,17 @@
                 </svg>
             </div>
             <div>
-                <h3 class="text-base font-bold text-slate-800">Delete Customer</h3>
-                <p class="text-sm text-slate-500 mt-1">Are you sure you want to delete <span id="delete-customer-name" class="font-semibold text-slate-700"></span>? This action cannot be undone.</p>
+                <h3 class="text-base font-bold text-slate-800">Hapus Pelanggan</h3>
+                <p class="text-sm text-slate-500 mt-1">Apakah Anda yakin ingin menghapus pelanggan <span id="delete-customer-name" class="font-semibold text-slate-700"></span>? Tindakan ini tidak dapat dibatalkan.</p>
             </div>
         </div>
 
         <div class="flex items-center justify-end gap-3 pt-2">
             <button onclick="closeDeleteModal()" class="px-4 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition duration-150">
-                Cancel
+                Batal
             </button>
             <button onclick="handleDeleteConfirm()" id="btn-delete" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold rounded-xl transition duration-150">
-                Delete
+                Hapus
             </button>
         </div>
     </div>
@@ -198,18 +198,18 @@
                 }
             });
 
-            if (!response.ok) throw new Error("Failed to fetch counters.");
+            if (!response.ok) throw new Error("Gagal mengambil data counter.");
 
             activeCounters = await response.json();
             populateCounterDropdown();
         } catch (error) {
-            showToast("Failed loading counters. Please reload.", "error");
+            showToast("Gagal memuat counter. Silakan muat ulang.", "error");
         }
     }
 
     function populateCounterDropdown() {
         const select = document.getElementById("input-counter-id");
-        select.innerHTML = '<option value="">Select Counter...</option>';
+        select.innerHTML = '<option value="">Pilih Counter...</option>';
         activeCounters.forEach(counter => {
             if (counter.status) {
                 const option = document.createElement("option");
@@ -236,12 +236,12 @@
                 }
             });
 
-            if (!response.ok) throw new Error("Failed to fetch customers.");
+            if (!response.ok) throw new Error("Gagal mengambil data pelanggan.");
 
             activeCustomers = await response.json();
             renderCustomers();
         } catch (error) {
-            showToast("Failed loading customers. Please try again.", "error");
+            showToast("Gagal memuat pelanggan. Silakan coba lagi.", "error");
         } finally {
             skeleton.classList.add("hidden");
         }
@@ -288,7 +288,7 @@
                             <svg class="w-8 h-8 opacity-40 text-body" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
-                            <span class="text-sm font-semibold">No customers match your criteria.</span>
+                            <span class="text-sm font-semibold">Tidak ada pelanggan yang cocok dengan kriteria Anda.</span>
                         </div>
                     </td>
                 </tr>
@@ -300,7 +300,7 @@
             const row = document.createElement("tr");
             row.className = "bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium transition-colors duration-150";
 
-            const counterName = customer.counter ? escapeHtml(customer.counter.name) : '<span class="text-body opacity-50 font-normal">None</span>';
+            const counterName = customer.counter ? escapeHtml(customer.counter.name) : '<span class="text-body opacity-50 font-normal">Tanpa Counter</span>';
 
             row.innerHTML = `
                 <td class="px-6 py-4 font-semibold text-body">#${customer.id}</td>
@@ -310,8 +310,8 @@
                 <td class="px-6 py-4 text-xs max-w-[250px] truncate" title="${escapeHtml(customer.address)}">${escapeHtml(customer.address)}</td>
                 <td class="px-6 py-4 text-right">
                     <div class="flex items-center justify-end gap-3">
-                        <button onclick="openEditModal(${customer.id})" class="font-medium text-fg-brand hover:underline cursor-pointer" title="Edit">Edit</button>
-                        <button onclick="openDeleteModal(${customer.id}, '${escapeQuote(customer.name)}')" class="font-medium text-fg-danger hover:underline cursor-pointer" title="Delete">Delete</button>
+                        <button onclick="openEditModal(${customer.id})" class="font-medium text-fg-brand hover:underline cursor-pointer" title="Ubah">Ubah</button>
+                        <button onclick="openDeleteModal(${customer.id}, '${escapeQuote(customer.name)}')" class="font-medium text-fg-danger hover:underline cursor-pointer" title="Hapus">Hapus</button>
                     </div>
                 </td>
             `;
@@ -325,7 +325,7 @@
 
     // Modal Helpers
     function openAddModal() {
-        document.getElementById("modal-title").innerText = "Add New Customer";
+        document.getElementById("modal-title").innerText = "Tambah Pelanggan Baru";
         document.getElementById("customer-id").value = "";
         document.getElementById("customer-form").reset();
 
@@ -337,7 +337,7 @@
         const customer = activeCustomers.find(c => c.id === id);
         if (!customer) return;
 
-        document.getElementById("modal-title").innerText = "Edit Customer";
+        document.getElementById("modal-title").innerText = "Ubah Pelanggan";
         document.getElementById("customer-id").value = customer.id;
         document.getElementById("input-counter-id").value = customer.counter_id;
         document.getElementById("input-name").value = customer.name;
@@ -399,7 +399,7 @@
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            Saving...
+            Menyimpan...
         `;
 
         try {
@@ -421,9 +421,9 @@
                 return;
             }
 
-            if (!response.ok) throw new Error("Could not save customer details.");
+            if (!response.ok) throw new Error("Gagal menyimpan detail pelanggan.");
 
-            showToast(`Customer "${name}" successfully ${isEdit ? 'updated' : 'created'}!`, "success");
+            showToast(`Pelanggan "${name}" berhasil ${isEdit ? 'diperbarui' : 'dibuat'}!`, "success");
             closeModal();
             fetchCustomers();
         } catch (error) {
@@ -501,7 +501,7 @@
         const btnDelete = document.getElementById("btn-delete");
         const originalText = btnDelete.innerText;
         btnDelete.disabled = true;
-        btnDelete.innerText = "Deleting...";
+        btnDelete.innerText = "Menghapus...";
 
         try {
             const response = await fetch(`/customers/${customerToDelete}`, {
@@ -512,9 +512,9 @@
                 }
             });
 
-            if (!response.ok) throw new Error("Failed to delete customer.");
+            if (!response.ok) throw new Error("Gagal menghapus pelanggan.");
 
-            showToast("Customer successfully deleted.", "success");
+            showToast("Pelanggan berhasil dihapus.", "success");
             closeDeleteModal();
             fetchCustomers();
         } catch (error) {

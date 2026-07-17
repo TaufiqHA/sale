@@ -1,13 +1,13 @@
 @extends('layouts.administrator')
 
-@section('title', 'Stock Monitor')
+@section('title', 'Monitoring Stok')
 
 @section('content')
 <div class="relative min-h-[calc(100vh-8rem)]">
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-            <h1 class="text-xl font-bold text-heading">Stock Monitor</h1>
+            <h1 class="text-xl font-bold text-heading">Monitoring Stok</h1>
             <p class="text-xs text-body mt-0.5">Pantau tingkat persediaan stok produk dan identifikasi kebutuhan restock</p>
         </div>
     </div>
@@ -48,7 +48,7 @@
                 </svg>
             </div>
             <div>
-                <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Habis / Out of Stock</h3>
+                <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Habis</h3>
                 <p id="summary-out-stock" class="text-2xl font-bold text-rose-600 mt-1">0</p>
             </div>
         </div>
@@ -183,7 +183,7 @@
             await fetchCounters();
             await fetchStockData();
         } catch (e) {
-            showToast("Failed to initialize Stock Monitor.", "error");
+            showToast("Gagal menginisialisasi Monitoring Stok.", "error");
         }
     });
 
@@ -196,7 +196,7 @@
             countersList = await response.json();
             renderCounterFilterOptions();
         } catch (error) {
-            showToast("Failed loading counters filter options.", "error");
+            showToast("Gagal memuat pilihan filter counter.", "error");
         }
     }
 
@@ -351,7 +351,7 @@
             row.innerHTML = `
                 <td class="px-6 py-4">
                     <div class="font-bold text-body">${escapeHtml(product.sku)}</div>
-                    <div class="text-xs text-body opacity-60 mt-0.5">${product.barcode ? escapeHtml(product.barcode) : '<span class="text-body opacity-40">No Barcode</span>'}</div>
+                    <div class="text-xs text-body opacity-60 mt-0.5">${product.barcode ? escapeHtml(product.barcode) : '<span class="text-body opacity-40">Tanpa Barcode</span>'}</div>
                 </td>
                 <th scope="row" class="px-6 py-4 font-semibold text-heading whitespace-nowrap text-left">${escapeHtml(product.name)}</th>
                 <td class="px-6 py-4 text-xs font-semibold text-body">${escapeHtml(catName)}</td>
@@ -385,6 +385,18 @@
         document.getElementById("selected-counter-label").innerText = name;
         
         const button = document.getElementById("dropdownFilterButton");
+        if (button) {
+            button.click();
+        }
+
+        handleSearchFilterChange();
+    }
+
+    function selectStockFilter(status, name) {
+        document.getElementById("filter-stock-status").value = status;
+        document.getElementById("selected-stock-label").innerText = name;
+        
+        const button = document.getElementById("dropdownStockButton");
         if (button) {
             button.click();
         }
