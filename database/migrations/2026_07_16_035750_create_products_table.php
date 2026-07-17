@@ -24,6 +24,7 @@ return new class extends Migration
             $table->decimal('sell_price', 15, 2);
             $table->integer('stock')->default(0);
             $table->boolean('status')->default(true);
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

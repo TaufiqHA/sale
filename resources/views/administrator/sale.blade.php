@@ -148,7 +148,7 @@
                             <label for="input-customer-id" class="block mb-2 text-sm font-medium text-heading">Cari Data Pelanggan</label>
                             <div class="flex gap-2">
                                 <select id="input-customer-id" name="customer_id" onchange="onCustomerChange()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs">
-                                    <option value="">None (Umum)</option>
+                                    <option value="">Pilih Pelanggan...</option>
                                     @foreach($customers as $customer)
                                         <option value="{{ $customer->id }}" data-counter-id="{{ $customer->counter_id }}" data-phone="{{ $customer->phone }}" data-address="{{ $customer->address }}">{{ $customer->name }}</option>
                                     @endforeach
@@ -168,7 +168,7 @@
 
                         <!-- Expedition Select -->
                         <div class="col-span-2 sm:col-span-1">
-                            <label for="input-expedition-id" class="block mb-2 text-sm font-medium text-heading">EKSPEDISI</label>
+                            <label for="input-expedition-id" class="block mb-2 text-sm font-medium text-heading">Ekspedisi</label>
                             <div class="flex gap-2">
                                 <select id="input-expedition-id" name="expedition_id" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs">
                                     <option value="">Pilih Ekspedisi...</option>
@@ -738,7 +738,7 @@
         const currentSelectedVal = customerSelect.value;
         
         // Save None option
-        customerSelect.innerHTML = '<option value="">Umum</option>';
+        customerSelect.innerHTML = '<option value="">Pilih Pelanggan...</option>';
         
         // Filter customers based on selectedCounterId - return empty list if no counter is selected
         const filtered = selectedCounterId ? activeCustomers.filter(c => String(c.counter_id) === String(selectedCounterId)) : [];
@@ -774,6 +774,7 @@
             const opt = document.createElement("option");
             opt.value = p.id;
             opt.setAttribute("data-price", p.sell_price || 0);
+            opt.setAttribute("data-image", p.image || "");
             opt.innerText = p.name;
             productSelect.appendChild(opt);
         });
@@ -989,6 +990,7 @@
         
         const productId = selectedOption.value;
         const productName = selectedOption.innerText;
+        const productImage = selectedOption.getAttribute("data-image") || "";
         const qty = parseInt(qtyInput.value) || 0;
         const price = parseFormattedNumber(priceInput.value);
         
@@ -1010,6 +1012,7 @@
             saleItems.push({
                 product_id: productId,
                 product_name: productName,
+                product_image: productImage,
                 qty: qty,
                 price: price,
                 subtotal: qty * price
@@ -1043,9 +1046,16 @@
         saleItems.forEach((item, index) => {
             const row = document.createElement("tr");
             row.className = "border-b border-default hover:bg-neutral-secondary-medium/30";
+            
+            const imageHtml = item.product_image 
+                ? `<img src="/storage/${item.product_image}" class="w-10 h-10 object-cover rounded mx-auto border border-default" alt="${escapeHtml(item.product_name)}">`
+                : `<div class="w-10 h-10 bg-slate-100 border border-default rounded flex items-center justify-center text-slate-400 mx-auto">
+                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+                   </div>`;
+            
             row.innerHTML = `
                 <td class="px-4 py-2">
-                    <div class="w-10 h-10 bg-slate-700/30 rounded flex items-center justify-center text-[10px] font-bold text-heading">IMAGE</div>
+                    ${imageHtml}
                 </td>
                 <td class="px-4 py-2 font-medium text-heading">${escapeHtml(item.product_name)}</td>
                 <td class="px-4 py-2 text-center font-semibold">${item.qty}</td>
@@ -1467,6 +1477,7 @@
         saleItems = sale.items ? sale.items.map(item => ({
             product_id: item.product_id,
             product_name: item.product ? item.product.name : 'Unknown Product',
+            product_image: item.product ? item.product.image : null,
             qty: parseInt(item.qty),
             price: parseFloat(item.price),
             subtotal: parseFloat(item.subtotal)

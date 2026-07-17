@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'sell_price',
     'stock',
     'status',
+    'image',
 ])]
 class Product extends Model
 {

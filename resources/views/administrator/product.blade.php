@@ -87,6 +87,7 @@
         <table class="w-full text-sm text-left rtl:text-right text-body">
             <thead class="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
                 <tr>
+                    <th scope="col" class="px-6 py-3 font-medium w-16 text-center">Gambar</th>
                     <th scope="col" class="px-6 py-3 font-medium">SKU / Barcode</th>
                     <th scope="col" class="px-6 py-3 font-medium">Nama Produk</th>
                     <th scope="col" class="px-6 py-3 font-medium">Kategori</th>
@@ -213,10 +214,37 @@
                     </div>
 
                     <!-- Description -->
-                    <div class="col-span-2">
+                    {{-- <div class="col-span-2">
                         <label for="input-description" class="block mb-2.5 text-sm font-medium text-heading">Deskripsi Produk</label>
                         <textarea id="input-description" name="description" rows="3" class="block bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full p-3.5 shadow-xs placeholder:text-body" placeholder="Detail produk atau catatan..."></textarea>
                         <p id="error-description" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div> --}}
+
+                    <!-- Gambar Produk -->
+                    <div class="col-span-2 bg-neutral-secondary-soft p-4 rounded-base border border-default">
+                        <label class="block mb-2 text-sm font-medium text-heading">Gambar Produk</label>
+                        <div class="flex items-center gap-4">
+                            <!-- Image Preview Frame -->
+                            <div id="image-preview-container" class="relative w-20 h-20 rounded-lg border border-default-medium flex items-center justify-center overflow-hidden bg-white group shrink-0">
+                                <span id="image-placeholder" class="text-slate-400">
+                                    <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+                                </span>
+                                <img id="image-preview" class="w-full h-full object-cover hidden" alt="Preview">
+                                <button type="button" id="btn-remove-image" onclick="removeSelectedImage()" class="absolute inset-0 bg-black/40 items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity hidden">
+                                    <svg class="w-5 h-5 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                            </div>
+                            <!-- Upload Controls -->
+                            <div class="flex flex-col gap-1.5">
+                                <label for="input-image" class="inline-flex items-center justify-center bg-white border border-default-medium text-heading text-xs font-semibold px-3 py-2 rounded-base hover:bg-neutral-secondary-soft focus:outline-none focus:ring-2 focus:ring-brand cursor-pointer transition">
+                                    Pilih File
+                                </label>
+                                <input type="file" id="input-image" name="image" accept="image/*" onchange="previewImageFile(event)" class="hidden">
+                                <span class="text-[11px] text-body opacity-60">Format: JPG, PNG, WEBP, GIF (Max. 2MB)</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="remove-image-flag" value="0">
+                        <p id="error-image" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
                     <!-- Status Checkbox -->
@@ -294,9 +322,9 @@
                     <div class="space-y-1.5">
                         <input type="text" id="inline-cat-name" placeholder="Nama Kategori (contoh: Minuman)" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body" required>
                     </div>
-                    <div class="space-y-1.5">
+                    {{-- <div class="space-y-1.5">
                         <input type="text" id="inline-cat-desc" placeholder="Deskripsi Singkat (opsional)" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body">
-                    </div>
+                    </div> --}}
                     <button type="submit" id="btn-inline-cat-save" class="w-full text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2 focus:outline-none cursor-pointer">
                         Tambah Kategori
                     </button>
@@ -345,13 +373,8 @@
                 <!-- Add Unit Inline Form -->
                 <form id="inline-unit-form" onsubmit="handleInlineUnitSubmit(event)" class="space-y-3 bg-neutral-secondary-soft p-4 rounded-base border border-default">
                     <h4 class="text-xs font-bold uppercase tracking-wider text-heading">Tambah Satuan Cepat</h4>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div class="space-y-1.5">
-                            <input type="text" id="inline-unit-name" placeholder="Nama (contoh: Pieces)" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body" required>
-                        </div>
-                        <div class="space-y-1.5">
-                            <input type="text" id="inline-unit-code" placeholder="Kode (contoh: PCS)" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body" required>
-                        </div>
+                    <div class="space-y-1.5">
+                        <input type="text" id="inline-unit-name" placeholder="Nama (contoh: Pieces)" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2 shadow-xs placeholder:text-body" required>
                     </div>
                     <button type="submit" id="btn-inline-unit-save" class="w-full text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2 focus:outline-none cursor-pointer">
                         Tambah Satuan
@@ -366,7 +389,6 @@
                             <thead>
                                 <tr class="bg-neutral-secondary-medium text-heading border-b border-default font-semibold">
                                     <th class="p-3">Nama</th>
-                                    <th class="p-3">Kode</th>
                                     <th class="p-3 text-right">Aksi</th>
                                 </tr>
                             </thead>
@@ -474,7 +496,7 @@
             const select = document.getElementById("input-unit_id");
             select.innerHTML = '<option value="" disabled selected>Pilih Satuan</option>';
             unitsList.forEach(unit => {
-                select.innerHTML += `<option value="${unit.id}">${escapeHtml(unit.name)} (${escapeHtml(unit.code)})</option>`;
+                select.innerHTML += `<option value="${unit.id}">${escapeHtml(unit.name)}</option>`;
             });
         } catch (e) {
             showToast("Gagal memuat satuan.", "error");
@@ -587,10 +609,19 @@
             const badgeText = product.status ? "Aktif" : "Tidak Aktif";
 
             const catName = product.category ? product.category.name : 'Tanpa Kategori';
-            const unitName = product.unit ? `${product.unit.name} (${product.unit.code})` : '-';
+            const unitName = product.unit ? product.unit.name : '-';
             const counterName = product.counter ? product.counter.name : '-';
 
+            const imageHtml = product.image 
+                ? `<img src="/storage/${product.image}" class="w-10 h-10 object-cover rounded-md mx-auto" alt="${escapeHtml(product.name)}">`
+                : `<div class="w-10 h-10 bg-slate-100 rounded-md flex items-center justify-center text-slate-400 mx-auto">
+                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+                   </div>`;
+
             row.innerHTML = `
+                <td class="px-6 py-4 text-center">
+                    ${imageHtml}
+                </td>
                 <td class="px-6 py-4">
                     <div class="font-bold text-body">${escapeHtml(product.sku)}</div>
                     <div class="text-xs text-body opacity-60 mt-0.5">${product.barcode ? escapeHtml(product.barcode) : '<span class="text-body opacity-40">Tanpa Barcode</span>'}</div>
@@ -633,6 +664,7 @@
         document.getElementById("input-counter_id").selectedIndex = 0;
         document.getElementById("input-stock").value = 0;
         
+        resetImagePreview();
         clearValidationErrors();
         showModal();
     }
@@ -652,8 +684,20 @@
         document.getElementById("input-stock").value = product.stock;
         document.getElementById("input-buy_price").value = formatThousandSeparator(Math.round(parseFloat(product.buy_price)));
         document.getElementById("input-sell_price").value = formatThousandSeparator(Math.round(parseFloat(product.sell_price)));
-        document.getElementById("input-description").value = product.description || "";
+        const descInput = document.getElementById("input-description");
+        if (descInput) {
+            descInput.value = product.description || "";
+        }
         document.getElementById("input-status").checked = !!product.status;
+
+        resetImagePreview();
+        if (product.image) {
+            const img = document.getElementById("image-preview");
+            img.src = `/storage/${product.image}`;
+            img.classList.remove("hidden");
+            document.getElementById("image-placeholder").classList.add("hidden");
+            document.getElementById("btn-remove-image").classList.replace("hidden", "flex");
+        }
 
         clearValidationErrors();
         showModal();
@@ -683,7 +727,46 @@
         
         setTimeout(() => {
             modal.classList.add("hidden");
+            resetImagePreview();
         }, 300);
+    }
+
+    // Image Upload Preview & Removal Helpers
+    function previewImageFile(event) {
+        const input = event.target;
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.getElementById("image-preview");
+                img.src = e.target.result;
+                img.classList.remove("hidden");
+                document.getElementById("image-placeholder").classList.add("hidden");
+                document.getElementById("btn-remove-image").classList.replace("hidden", "flex");
+                document.getElementById("remove-image-flag").value = "0";
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    function removeSelectedImage() {
+        document.getElementById("input-image").value = "";
+        const img = document.getElementById("image-preview");
+        img.src = "";
+        img.classList.add("hidden");
+        document.getElementById("image-placeholder").classList.remove("hidden");
+        document.getElementById("btn-remove-image").classList.replace("flex", "hidden");
+        document.getElementById("remove-image-flag").value = "1";
+    }
+
+    function resetImagePreview() {
+        document.getElementById("input-image").value = "";
+        const img = document.getElementById("image-preview");
+        img.src = "";
+        img.classList.add("hidden");
+        document.getElementById("image-placeholder").classList.remove("hidden");
+        document.getElementById("btn-remove-image").classList.replace("flex", "hidden");
+        document.getElementById("remove-image-flag").value = "0";
     }
 
     // Category Manage Modal
@@ -747,7 +830,8 @@
     async function handleInlineCategorySubmit(event) {
         event.preventDefault();
         const name = document.getElementById("inline-cat-name").value;
-        const description = document.getElementById("inline-cat-desc").value;
+        const descEl = document.getElementById("inline-cat-desc");
+        const description = descEl ? descEl.value : "";
 
         const btn = document.getElementById("btn-inline-cat-save");
         btn.disabled = true;
@@ -840,7 +924,7 @@
         tbody.innerHTML = "";
 
         if (unitsList.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="3" class="p-4 text-center text-slate-300">Satuan tidak ditemukan.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="2" class="p-4 text-center text-slate-300">Satuan tidak ditemukan.</td></tr>`;
             return;
         }
 
@@ -848,7 +932,6 @@
             const tr = document.createElement("tr");
             tr.innerHTML = `
                 <td class="p-3 font-semibold text-slate-800">${escapeHtml(unit.name)}</td>
-                <td class="p-3 font-semibold text-slate-500">${escapeHtml(unit.code)}</td>
                 <td class="p-3 text-right">
                     <button type="button" onclick="deleteInlineUnit(${unit.id})" class="text-rose-600 hover:text-rose-800 p-1 hover:bg-rose-50 rounded-lg transition shrink-0 cursor-pointer" title="Delete">
                         <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -864,7 +947,6 @@
     async function handleInlineUnitSubmit(event) {
         event.preventDefault();
         const name = document.getElementById("inline-unit-name").value;
-        const code = document.getElementById("inline-unit-code").value;
 
         const btn = document.getElementById("btn-inline-unit-save");
         btn.disabled = true;
@@ -877,7 +959,7 @@
                     "Accept": "application/json",
                     "X-CSRF-TOKEN": csrfToken,
                 },
-                body: JSON.stringify({ name, code })
+                body: JSON.stringify({ name })
             });
 
             if (response.status === 422) {
@@ -937,13 +1019,42 @@
         const buy_price = document.getElementById("input-buy_price").value.replace(/\./g, "");
         const sell_price = document.getElementById("input-sell_price").value.replace(/\./g, "");
         const stock = document.getElementById("input-stock").value;
-        const description = document.getElementById("input-description").value;
+        const descInput = document.getElementById("input-description");
+        const description = descInput ? descInput.value : "";
         const status = document.getElementById("input-status").checked;
 
-        const data = { name, sku, barcode, category_id, unit_id, counter_id, buy_price, sell_price, stock, description, status };
+        const formData = new FormData();
+        formData.append("name", name);
+        formData.append("sku", sku);
+        if (barcode) {
+            formData.append("barcode", barcode);
+        }
+        formData.append("category_id", category_id);
+        formData.append("unit_id", unit_id);
+        formData.append("counter_id", counter_id);
+        formData.append("buy_price", buy_price);
+        formData.append("sell_price", sell_price);
+        formData.append("stock", stock);
+        formData.append("description", description);
+        formData.append("status", status ? "1" : "0");
+
+        const imageFileInput = document.getElementById("input-image");
+        if (imageFileInput.files.length > 0) {
+            formData.append("image", imageFileInput.files[0]);
+        }
+
+        const removeImageFlag = document.getElementById("remove-image-flag").value;
+        if (removeImageFlag === "1") {
+            formData.append("remove_image", "1");
+        }
+
         const isEdit = !!id;
         const url = isEdit ? `/products/${id}` : "/products";
-        const method = isEdit ? "PUT" : "POST";
+        const method = "POST"; // Use POST for multipart form uploads
+
+        if (isEdit) {
+            formData.append("_method", "PUT");
+        }
 
         const btnSave = document.getElementById("btn-save");
         const originalText = btnSave.innerHTML;
@@ -960,11 +1071,10 @@
             const response = await fetch(url, {
                 method: method,
                 headers: {
-                    "Content-Type": "application/json",
                     "Accept": "application/json",
                     "X-CSRF-TOKEN": csrfToken,
                 },
-                body: JSON.stringify(data),
+                body: formData,
             });
 
             const result = await response.json();

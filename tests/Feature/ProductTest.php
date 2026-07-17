@@ -8,6 +8,8 @@ use App\Models\Product;
 use App\Models\Unit;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ProductTest extends TestCase
@@ -17,7 +19,7 @@ class ProductTest extends TestCase
     public function test_product_can_be_created_using_factory(): void
     {
         $category = Category::factory()->create(['name' => 'Clothing']);
-        $unit = Unit::factory()->create(['name' => 'Pieces', 'code' => 'PCS']);
+        $unit = Unit::factory()->create(['name' => 'Pieces']);
         $counter = Counter::factory()->create(['name' => 'Counter A']);
 
         $product = Product::factory()->create([
@@ -188,5 +190,75 @@ class ProductTest extends TestCase
         $this->assertDatabaseMissing('products', [
             'id' => $product->id,
         ]);
+    }
+
+    public function test_authenticated_user_can_create_product_with_image(): void
+    {
+        Storage::fake('public');
+        $user = User::factory()->create();
+        $category = Category::factory()->create();
+        $unit = Unit::factory()->create();
+        $counter = Counter::factory()->create();
+        $image = UploadedFile::fake()->image('product.jpg');
+
+        $response = $this->actingAs($user)->postJson('/products', [
+            'category_id' => $category->id,
+            'unit_id' => $unit->id,
+            'counter_id' => $counter->id,
+            'sku' => 'SKU-WITH-IMAGE',
+            'barcode' => '88800112244',
+            'name' => 'Image Product',
+            'buy_price' => 4500,
+            'sell_price' => 6000,
+            'stock' => 50,
+            'status' => true,
+            'image' => $image,
+        ]);
+
+        $response->assertStatus(201);
+        $product = Product::where('sku', 'SKU-WITH-IMAGE')->first();
+        $this->assertNotNull($product->image);
+        Storage::disk('public')->assertExists($product->image);
+    }
+
+    public function test_authenticated_user_can_update_product_with_image(): void
+    {
+        Storage::fake('public');
+        $user = User::factory()->create();
+        $product = Product::factory()->create();
+        $newImage = UploadedFile::fake()->image('new_product.jpg');
+
+        $response = $this->actingAs($user)->putJson('/products/'.$product->id, [
+            'category_id' => $product->category_id,
+            'unit_id' => $product->unit_id,
+            'counter_id' => $product->counter_id,
+            'sku' => $product->sku,
+            'name' => 'Updated Image Product',
+            'buy_price' => 4500,
+            'sell_price' => 6000,
+            'stock' => 50,
+            'status' => true,
+            'image' => $newImage,
+        ]);
+
+        $response->assertStatus(200);
+        $product->refresh();
+        $this->assertNotNull($product->image);
+        Storage::disk('public')->assertExists($product->image);
+    }
+
+    public function test_deleting_product_deletes_its_image(): void
+    {
+        Storage::fake('public');
+        $user = User::factory()->create();
+        $imagePath = UploadedFile::fake()->image('product.jpg')->store('products', 'public');
+        $product = Product::factory()->create(['image' => $imagePath]);
+
+        Storage::disk('public')->assertExists($imagePath);
+
+        $response = $this->actingAs($user)->deleteJson('/products/'.$product->id);
+        $response->assertStatus(204);
+
+        Storage::disk('public')->assertMissing($imagePath);
     }
 }

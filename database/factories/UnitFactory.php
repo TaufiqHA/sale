@@ -19,7 +19,6 @@ class UnitFactory extends Factory
     {
         return [
             'name' => fake()->word(),
-            'code' => strtoupper(fake()->unique()->lexify('???')),
         ];
     }
 }

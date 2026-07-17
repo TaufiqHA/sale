@@ -15,13 +15,11 @@ class UnitTest extends TestCase
     {
         $unit = Unit::factory()->create([
             'name' => 'Pieces',
-            'code' => 'PCS',
         ]);
 
         $this->assertDatabaseHas('units', [
             'id' => $unit->id,
             'name' => 'Pieces',
-            'code' => 'PCS',
         ]);
     }
 
@@ -47,33 +45,16 @@ class UnitTest extends TestCase
 
         $response = $this->actingAs($user)->postJson('/units', [
             'name' => 'Boxes',
-            'code' => 'BOX',
         ]);
 
         $response->assertStatus(201)
             ->assertJsonFragment([
                 'name' => 'Boxes',
-                'code' => 'BOX',
             ]);
 
         $this->assertDatabaseHas('units', [
             'name' => 'Boxes',
-            'code' => 'BOX',
         ]);
-    }
-
-    public function test_create_unit_validation_requires_unique_code(): void
-    {
-        $user = User::factory()->create();
-        Unit::factory()->create(['code' => 'PCS']);
-
-        $response = $this->actingAs($user)->postJson('/units', [
-            'name' => 'Pieces Duplicate',
-            'code' => 'PCS',
-        ]);
-
-        $response->assertStatus(422)
-            ->assertJsonValidationErrors(['code']);
     }
 
     public function test_authenticated_user_can_show_unit(): void
@@ -87,30 +68,26 @@ class UnitTest extends TestCase
             ->assertJson([
                 'id' => $unit->id,
                 'name' => $unit->name,
-                'code' => $unit->code,
             ]);
     }
 
     public function test_authenticated_user_can_update_unit(): void
     {
         $user = User::factory()->create();
-        $unit = Unit::factory()->create(['name' => 'Old Unit', 'code' => 'OLD']);
+        $unit = Unit::factory()->create(['name' => 'Old Unit']);
 
         $response = $this->actingAs($user)->putJson('/units/'.$unit->id, [
             'name' => 'New Unit',
-            'code' => 'NEW',
         ]);
 
         $response->assertStatus(200)
             ->assertJsonFragment([
                 'name' => 'New Unit',
-                'code' => 'NEW',
             ]);
 
         $this->assertDatabaseHas('units', [
             'id' => $unit->id,
             'name' => 'New Unit',
-            'code' => 'NEW',
         ]);
     }
 

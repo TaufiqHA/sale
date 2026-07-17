@@ -90,7 +90,7 @@ class ProductionTest extends TestCase
     {
         $user = User::factory()->create();
         $counter = Counter::factory()->create();
-        $product = Product::factory()->create();
+        $product = Product::factory()->create(['stock' => 5]);
 
         $response = $this->actingAs($user)->postJson('/productions', [
             'counter_id' => $counter->id,
@@ -115,6 +115,8 @@ class ProductionTest extends TestCase
             'notes' => 'Standard batch',
             'status' => 'completed',
         ]);
+
+        $this->assertEquals(25, $product->fresh()->stock);
     }
 
     public function test_authenticated_user_can_show_production(): void
@@ -131,9 +133,18 @@ class ProductionTest extends TestCase
     public function test_authenticated_user_can_update_production(): void
     {
         $user = User::factory()->create();
-        $production = Production::factory()->create(['notes' => 'Old notes']);
+        $oldProduct = Product::factory()->create(['stock' => 20]);
+        $newProduct = Product::factory()->create(['stock' => 5]);
+        $production = Production::factory()->create([
+            'product_id' => $oldProduct->id,
+            'total_result' => 10,
+            'status' => 'completed',
+        ]);
+
+        // After creation (simulated by factory + manual stock adjustment), oldProduct stock is 20
+        $this->assertEquals(20, $oldProduct->fresh()->stock);
+
         $newCounter = Counter::factory()->create();
-        $newProduct = Product::factory()->create();
 
         $response = $this->actingAs($user)->putJson('/productions/'.$production->id, [
             'counter_id' => $newCounter->id,
@@ -145,26 +156,38 @@ class ProductionTest extends TestCase
             'selling_price' => 12.00,
             'estimated_profit' => 2.00,
             'notes' => 'Updated notes',
-            'status' => 'cancelled',
+            'status' => 'completed',
         ]);
 
         $response->assertStatus(200)
             ->assertJsonFragment([
                 'notes' => 'Updated notes',
-                'status' => 'cancelled',
+                'status' => 'completed',
             ]);
 
         $this->assertDatabaseHas('productions', [
             'id' => $production->id,
             'notes' => 'Updated notes',
-            'status' => 'cancelled',
+            'status' => 'completed',
         ]);
+
+        // After update, oldProduct stock reverts to 10, newProduct increases to 5 + 30 = 35
+        $this->assertEquals(10, $oldProduct->fresh()->stock);
+        $this->assertEquals(35, $newProduct->fresh()->stock);
     }
 
     public function test_authenticated_user_can_delete_production(): void
     {
         $user = User::factory()->create();
-        $production = Production::factory()->create();
+        $product = Product::factory()->create(['stock' => 20]);
+        $production = Production::factory()->create([
+            'product_id' => $product->id,
+            'total_result' => 10,
+            'status' => 'completed',
+        ]);
+
+        // Before delete (simulated by factory + manual stock adjustment): stock = 20
+        $this->assertEquals(20, $product->fresh()->stock);
 
         $response = $this->actingAs($user)->deleteJson('/productions/'.$production->id);
 
@@ -172,5 +195,8 @@ class ProductionTest extends TestCase
         $this->assertDatabaseMissing('productions', [
             'id' => $production->id,
         ]);
+
+        // After delete: stock reverts to 10
+        $this->assertEquals(10, $product->fresh()->stock);
     }
 }

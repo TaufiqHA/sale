@@ -59,6 +59,13 @@ class ProductionController extends Controller
                 }
             }
 
+            if ($production->status === 'completed') {
+                $product = Product::find($production->product_id);
+                if ($product) {
+                    $product->increment('stock', $production->total_result);
+                }
+            }
+
             return $production;
         });
 
@@ -105,11 +112,30 @@ class ProductionController extends Controller
         ]);
 
         DB::transaction(function () use ($production, $validated) {
+            $oldStatus = $production->status;
+            $oldProductId = $production->product_id;
+            $oldTotalResult = $production->total_result;
+
             $production->update(Arr::except($validated, ['items']));
             if (isset($validated['items'])) {
                 $production->productionItems()->delete();
                 foreach ($validated['items'] as $item) {
                     $production->productionItems()->create($item);
+                }
+            }
+
+            // Adjust stock
+            if ($oldStatus === 'completed') {
+                $oldProduct = Product::find($oldProductId);
+                if ($oldProduct) {
+                    $oldProduct->decrement('stock', $oldTotalResult);
+                }
+            }
+
+            if ($production->status === 'completed') {
+                $newProduct = Product::find($production->product_id);
+                if ($newProduct) {
+                    $newProduct->increment('stock', $production->total_result);
                 }
             }
         });
@@ -122,7 +148,15 @@ class ProductionController extends Controller
      */
     public function destroy(Production $production): JsonResponse
     {
-        $production->delete();
+        DB::transaction(function () use ($production) {
+            if ($production->status === 'completed') {
+                $product = Product::find($production->product_id);
+                if ($product) {
+                    $product->decrement('stock', $production->total_result);
+                }
+            }
+            $production->delete();
+        });
 
         return response()->json(null, 204);
     }

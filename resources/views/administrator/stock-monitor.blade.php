@@ -345,7 +345,7 @@
             const statusText = product.status ? "Aktif" : "Nonaktif";
 
             const catName = product.category ? product.category.name : 'Tanpa Kategori';
-            const unitName = product.unit ? `${product.unit.name} (${product.unit.code})` : '-';
+            const unitName = product.unit ? product.unit.name : '-';
             const counterName = product.counter ? product.counter.name : '-';
 
             row.innerHTML = `
@@ -358,7 +358,7 @@
                 <td class="px-6 py-4 text-xs font-semibold text-body">${escapeHtml(counterName)}</td>
                 <td class="px-6 py-4 text-center">
                     <span class="px-2.5 py-1 text-sm font-bold border rounded-md shadow-xs ${product.stock === 0 ? 'bg-rose-50 border-rose-200 text-rose-700' : (product.stock <= 5 ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-slate-50 border-slate-200 text-slate-700')}">
-                        ${product.stock} <span class="text-[10px] font-normal text-slate-400 ml-0.5">${escapeHtml(product.unit ? product.unit.code : '')}</span>
+                        ${product.stock} <span class="text-[10px] font-normal text-slate-400 ml-0.5">${escapeHtml(product.unit ? product.unit.name : '')}</span>
                     </span>
                 </td>
                 <td class="px-6 py-4 text-center">

@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('units', function (Blueprint $table) {
             $table->id();
             $table->string('name')->comment('Pieces');
-            $table->string('code')->unique()->comment('PCS');
             $table->timestamps();
         });
     }
