@@ -7,7 +7,9 @@ use App\Models\Courier;
 use App\Models\Customer;
 use App\Models\Expedition;
 use App\Models\Marketplace;
+use App\Models\Product;
 use App\Models\Sale;
+use App\Models\SaleItem;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -205,5 +207,100 @@ class SaleTest extends TestCase
         $this->assertDatabaseMissing('sales', [
             'id' => $sale->id,
         ]);
+    }
+
+    public function test_sale_creation_decrements_product_stock(): void
+    {
+        $user = User::factory()->create();
+        $counter = Counter::factory()->create();
+        $product = Product::factory()->create(['stock' => 10]);
+
+        $response = $this->actingAs($user)->postJson('/sales', [
+            'counter_id' => $counter->id,
+            'barcode' => '1234567890',
+            'type' => 'umum',
+            'date' => now()->toDateTimeString(),
+            'subtotal' => 20000.00,
+            'discount' => 1000.00,
+            'shipping_cost' => 500.00,
+            'grand_total' => 19500.00,
+            'payment_method' => 'transfer',
+            'items' => [
+                [
+                    'product_id' => $product->id,
+                    'qty' => 3,
+                    'price' => 10000.00,
+                    'subtotal' => 30000.00,
+                ],
+            ],
+        ]);
+
+        $response->assertStatus(201);
+        $this->assertEquals(7, $product->fresh()->stock);
+    }
+
+    public function test_sale_update_adjusts_product_stock(): void
+    {
+        $user = User::factory()->create();
+        $counter = Counter::factory()->create();
+
+        $product1 = Product::factory()->create(['stock' => 10]);
+        $product2 = Product::factory()->create(['stock' => 10]);
+
+        $sale = Sale::factory()->create([
+            'counter_id' => $counter->id,
+        ]);
+
+        $saleItem = SaleItem::factory()->create([
+            'sale_id' => $sale->id,
+            'product_id' => $product1->id,
+            'qty' => 3,
+        ]);
+        $product1->update(['stock' => 7]);
+
+        $response = $this->actingAs($user)->putJson('/sales/'.$sale->id, [
+            'counter_id' => $counter->id,
+            'barcode' => $sale->barcode,
+            'type' => $sale->type,
+            'date' => $sale->date->toDateTimeString(),
+            'subtotal' => 20000.00,
+            'grand_total' => 20000.00,
+            'payment_method' => 'tunai',
+            'items' => [
+                [
+                    'product_id' => $product1->id,
+                    'qty' => 2,
+                    'price' => 10000.00,
+                    'subtotal' => 20000.00,
+                ],
+                [
+                    'product_id' => $product2->id,
+                    'qty' => 4,
+                    'price' => 5000.00,
+                    'subtotal' => 20000.00,
+                ],
+            ],
+        ]);
+
+        $response->assertStatus(200);
+        $this->assertEquals(8, $product1->fresh()->stock);
+        $this->assertEquals(6, $product2->fresh()->stock);
+    }
+
+    public function test_sale_deletion_restores_product_stock(): void
+    {
+        $user = User::factory()->create();
+        $product = Product::factory()->create(['stock' => 7]);
+        $sale = Sale::factory()->create();
+        $saleItem = SaleItem::factory()->create([
+            'sale_id' => $sale->id,
+            'product_id' => $product->id,
+            'qty' => 3,
+        ]);
+
+        $response = $this->actingAs($user)->deleteJson('/sales/'.$sale->id);
+
+        $response->assertStatus(204);
+        $this->assertEquals(10, $product->fresh()->stock);
     }
 }

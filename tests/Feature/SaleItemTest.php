@@ -153,4 +153,68 @@ class SaleItemTest extends TestCase
             'id' => $saleItem->id,
         ]);
     }
+
+    public function test_sale_item_creation_decrements_product_stock(): void
+    {
+        $user = User::factory()->create();
+        $sale = Sale::factory()->create();
+        $product = Product::factory()->create(['stock' => 10]);
+
+        $response = $this->actingAs($user)->postJson('/sale-items', [
+            'sale_id' => $sale->id,
+            'product_id' => $product->id,
+            'qty' => 3,
+            'price' => 12000.00,
+            'subtotal' => 36000.00,
+        ]);
+
+        $response->assertStatus(201);
+        $this->assertEquals(7, $product->fresh()->stock);
+    }
+
+    public function test_sale_item_update_adjusts_product_stock(): void
+    {
+        $user = User::factory()->create();
+        $sale = Sale::factory()->create();
+
+        $product1 = Product::factory()->create(['stock' => 10]);
+        $product2 = Product::factory()->create(['stock' => 10]);
+
+        $saleItem = SaleItem::factory()->create([
+            'sale_id' => $sale->id,
+            'product_id' => $product1->id,
+            'qty' => 3,
+        ]);
+        $product1->update(['stock' => 7]); // simulate store decrement
+
+        // Update the sale item to point to product2 with qty 4
+        $response = $this->actingAs($user)->putJson('/sale-items/'.$saleItem->id, [
+            'sale_id' => $sale->id,
+            'product_id' => $product2->id,
+            'qty' => 4,
+            'price' => 15000.50,
+            'subtotal' => 60002.00,
+        ]);
+
+        $response->assertStatus(200);
+        // Product 1 stock is restored: 7 + 3 = 10
+        $this->assertEquals(10, $product1->fresh()->stock);
+        // Product 2 stock is decremented: 10 - 4 = 6
+        $this->assertEquals(6, $product2->fresh()->stock);
+    }
+
+    public function test_sale_item_deletion_restores_product_stock(): void
+    {
+        $user = User::factory()->create();
+        $product = Product::factory()->create(['stock' => 7]);
+        $saleItem = SaleItem::factory()->create([
+            'product_id' => $product->id,
+            'qty' => 3,
+        ]);
+
+        $response = $this->actingAs($user)->deleteJson('/sale-items/'.$saleItem->id);
+
+        $response->assertStatus(204);
+        $this->assertEquals(10, $product->fresh()->stock);
+    }
 }

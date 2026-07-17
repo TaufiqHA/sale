@@ -67,6 +67,10 @@ class SaleController extends Controller
             if (! empty($validated['items'])) {
                 foreach ($validated['items'] as $item) {
                     $sale->items()->create($item);
+                    $product = Product::find($item['product_id']);
+                    if ($product) {
+                        $product->decrement('stock', $item['qty']);
+                    }
                 }
             }
 
@@ -121,9 +125,21 @@ class SaleController extends Controller
         DB::transaction(function () use ($sale, $validated) {
             $sale->update(Arr::except($validated, ['items']));
             if (isset($validated['items'])) {
+                foreach ($sale->items as $item) {
+                    $product = Product::find($item->product_id);
+                    if ($product) {
+                        $product->increment('stock', $item->qty);
+                    }
+                }
+
                 $sale->items()->delete();
+
                 foreach ($validated['items'] as $item) {
                     $sale->items()->create($item);
+                    $product = Product::find($item['product_id']);
+                    if ($product) {
+                        $product->decrement('stock', $item['qty']);
+                    }
                 }
             }
         });
@@ -136,7 +152,15 @@ class SaleController extends Controller
      */
     public function destroy(Sale $sale): JsonResponse
     {
-        $sale->delete();
+        DB::transaction(function () use ($sale) {
+            foreach ($sale->items as $item) {
+                $product = Product::find($item->product_id);
+                if ($product) {
+                    $product->increment('stock', $item->qty);
+                }
+            }
+            $sale->delete();
+        });
 
         return response()->json(null, 204);
     }
