@@ -56,6 +56,14 @@
                   <span class="flex-1 ms-3 whitespace-nowrap">Sales</span>
                </a>
             </li>
+            <li>
+               <a href="{{ route('productions.index') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('productions.*') ? 'bg-[#1641b3] text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-[#1641b3] hover:text-white font-medium' }}">
+                  <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('productions.*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h8m-8 6h8m-8 6h8M4 6h4v4H4V6Zm0 6h4v4H4v-4Zm0 6h4v4H4v-4Z"/>
+                  </svg>
+                  <span class="flex-1 ms-3 whitespace-nowrap">Production</span>
+               </a>
+            </li>
          </ul>
       </div>
 

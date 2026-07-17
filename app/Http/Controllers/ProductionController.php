@@ -8,6 +8,8 @@ use App\Models\Production;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class ProductionController extends Controller
 {
@@ -17,7 +19,7 @@ class ProductionController extends Controller
     public function index(Request $request): JsonResponse|View
     {
         if ($request->wantsJson()) {
-            return response()->json(Production::with(['counter', 'product'])->get());
+            return response()->json(Production::with(['counter', 'product', 'productionItems'])->get());
         }
 
         return view('administrator.production', [
@@ -42,11 +44,25 @@ class ProductionController extends Controller
             'estimated_profit' => ['required', 'numeric'],
             'notes' => ['nullable', 'string'],
             'status' => ['required', 'in:draft,completed,cancelled'],
+            'items' => ['sometimes', 'array'],
+            'items.*.description' => ['required', 'string'],
+            'items.*.unit_price' => ['required', 'numeric', 'min:0'],
+            'items.*.qty' => ['required', 'numeric', 'min:0'],
+            'items.*.total' => ['required', 'numeric', 'min:0'],
         ]);
 
-        $production = Production::create($validated);
+        $production = DB::transaction(function () use ($validated) {
+            $production = Production::create(Arr::except($validated, ['items']));
+            if (! empty($validated['items'])) {
+                foreach ($validated['items'] as $item) {
+                    $production->productionItems()->create($item);
+                }
+            }
 
-        return response()->json($production->load(['counter', 'product']), 201);
+            return $production;
+        });
+
+        return response()->json($production->load(['counter', 'product', 'productionItems']), 201);
     }
 
     /**
@@ -62,7 +78,7 @@ class ProductionController extends Controller
      */
     public function show(Production $production): JsonResponse
     {
-        return response()->json($production->load(['counter', 'product']));
+        return response()->json($production->load(['counter', 'product', 'productionItems']));
     }
 
     /**
@@ -81,11 +97,24 @@ class ProductionController extends Controller
             'estimated_profit' => ['required', 'numeric'],
             'notes' => ['nullable', 'string'],
             'status' => ['required', 'in:draft,completed,cancelled'],
+            'items' => ['sometimes', 'array'],
+            'items.*.description' => ['required', 'string'],
+            'items.*.unit_price' => ['required', 'numeric', 'min:0'],
+            'items.*.qty' => ['required', 'numeric', 'min:0'],
+            'items.*.total' => ['required', 'numeric', 'min:0'],
         ]);
 
-        $production->update($validated);
+        DB::transaction(function () use ($production, $validated) {
+            $production->update(Arr::except($validated, ['items']));
+            if (isset($validated['items'])) {
+                $production->productionItems()->delete();
+                foreach ($validated['items'] as $item) {
+                    $production->productionItems()->create($item);
+                }
+            }
+        });
 
-        return response()->json($production->load(['counter', 'product']));
+        return response()->json($production->load(['counter', 'product', 'productionItems']));
     }
 
     /**
