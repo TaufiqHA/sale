@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CounterController;
 use App\Http\Controllers\CourierController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpeditionController;
 use App\Http\Controllers\MarketplaceController;
 use App\Http\Controllers\ProductController;
@@ -23,13 +24,8 @@ Route::post('/', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/me', [AuthController::class, 'me'])->middleware('auth')->name('me');
 
-Route::get('/administrator/dashboard', function () {
-    if (auth()->user()->role !== 'administrator') {
-        abort(403);
-    }
-
-    return view('administrator.dashboard');
-})->middleware('auth')->name('administrator.dashboard');
+Route::get('/administrator/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('administrator.dashboard');
+Route::get('/administrator/dashboard/stats', [DashboardController::class, 'stats'])->middleware('auth')->name('administrator.dashboard.stats');
 
 Route::get('/administrator/stock-monitor', [ProductController::class, 'stockMonitor'])->middleware('auth')->name('administrator.stock-monitor');
 
