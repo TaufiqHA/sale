@@ -41,6 +41,14 @@
                </a>
             </li>
             <li>
+               <a href="{{ route('administrator.stock-monitor') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('administrator.stock-monitor') ? 'bg-[#1641b3] text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-[#1641b3] hover:text-white font-medium' }}">
+                  <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('administrator.stock-monitor') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M7 17V13m4 4V9m4 8V11m4 6V7"/>
+                  </svg>
+                  <span class="flex-1 ms-3 whitespace-nowrap">Stock Monitor</span>
+               </a>
+            </li>
+            <li>
                <a href="{{ route('customers.index') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('customers.*') ? 'bg-[#1641b3] text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-[#1641b3] hover:text-white font-medium' }}">
                   <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('customers.*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17v1a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-4a3 3 0 0 0-3 3Zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>

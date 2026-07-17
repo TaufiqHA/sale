@@ -31,6 +31,8 @@ Route::get('/administrator/dashboard', function () {
     return view('administrator.dashboard');
 })->middleware('auth')->name('administrator.dashboard');
 
+Route::get('/administrator/stock-monitor', [ProductController::class, 'stockMonitor'])->middleware('auth')->name('administrator.stock-monitor');
+
 Route::apiResource('categories', CategoryController::class)->middleware('auth');
 Route::apiResource('units', UnitController::class)->middleware('auth');
 Route::apiResource('counters', CounterController::class)->middleware('auth');

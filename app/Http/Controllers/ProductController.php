@@ -102,4 +102,20 @@ class ProductController extends Controller
     {
         return $this->destroy($product);
     }
+
+    /**
+     * Display the stock monitor page.
+     */
+    public function stockMonitor(Request $request): JsonResponse|View
+    {
+        if ($request->wantsJson()) {
+            return response()->json(
+                Product::with(['category', 'unit', 'counter'])
+                    ->orderBy('stock', 'asc')
+                    ->get()
+            );
+        }
+
+        return view('administrator.stock-monitor');
+    }
 }
