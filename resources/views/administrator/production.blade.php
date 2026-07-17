@@ -114,7 +114,7 @@
             <!-- Header fields grid inside the form -->
             <div class="grid gap-4 grid-cols-4 py-4 md:py-6 border-b border-default mb-6 shrink-0">
                 <!-- Pilih Counter -->
-                <div class="col-span-4 sm:col-span-1">
+                <div class="col-span-4 sm:col-span-2 md:col-span-1">
                     <label for="input-counter-id" class="block mb-2 text-sm font-medium text-heading">Pilih Counter *</label>
                     <select id="input-counter-id" onchange="onCounterChange()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs cursor-pointer" required>
                         <option value="">Pilih Counter...</option>
@@ -128,7 +128,7 @@
                 </div>
 
                 <!-- PRODUK BARANG -->
-                <div class="col-span-4 sm:col-span-1">
+                <div class="col-span-4 sm:col-span-2 md:col-span-1">
                     <label for="input-product-id" class="block mb-2 text-sm font-medium text-heading">PRODUK BARANG *</label>
                     <select id="input-product-id" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs cursor-pointer" disabled required>
                         <option value="">PRODUK BARANG</option>
@@ -137,14 +137,14 @@
                 </div>
 
                 <!-- Tanggal -->
-                <div class="col-span-4 sm:col-span-1">
+                <div class="col-span-4 sm:col-span-2 md:col-span-1">
                     <label for="input-production-date" class="block mb-2 text-sm font-medium text-heading">Tanggal *</label>
                     <input type="date" id="input-production-date" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs cursor-pointer" required>
                     <p id="error-production_date" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                 </div>
 
                 <!-- Status -->
-                <div class="col-span-4 sm:col-span-1">
+                <div class="col-span-4 sm:col-span-2 md:col-span-1">
                     <label for="input-status" class="block mb-2 text-sm font-medium text-heading">Status *</label>
                     <select id="input-status" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs cursor-pointer" required>
                         <option value="draft">Draft</option>
@@ -160,7 +160,7 @@
                 
                 <!-- Left Side: Table of Ingredients/Items (Spans 2 columns) -->
                 <div class="lg:col-span-2 overflow-x-auto">
-                    <table class="w-full border-collapse border border-slate-400 text-xs">
+                    <table class="w-full min-w-[600px] lg:min-w-full border-collapse border border-slate-400 text-xs">
                         <thead>
                             <tr class="bg-slate-200 text-slate-900 border border-slate-400">
                                 <th class="border border-slate-400 px-2 py-2 w-10 text-center font-bold">No</th>

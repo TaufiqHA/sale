@@ -111,7 +111,7 @@
                 <!-- Header fields grid -->
                 <div class="grid gap-4 grid-cols-3 py-4 md:py-6">
                     <!-- Pilih Counter -->
-                    <div class="col-span-3 sm:col-span-1">
+                    <div class="col-span-3 md:col-span-1">
                         <label for="input-counter-id" class="block mb-2 text-sm font-medium text-heading">Pilih Counter</label>
                         <select id="input-counter-id" name="counter_id" onchange="onCounterChange()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs" required>
                             <option value="">Pilih Counter...</option>
@@ -125,14 +125,14 @@
                     </div>
 
                     <!-- Tanggal -->
-                    <div class="col-span-3 sm:col-span-1">
+                    <div class="col-span-3 md:col-span-1">
                         <label for="input-date" class="block mb-2 text-sm font-medium text-heading">Tanggal</label>
                         <input type="datetime-local" id="input-date" name="date" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs" required>
                         <p id="error-date" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
                     <!-- Type (Enum: umum, marketplace) -->
-                    <div class="col-span-3 sm:col-span-1">
+                    <div class="col-span-3 md:col-span-1">
                         <label for="input-type" class="block mb-2 text-sm font-medium text-heading">Tipe</label>
                         <select id="input-type" name="type" onchange="onTypeChange()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs" required>
                             <option value="umum">UMUM</option>
@@ -144,7 +144,7 @@
                     <!-- UMUM fields wrapper -->
                     <div id="umum-fields-wrapper" class="col-span-3 grid grid-cols-2 gap-4">
                         <!-- Cari Data Pelanggan -->
-                        <div class="col-span-2 sm:col-span-1">
+                        <div class="col-span-2 md:col-span-1">
                             <label for="input-customer-id" class="block mb-2 text-sm font-medium text-heading">Cari Data Pelanggan</label>
                             <div class="flex gap-2">
                                 <select id="input-customer-id" name="customer_id" onchange="onCustomerChange()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs">
@@ -153,7 +153,7 @@
                                         <option value="{{ $customer->id }}" data-counter-id="{{ $customer->counter_id }}" data-phone="{{ $customer->phone }}" data-address="{{ $customer->address }}">{{ $customer->name }}</option>
                                     @endforeach
                                 </select>
-                                <button type="button" id="btn-manage-customers" onclick="openManageCustomers()" class="inline-flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 px-4 py-2.5 rounded-base text-sm font-medium focus:outline-none cursor-pointer shrink-0">
+                                <button type="button" id="btn-manage-customers" onclick="openManageCustomers()" class="inline-flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
                                     Kelola
                                 </button>
                             </div>
@@ -167,7 +167,7 @@
                         </div>
 
                         <!-- Expedition Select -->
-                        <div class="col-span-2 sm:col-span-1">
+                        <div class="col-span-2 md:col-span-1">
                             <label for="input-expedition-id" class="block mb-2 text-sm font-medium text-heading">Ekspedisi</label>
                             <div class="flex gap-2">
                                 <select id="input-expedition-id" name="expedition_id" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs">
@@ -176,7 +176,7 @@
                                         <option value="{{ $expedition->id }}">{{ $expedition->name }}</option>
                                     @endforeach
                                 </select>
-                                <button type="button" onclick="openManageExpeditions()" class="inline-flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 px-4 py-2.5 rounded-base text-sm font-medium focus:outline-none cursor-pointer shrink-0">
+                                <button type="button" onclick="openManageExpeditions()" class="inline-flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
                                     Kelola
                                 </button>
                             </div>
@@ -187,7 +187,7 @@
                     <!-- MARKETPLACE fields wrapper -->
                     <div id="marketplace-fields-wrapper" class="col-span-3 grid grid-cols-2 gap-4 hidden">
                         <!-- Left Side: Barcode -->
-                        <div class="col-span-2 sm:col-span-1 flex flex-col justify-between">
+                        <div class="col-span-2 md:col-span-1 flex flex-col justify-between">
                             <div>
                                 <label for="input-barcode" class="block mb-2 text-sm font-medium text-heading">Masukkan Kode Barcode</label>
                                 <input type="text" id="input-barcode" name="barcode" oninput="onBarcodeChange()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="Masukkan Barcode">
@@ -202,7 +202,7 @@
                         </div>
 
                         <!-- Right Side: Marketplace & Courier -->
-                        <div class="col-span-2 sm:col-span-1 space-y-4">
+                        <div class="col-span-2 md:col-span-1 space-y-4">
                             <!-- Marketplace Select -->
                             <div>
                                 <label for="input-marketplace-id" class="block mb-2 text-sm font-medium text-heading">Marketplace</label>
@@ -225,7 +225,7 @@
                                             <option value="{{ $courier->id }}">{{ $courier->name }} ({{ $courier->type }})</option>
                                         @endforeach
                                     </select>
-                                    <button type="button" onclick="openManageCouriers()" class="inline-flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 px-4 py-2.5 rounded-base text-sm font-medium focus:outline-none cursor-pointer shrink-0">
+                                    <button type="button" onclick="openManageCouriers()" class="inline-flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
                                         Kelola
                                     </button>
                                 </div>
@@ -241,7 +241,7 @@
                         
                         <!-- Item input row -->
                         <div class="grid grid-cols-12 gap-3 items-end bg-neutral-secondary-medium p-3 rounded-base mb-4 border border-default-medium">
-                            <div class="col-span-12 sm:col-span-6">
+                            <div class="col-span-12 md:col-span-6">
                                 <label for="select-product-id" class="block mb-2 text-xs font-semibold text-heading">-- Pilih Produk --</label>
                                 <select id="select-product-id" onchange="onProductChange()" class="bg-neutral-primary-soft border border-default text-heading text-sm rounded-base block w-full px-2.5 py-2">
                                     <option value="">-- Pilih Produk --</option>
@@ -250,15 +250,15 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-span-12 sm:col-span-2">
+                            <div class="col-span-3 md:col-span-2">
                                 <label for="input-item-qty" class="block mb-2 text-xs font-semibold text-heading">Qty</label>
                                 <input type="number" id="input-item-qty" min="1" value="1" oninput="calculateItemSubtotal()" class="bg-neutral-primary-soft border border-default text-heading text-sm rounded-base block w-full px-2.5 py-2 text-center">
                             </div>
-                            <div class="col-span-12 sm:col-span-3">
+                            <div class="col-span-6 md:col-span-3">
                                 <label for="input-item-price" class="block mb-2 text-xs font-semibold text-heading">Harga</label>
                                 <input type="text" id="input-item-price" oninput="onPriceInput(this)" class="bg-neutral-primary-soft border border-default text-heading text-sm rounded-base block w-full px-2.5 py-2 text-right">
                             </div>
-                            <div class="col-span-12 sm:col-span-1 text-right">
+                            <div class="col-span-3 md:col-span-1 text-right">
                                 <button type="button" onclick="addSaleItem()" class="w-full inline-flex items-center justify-center p-2 bg-brand text-white hover:bg-brand-strong rounded-base font-bold cursor-pointer h-[38px]">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
                                 </button>
@@ -267,7 +267,7 @@
 
                         <!-- Items Table -->
                         <div class="overflow-x-auto border border-default rounded-base max-h-48 overflow-y-auto">
-                            <table class="w-full text-xs text-left text-body">
+                            <table class="w-full min-w-[600px] md:min-w-full text-xs text-left text-body">
                                 <thead class="bg-neutral-secondary-medium text-heading uppercase font-semibold border-b border-default">
                                     <tr>
                                         <th class="px-4 py-2">Gambar</th>
@@ -393,7 +393,7 @@
             <div class="space-y-2">
                 <h4 class="text-xs font-bold text-heading uppercase tracking-wider">Daftar Pelanggan Terdaftar</h4>
                 <div class="overflow-x-auto border border-default rounded-base max-h-48 overflow-y-auto">
-                    <table class="w-full text-xs text-left text-body">
+                    <table class="w-full min-w-[400px] md:min-w-full text-xs text-left text-body">
                         <thead class="bg-neutral-secondary-medium text-heading uppercase font-semibold border-b border-default">
                             <tr>
                                 <th class="px-3 py-2">Nama</th>
@@ -432,12 +432,12 @@
             <!-- Add Expedition Form -->
             <form id="inline-expedition-form" onsubmit="handleInlineExpeditionSubmit(event)" class="bg-neutral-secondary-medium p-4 rounded-base border border-default-medium space-y-3">
                 <h4 class="text-xs font-bold text-heading uppercase tracking-wider">Tambah Ekspedisi Baru</h4>
-                <div class="flex gap-3 items-end">
-                    <div class="flex-1">
+                <div class="flex flex-col sm:flex-row gap-3 sm:items-end">
+                    <div class="w-full sm:flex-1">
                         <label for="inline-expedition-name" class="block mb-1 text-xs font-medium text-heading">Nama Ekspedisi *</label>
                         <input type="text" id="inline-expedition-name" required class="bg-neutral-primary-soft border border-default text-heading text-xs rounded-base block w-full px-2.5 py-2 placeholder:text-body" placeholder="contoh: JNE, J&T">
                     </div>
-                    <button type="submit" class="inline-flex items-center text-white bg-brand hover:bg-brand-strong font-medium rounded-base text-xs px-3.5 py-2 cursor-pointer shadow-xs h-[34px]">
+                    <button type="submit" class="inline-flex items-center justify-center text-white bg-brand hover:bg-brand-strong font-medium rounded-base text-xs px-3.5 py-2 cursor-pointer shadow-xs h-[34px] w-full sm:w-auto shrink-0">
                         <svg class="w-3.5 h-3.5 me-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
                         Simpan
                     </button>
@@ -448,7 +448,7 @@
             <div class="space-y-2">
                 <h4 class="text-xs font-bold text-heading uppercase tracking-wider">Daftar Ekspedisi Terdaftar</h4>
                 <div class="overflow-x-auto border border-default rounded-base max-h-48 overflow-y-auto">
-                    <table class="w-full text-xs text-left text-body">
+                    <table class="w-full min-w-[300px] md:min-w-full text-xs text-left text-body">
                         <thead class="bg-neutral-secondary-medium text-heading uppercase font-semibold border-b border-default">
                             <tr>
                                 <th class="px-3 py-2">ID</th>
@@ -512,7 +512,7 @@
             <div class="space-y-2">
                 <h4 class="text-xs font-bold text-heading uppercase tracking-wider">Daftar Kurir Terdaftar</h4>
                 <div class="overflow-x-auto border border-default rounded-base max-h-48 overflow-y-auto">
-                    <table class="w-full text-xs text-left text-body">
+                    <table class="w-full min-w-[300px] md:min-w-full text-xs text-left text-body">
                         <thead class="bg-neutral-secondary-medium text-heading uppercase font-semibold border-b border-default">
                             <tr>
                                 <th class="px-3 py-2">Nama Kurir</th>
