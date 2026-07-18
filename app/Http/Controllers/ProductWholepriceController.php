@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProductWholesale;
+use App\Models\ProductWholeprice;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class ProductWholesaleController extends Controller
+class ProductWholepriceController extends Controller
 {
     /**
      * Store a newly created resource in storage.
@@ -16,12 +16,12 @@ class ProductWholesaleController extends Controller
         $validated = $request->validate([
             'product_id' => ['required', 'exists:products,id'],
             'minimum_qty' => ['required', 'integer', 'min:1'],
-            'wholesale_price' => ['required', 'numeric', 'min:0'],
+            'wholeprice_price' => ['required', 'numeric', 'min:0'],
         ]);
 
-        $productWholesale = ProductWholesale::create($validated);
+        $productWholeprice = ProductWholeprice::create($validated);
 
-        return response()->json($productWholesale->load('product'), 201);
+        return response()->json($productWholeprice->load('product'), 201);
     }
 
     /**
@@ -35,33 +35,33 @@ class ProductWholesaleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ProductWholesale $productWholesale): JsonResponse
+    public function show(ProductWholeprice $productWholeprice): JsonResponse
     {
-        return response()->json($productWholesale->load('product'));
+        return response()->json($productWholeprice->load('product'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, ProductWholesale $productWholesale): JsonResponse
+    public function update(Request $request, ProductWholeprice $productWholeprice): JsonResponse
     {
         $validated = $request->validate([
             'product_id' => ['required', 'exists:products,id'],
             'minimum_qty' => ['required', 'integer', 'min:1'],
-            'wholesale_price' => ['required', 'numeric', 'min:0'],
+            'wholeprice_price' => ['required', 'numeric', 'min:0'],
         ]);
 
-        $productWholesale->update($validated);
+        $productWholeprice->update($validated);
 
-        return response()->json($productWholesale->load('product'));
+        return response()->json($productWholeprice->load('product'));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ProductWholesale $productWholesale): JsonResponse
+    public function destroy(ProductWholeprice $productWholeprice): JsonResponse
     {
-        $productWholesale->delete();
+        $productWholeprice->delete();
 
         return response()->json(null, 204);
     }
@@ -69,8 +69,8 @@ class ProductWholesaleController extends Controller
     /**
      * Alias for destroy.
      */
-    public function delete(ProductWholesale $productWholesale): JsonResponse
+    public function delete(ProductWholeprice $productWholeprice): JsonResponse
     {
-        return $this->destroy($productWholesale);
+        return $this->destroy($productWholeprice);
     }
 }

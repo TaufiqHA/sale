@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_wholesales', function (Blueprint $table) {
+        Schema::create('product_wholeprices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->integer('minimum_qty')->comment('Minimal pembelian');
-            $table->decimal('wholesale_price', 15, 2);
+            $table->decimal('wholeprice_price', 15, 2);
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_wholesales');
+        Schema::dropIfExists('product_wholeprices');
     }
 };

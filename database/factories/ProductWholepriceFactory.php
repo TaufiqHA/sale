@@ -3,13 +3,13 @@
 namespace Database\Factories;
 
 use App\Models\Product;
-use App\Models\ProductWholesale;
+use App\Models\ProductWholeprice;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<ProductWholesale>
+ * @extends Factory<ProductWholeprice>
  */
-class ProductWholesaleFactory extends Factory
+class ProductWholepriceFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -21,7 +21,7 @@ class ProductWholesaleFactory extends Factory
         return [
             'product_id' => Product::factory(),
             'minimum_qty' => fake()->numberBetween(2, 50),
-            'wholesale_price' => fake()->randomFloat(2, 5, 100),
+            'wholeprice_price' => fake()->randomFloat(2, 5, 100),
         ];
     }
 }

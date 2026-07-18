@@ -78,10 +78,10 @@ class Product extends Model
     }
 
     /**
-     * Get the wholesale prices for the product.
+     * Get the wholeprices for the product.
      */
-    public function wholesales(): HasMany
+    public function wholeprices(): HasMany
     {
-        return $this->hasMany(ProductWholesale::class);
+        return $this->hasMany(ProductWholeprice::class);
     }
 }

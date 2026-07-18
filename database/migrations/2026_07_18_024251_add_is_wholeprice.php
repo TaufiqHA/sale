@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        if (! Schema::hasColumn('products', 'is_wholesale')) {
+        if (! Schema::hasColumn('products', 'is_wholeprice')) {
             Schema::table('products', function (Blueprint $table) {
-                $table->boolean('is_wholesale')->default(false);
+                $table->boolean('is_wholeprice')->default(false);
             });
         }
     }
@@ -23,9 +23,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        if (Schema::hasColumn('products', 'is_wholesale')) {
+        if (Schema::hasColumn('products', 'is_wholeprice')) {
             Schema::table('products', function (Blueprint $table) {
-                $table->dropColumn('is_wholesale');
+                $table->dropColumn('is_wholeprice');
             });
         }
     }
