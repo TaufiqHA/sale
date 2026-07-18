@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'qty',
     'price',
     'subtotal',
+    'is_wholeprice',
+    'wholeprice_id',
 ])]
 class SaleItem extends Model
 {
@@ -31,6 +33,8 @@ class SaleItem extends Model
             'qty' => 'integer',
             'price' => 'decimal:2',
             'subtotal' => 'decimal:2',
+            'is_wholeprice' => 'boolean',
+            'wholeprice_id' => 'integer',
         ];
     }
 
@@ -48,5 +52,13 @@ class SaleItem extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * Get the wholeprice tier that owns the sale item.
+     */
+    public function wholeprice(): BelongsTo
+    {
+        return $this->belongsTo(ProductWholeprice::class, 'wholeprice_id');
     }
 }

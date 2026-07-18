@@ -17,7 +17,8 @@ return new class extends Migration
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
             $table->integer('qty');
             $table->decimal('price', 15, 2)->comment('Harga jual saat transaksi');
-            // $table->boolean('is_wholesale')->default(false)->comment('Checklist Grosir');
+            $table->boolean('is_wholeprice')->default(false);
+            $table->foreignId('wholeprice_id')->nullable()->constrained('product_wholeprices')->nullOnDelete();
             $table->decimal('subtotal', 15, 2);
             $table->timestamps();
         });
