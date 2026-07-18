@@ -263,6 +263,24 @@
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
                                 </button>
                             </div>
+
+                            <!-- Dynamic Wholeprice Radio Options Container -->
+                            <div id="item-wholeprice-wrapper" class="col-span-12 hidden bg-neutral-primary-soft p-3 rounded-lg border border-default-medium mt-1">
+                                <div class="text-xs font-semibold text-heading mb-2">Pilihan Tipe Harga:</div>
+                                <div class="flex flex-wrap gap-4">
+                                    <label class="inline-flex items-center cursor-pointer text-xs text-body font-medium">
+                                        <input type="radio" id="price-type-normal" name="price_type" value="normal" checked onchange="onPriceTypeChange('normal')" class="mr-2 text-brand focus:ring-brand">
+                                        Harga Normal (<span id="normal-price-label">Rp 0</span>)
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer text-xs text-body font-medium">
+                                        <input type="radio" id="price-type-wholeprice" name="price_type" value="wholeprice" onchange="onPriceTypeChange('wholeprice')" class="mr-2 text-brand focus:ring-brand">
+                                        Harga Grosir
+                                    </label>
+                                </div>
+                                <div id="wholeprice-tiers-selection" class="hidden mt-3 pl-4 border-l-2 border-slate-200 flex flex-col gap-2">
+                                    <!-- Tiers dynamically rendered here -->
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Items Table -->
@@ -962,19 +980,102 @@
         const selectedOption = productSelect.options[productSelect.selectedIndex];
         const priceInput = document.getElementById("input-item-price");
         const qtyInput = document.getElementById("input-item-qty");
+        const wholepriceWrapper = document.getElementById("item-wholeprice-wrapper");
+        const normalPriceLabel = document.getElementById("normal-price-label");
+        const tiersContainer = document.getElementById("wholeprice-tiers-selection");
+        
+        // Reset wholeprice state
+        wholepriceWrapper.classList.add("hidden");
+        document.getElementById("price-type-normal").checked = true;
+        tiersContainer.classList.add("hidden");
+        tiersContainer.innerHTML = "";
         
         if (selectedOption && selectedOption.value) {
+            const productId = selectedOption.value;
             const defaultPrice = parseFloat(selectedOption.getAttribute("data-price")) || 0;
             priceInput.value = formatNumberInput(Math.round(defaultPrice).toString());
             qtyInput.value = 1;
+            
+            // Look up product in activeProducts to check if is_wholeprice is true
+            const productObj = activeProducts.find(p => String(p.id) === String(productId));
+            if (productObj && productObj.is_wholeprice && productObj.wholeprices && productObj.wholeprices.length > 0) {
+                // Populate options
+                normalPriceLabel.innerText = formatCurrency(defaultPrice);
+                productObj.wholeprices.forEach((tier, index) => {
+                    const div = document.createElement("div");
+                    div.className = "flex items-center gap-2";
+                    div.innerHTML = `
+                        <label class="inline-flex items-center cursor-pointer text-xs text-body">
+                            <input type="radio" name="selected_wholeprice_tier" value="${tier.id}" data-min-qty="${tier.minimum_qty}" data-price="${tier.wholeprice_price}" onchange="selectWholepriceTier(this)" class="mr-2 text-brand focus:ring-brand" ${index === 0 ? 'checked' : ''}>
+                            Min. Qty ${tier.minimum_qty} - ${formatCurrency(tier.wholeprice_price)} / unit
+                        </label>
+                    `;
+                    tiersContainer.appendChild(div);
+                });
+                
+                // Show wrapper
+                wholepriceWrapper.classList.remove("hidden");
+            }
         } else {
             priceInput.value = "";
             qtyInput.value = 1;
         }
     }
 
+    function onPriceTypeChange(type) {
+        const productSelect = document.getElementById("select-product-id");
+        const selectedOption = productSelect.options[productSelect.selectedIndex];
+        const priceInput = document.getElementById("input-item-price");
+        const tiersContainer = document.getElementById("wholeprice-tiers-selection");
+
+        if (type === 'normal') {
+            tiersContainer.classList.add("hidden");
+            if (selectedOption && selectedOption.value) {
+                const defaultPrice = parseFloat(selectedOption.getAttribute("data-price")) || 0;
+                priceInput.value = formatNumberInput(Math.round(defaultPrice).toString());
+            }
+        } else {
+            tiersContainer.classList.remove("hidden");
+            // Select first tier by default
+            const firstTierInput = tiersContainer.querySelector('input[name="selected_wholeprice_tier"]');
+            if (firstTierInput) {
+                firstTierInput.checked = true;
+                selectWholepriceTier(firstTierInput);
+            }
+        }
+    }
+
+    function selectWholepriceTier(tierRadio) {
+        const priceInput = document.getElementById("input-item-price");
+        const qtyInput = document.getElementById("input-item-qty");
+        
+        const minQty = parseInt(tierRadio.getAttribute("data-min-qty")) || 1;
+        const tierPrice = parseFloat(tierRadio.getAttribute("data-price")) || 0;
+        
+        priceInput.value = formatNumberInput(Math.round(tierPrice).toString());
+        
+        // Auto update qty if it's less than minimum qty of the tier
+        const currentQty = parseInt(qtyInput.value) || 0;
+        if (currentQty < minQty) {
+            qtyInput.value = minQty;
+        }
+    }
+
     function calculateItemSubtotal() {
-        // No action needed as subtotal is calculated upon addition
+        const qtyInput = document.getElementById("input-item-qty");
+        const isWholepriceChecked = document.getElementById("price-type-wholeprice").checked;
+        if (isWholepriceChecked) {
+            const selectedTierRadio = document.querySelector('input[name="selected_wholeprice_tier"]:checked');
+            if (selectedTierRadio) {
+                const minQty = parseInt(selectedTierRadio.getAttribute("data-min-qty")) || 1;
+                const currentQty = parseInt(qtyInput.value) || 0;
+                if (currentQty < minQty) {
+                    showToast(`Quantity kurang dari minimal pembelian untuk harga grosir ini (${minQty}). Harga dialihkan kembali ke harga normal.`, "warning");
+                    document.getElementById("price-type-normal").checked = true;
+                    onPriceTypeChange('normal');
+                }
+            }
+        }
     }
 
     function addSaleItem() {
@@ -1003,8 +1104,23 @@
             showToast("Harga tidak boleh negatif!", "error");
             return;
         }
+
+        // Check if wholeprice is used
+        const isWholeprice = document.getElementById("price-type-wholeprice").checked;
+        let wholepriceId = null;
+        if (isWholeprice) {
+            const selectedTierRadio = document.querySelector('input[name="selected_wholeprice_tier"]:checked');
+            if (selectedTierRadio) {
+                wholepriceId = selectedTierRadio.value;
+            }
+        }
         
-        const existingIndex = saleItems.findIndex(item => String(item.product_id) === String(productId));
+        const existingIndex = saleItems.findIndex(item => 
+            String(item.product_id) === String(productId) &&
+            !!item.is_wholeprice === isWholeprice &&
+            String(item.wholeprice_id) === String(wholepriceId)
+        );
+        
         if (existingIndex > -1) {
             saleItems[existingIndex].qty += qty;
             saleItems[existingIndex].subtotal = saleItems[existingIndex].qty * saleItems[existingIndex].price;
@@ -1015,7 +1131,9 @@
                 product_image: productImage,
                 qty: qty,
                 price: price,
-                subtotal: qty * price
+                subtotal: qty * price,
+                is_wholeprice: isWholeprice ? 1 : 0,
+                wholeprice_id: wholepriceId
             });
         }
         
@@ -1023,6 +1141,9 @@
         productSelect.value = "";
         qtyInput.value = "1";
         priceInput.value = "";
+        
+        // Hide wholeprice wrapper
+        document.getElementById("item-wholeprice-wrapper").classList.add("hidden");
         
         renderSaleItemsTable();
         calculateGrandTotal();
@@ -1051,13 +1172,16 @@
                 ? `<img src="/storage/${item.product_image}" class="w-10 h-10 object-cover rounded mx-auto border border-default" alt="${escapeHtml(item.product_name)}">`
                 : `<div class="w-10 h-10 bg-slate-100 border border-default rounded flex items-center justify-center text-slate-400 mx-auto">
                      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
-                   </div>`;
+                    </div>`;
             
             row.innerHTML = `
                 <td class="px-4 py-2">
                     ${imageHtml}
                 </td>
-                <td class="px-4 py-2 font-medium text-heading">${escapeHtml(item.product_name)}</td>
+                <td class="px-4 py-2 font-medium text-heading">
+                    <div>${escapeHtml(item.product_name)}</div>
+                    ${item.is_wholeprice ? '<span class="px-1.5 py-0.5 text-[9px] bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200 mt-1 inline-block">Grosir</span>' : ''}
+                </td>
                 <td class="px-4 py-2 text-center font-semibold">${item.qty}</td>
                 <td class="px-4 py-2 text-right">${formatCurrency(item.price)}</td>
                 <td class="px-4 py-2 text-right font-bold text-slate-800">${formatCurrency(item.subtotal)}</td>
@@ -1415,6 +1539,9 @@
         document.getElementById("sale-id").value = "";
         document.getElementById("sale-form").reset();
         
+        // Hide wholeprice wrapper
+        document.getElementById("item-wholeprice-wrapper").classList.add("hidden");
+        
         saleItems = [];
         renderSaleItemsTable();
 
@@ -1473,6 +1600,9 @@
         document.getElementById("input-discount").value = formatNumberInput(Math.round(sale.discount || 0).toString()) || "0";
         document.getElementById("input-shipping-cost").value = formatNumberInput(Math.round(sale.shipping_cost || 0).toString()) || "0";
 
+        // Hide wholeprice wrapper
+        document.getElementById("item-wholeprice-wrapper").classList.add("hidden");
+
         // Load items
         saleItems = sale.items ? sale.items.map(item => ({
             product_id: item.product_id,
@@ -1480,7 +1610,9 @@
             product_image: item.product ? item.product.image : null,
             qty: parseInt(item.qty),
             price: parseFloat(item.price),
-            subtotal: parseFloat(item.subtotal)
+            subtotal: parseFloat(item.subtotal),
+            is_wholeprice: item.is_wholeprice ? 1 : 0,
+            wholeprice_id: item.wholeprice_id || null
         })) : [];
         
         renderSaleItemsTable();

@@ -261,4 +261,84 @@ class ProductTest extends TestCase
 
         Storage::disk('public')->assertMissing($imagePath);
     }
+
+    public function test_authenticated_user_can_create_product_with_wholeprices(): void
+    {
+        $user = User::factory()->create();
+        $category = Category::factory()->create();
+        $unit = Unit::factory()->create();
+        $counter = Counter::factory()->create();
+
+        $response = $this->actingAs($user)->postJson('/products', [
+            'category_id' => $category->id,
+            'unit_id' => $unit->id,
+            'counter_id' => $counter->id,
+            'sku' => 'SKU-WHOLEPRICE-NEW',
+            'barcode' => '88800112299',
+            'name' => 'Wholesale Soda',
+            'description' => 'Soda with wholesale tiers',
+            'buy_price' => 4500,
+            'sell_price' => 6000,
+            'stock' => 50,
+            'status' => true,
+            'is_wholeprice' => true,
+            'wholeprices' => [
+                ['minimum_qty' => 10, 'wholeprice_price' => 5500],
+                ['minimum_qty' => 50, 'wholeprice_price' => 5000],
+            ],
+        ]);
+
+        $response->assertStatus(201);
+        $product = Product::where('sku', 'SKU-WHOLEPRICE-NEW')->first();
+        $this->assertTrue($product->is_wholeprice);
+        $this->assertCount(2, $product->wholeprices);
+        $this->assertDatabaseHas('product_wholeprices', [
+            'product_id' => $product->id,
+            'minimum_qty' => 10,
+            'wholeprice_price' => 5500.00,
+        ]);
+        $this->assertDatabaseHas('product_wholeprices', [
+            'product_id' => $product->id,
+            'minimum_qty' => 50,
+            'wholeprice_price' => 5000.00,
+        ]);
+    }
+
+    public function test_authenticated_user_can_update_product_wholeprices(): void
+    {
+        $user = User::factory()->create();
+        $product = Product::factory()->create([
+            'is_wholeprice' => true,
+        ]);
+        $product->wholeprices()->create(['minimum_qty' => 10, 'wholeprice_price' => 5500]);
+
+        $response = $this->actingAs($user)->putJson('/products/'.$product->id, [
+            'category_id' => $product->category_id,
+            'unit_id' => $product->unit_id,
+            'counter_id' => $product->counter_id,
+            'sku' => $product->sku,
+            'name' => $product->name,
+            'buy_price' => $product->buy_price,
+            'sell_price' => $product->sell_price,
+            'stock' => $product->stock,
+            'status' => true,
+            'is_wholeprice' => true,
+            'wholeprices' => [
+                ['minimum_qty' => 20, 'wholeprice_price' => 5200],
+            ],
+        ]);
+
+        $response->assertStatus(200);
+        $product->refresh();
+        $this->assertCount(1, $product->wholeprices);
+        $this->assertDatabaseMissing('product_wholeprices', [
+            'product_id' => $product->id,
+            'minimum_qty' => 10,
+        ]);
+        $this->assertDatabaseHas('product_wholeprices', [
+            'product_id' => $product->id,
+            'minimum_qty' => 20,
+            'wholeprice_price' => 5200.00,
+        ]);
+    }
 }

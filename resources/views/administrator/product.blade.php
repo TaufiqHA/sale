@@ -247,6 +247,31 @@
                         <p id="error-image" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
+                    <!-- Wholeprice Checkbox -->
+                    <div class="col-span-2 flex items-center gap-3 py-2 border-t border-default pt-4">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="input-is_wholeprice" name="is_wholeprice" class="sr-only peer" onchange="toggleWholepriceSection(this.checked)">
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#1e50d0]/10 rounded-full peer peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1e50d0]"></div>
+                            <span class="ml-3 text-sm font-semibold text-slate-700">Aktifkan Harga Grosir</span>
+                        </label>
+                        <p id="error-is_wholeprice" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+
+                    <!-- Wholeprice Section -->
+                    <div id="wholeprice-section" class="col-span-2 hidden bg-neutral-secondary-soft p-4 rounded-base border border-default">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-sm font-semibold text-heading">Daftar Harga Grosir</h4>
+                            <button type="button" onclick="addWholepriceRow()" class="px-3 py-1.5 bg-brand text-white hover:bg-brand-strong rounded-base text-xs font-semibold focus:outline-none transition duration-150 inline-flex items-center gap-1.5 cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                                Tambah Level
+                            </button>
+                        </div>
+                        <div id="wholeprice-rows-container" class="flex flex-col gap-3">
+                            <!-- Rows loaded dynamically by JS -->
+                        </div>
+                        <p id="error-wholeprices" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+
                     <!-- Status Checkbox -->
                     <div class="col-span-2 flex items-center gap-3 py-2">
                         <label class="relative inline-flex items-center cursor-pointer">
@@ -632,7 +657,10 @@
                 <td class="px-6 py-4 text-xs font-semibold text-body">${escapeHtml(counterName)}</td>
                 <td class="px-6 py-4 text-xs font-bold text-body">${product.stock}</td>
                 <td class="px-6 py-4 font-semibold text-body">${formatRupiah(product.buy_price)}</td>
-                <td class="px-6 py-4 font-semibold text-fg-brand">${formatRupiah(product.sell_price)}</td>
+                <td class="px-6 py-4 font-semibold text-fg-brand">
+                    ${formatRupiah(product.sell_price)}
+                    ${product.is_wholeprice ? `<div class="text-[10px] text-emerald-600 font-semibold mt-1">Grosir Aktif</div>` : ''}
+                </td>
                 <td class="px-6 py-4">
                     <span class="px-2.5 py-1 text-[11px] rounded-full ${badgeClass}">
                         ${badgeText}
@@ -664,6 +692,10 @@
         document.getElementById("input-counter_id").selectedIndex = 0;
         document.getElementById("input-stock").value = 0;
         
+        document.getElementById("input-is_wholeprice").checked = false;
+        toggleWholepriceSection(false);
+        document.getElementById("wholeprice-rows-container").innerHTML = "";
+
         resetImagePreview();
         clearValidationErrors();
         showModal();
@@ -689,6 +721,17 @@
             descInput.value = product.description || "";
         }
         document.getElementById("input-status").checked = !!product.status;
+
+        // Reset and populate wholeprice
+        document.getElementById("wholeprice-rows-container").innerHTML = "";
+        const isWholeprice = !!product.is_wholeprice;
+        document.getElementById("input-is_wholeprice").checked = isWholeprice;
+        toggleWholepriceSection(isWholeprice);
+        if (isWholeprice && product.wholeprices) {
+            product.wholeprices.forEach(tier => {
+                addWholepriceRow(tier.minimum_qty, formatThousandSeparator(Math.round(parseFloat(tier.wholeprice_price))));
+            });
+        }
 
         resetImagePreview();
         if (product.image) {
@@ -729,6 +772,45 @@
             modal.classList.add("hidden");
             resetImagePreview();
         }, 300);
+    }
+
+    // Wholeprice Helpers
+    function toggleWholepriceSection(show) {
+        const section = document.getElementById("wholeprice-section");
+        if (show) {
+            section.classList.remove("hidden");
+        } else {
+            section.classList.add("hidden");
+        }
+    }
+
+    function addWholepriceRow(minQty = '', price = '') {
+        const container = document.getElementById("wholeprice-rows-container");
+        const row = document.createElement("div");
+        row.className = "wholeprice-row flex items-end gap-3 bg-white p-3 rounded-lg border border-default-medium";
+        row.innerHTML = `
+            <div class="flex-1">
+                <label class="block mb-1.5 text-[11px] font-semibold text-slate-500">Min. Qty</label>
+                <input type="number" min="1" class="input-min-qty bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-2.5 py-1.5 shadow-xs" placeholder="Misal: 10" value="${minQty}" required>
+            </div>
+            <div class="flex-1">
+                <label class="block mb-1.5 text-[11px] font-semibold text-slate-500">Harga Grosir (Rp)</label>
+                <input type="text" class="input-wholeprice-price bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-2.5 py-1.5 shadow-xs" placeholder="Misal: 6.500" value="${price}" oninput="this.value = formatThousandSeparator(this.value)" required>
+            </div>
+            <div class="shrink-0">
+                <button type="button" onclick="removeWholepriceRow(this)" class="text-rose-600 hover:text-rose-800 p-1.5 hover:bg-rose-50 rounded-lg transition cursor-pointer" title="Hapus Level">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                </button>
+            </div>
+        `;
+        container.appendChild(row);
+    }
+
+    function removeWholepriceRow(button) {
+        const row = button.closest(".wholeprice-row");
+        if (row) {
+            row.remove();
+        }
     }
 
     // Image Upload Preview & Removal Helpers
@@ -1022,6 +1104,7 @@
         const descInput = document.getElementById("input-description");
         const description = descInput ? descInput.value : "";
         const status = document.getElementById("input-status").checked;
+        const isWholeprice = document.getElementById("input-is_wholeprice").checked;
 
         const formData = new FormData();
         formData.append("name", name);
@@ -1037,6 +1120,17 @@
         formData.append("stock", stock);
         formData.append("description", description);
         formData.append("status", status ? "1" : "0");
+        formData.append("is_wholeprice", isWholeprice ? "1" : "0");
+
+        if (isWholeprice) {
+            const rows = document.querySelectorAll(".wholeprice-row");
+            rows.forEach((row, index) => {
+                const minQty = row.querySelector(".input-min-qty").value;
+                const price = row.querySelector(".input-wholeprice-price").value.replace(/\./g, "");
+                formData.append(`wholeprices[${index}][minimum_qty]`, minQty);
+                formData.append(`wholeprices[${index}][wholeprice_price]`, price);
+            });
+        }
 
         const imageFileInput = document.getElementById("input-image");
         if (imageFileInput.files.length > 0) {
@@ -1100,6 +1194,14 @@
     // Validation Display
     function showValidationErrors(errors) {
         Object.keys(errors).forEach(key => {
+            if (key.includes('.')) {
+                const generalErrorEl = document.getElementById("error-wholeprices");
+                if (generalErrorEl) {
+                    generalErrorEl.innerText = errors[key].join(", ");
+                    generalErrorEl.classList.remove("hidden");
+                }
+                return;
+            }
             const errorEl = document.getElementById(`error-${key}`);
             const inputEl = document.getElementById(`input-${key}`);
             if (errorEl) {

@@ -32,7 +32,7 @@ class SaleController extends Controller
             'expeditions' => Expedition::all(),
             'marketplaces' => Marketplace::all(),
             'couriers' => Courier::all(),
-            'products' => Product::where('status', true)->get(),
+            'products' => Product::where('status', true)->with('wholeprices')->get(),
         ]);
     }
 
@@ -60,6 +60,8 @@ class SaleController extends Controller
             'items.*.qty' => ['required', 'integer', 'min:1'],
             'items.*.price' => ['required', 'numeric', 'min:0'],
             'items.*.subtotal' => ['required', 'numeric', 'min:0'],
+            'items.*.is_wholeprice' => ['nullable', 'boolean'],
+            'items.*.wholeprice_id' => ['nullable', 'exists:product_wholeprices,id'],
         ]);
 
         $sale = DB::transaction(function () use ($validated) {
@@ -120,6 +122,8 @@ class SaleController extends Controller
             'items.*.qty' => ['required', 'integer', 'min:1'],
             'items.*.price' => ['required', 'numeric', 'min:0'],
             'items.*.subtotal' => ['required', 'numeric', 'min:0'],
+            'items.*.is_wholeprice' => ['nullable', 'boolean'],
+            'items.*.wholeprice_id' => ['nullable', 'exists:product_wholeprices,id'],
         ]);
 
         DB::transaction(function () use ($sale, $validated) {

@@ -16,7 +16,7 @@ class ProductController extends Controller
     public function index(Request $request): JsonResponse|View
     {
         if ($request->wantsJson()) {
-            return response()->json(Product::with(['category', 'unit', 'counter'])->get());
+            return response()->json(Product::with(['category', 'unit', 'counter', 'wholeprices'])->get());
         }
 
         return view('administrator.product');
@@ -40,6 +40,10 @@ class ProductController extends Controller
             'stock' => ['required', 'integer', 'min:0'],
             'status' => ['nullable', 'boolean'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'is_wholeprice' => ['nullable', 'boolean'],
+            'wholeprices' => ['nullable', 'array'],
+            'wholeprices.*.minimum_qty' => ['required_if:is_wholeprice,true', 'integer', 'min:1'],
+            'wholeprices.*.wholeprice_price' => ['required_if:is_wholeprice,true', 'numeric', 'min:0'],
         ]);
 
         if ($request->hasFile('image')) {
@@ -48,7 +52,18 @@ class ProductController extends Controller
 
         $product = Product::create($validated);
 
-        return response()->json($product->load(['category', 'unit', 'counter']), 201);
+        if ($request->boolean('is_wholeprice') && $request->has('wholeprices')) {
+            foreach ($request->input('wholeprices') as $tier) {
+                if (! empty($tier['minimum_qty']) && isset($tier['wholeprice_price'])) {
+                    $product->wholeprices()->create([
+                        'minimum_qty' => $tier['minimum_qty'],
+                        'wholeprice_price' => $tier['wholeprice_price'],
+                    ]);
+                }
+            }
+        }
+
+        return response()->json($product->load(['category', 'unit', 'counter', 'wholeprices']), 201);
     }
 
     /**
@@ -64,7 +79,7 @@ class ProductController extends Controller
      */
     public function show(Product $product): JsonResponse
     {
-        return response()->json($product->load(['category', 'unit', 'counter']));
+        return response()->json($product->load(['category', 'unit', 'counter', 'wholeprices']));
     }
 
     /**
@@ -85,6 +100,10 @@ class ProductController extends Controller
             'stock' => ['required', 'integer', 'min:0'],
             'status' => ['nullable', 'boolean'],
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,webp', 'max:2048'],
+            'is_wholeprice' => ['nullable', 'boolean'],
+            'wholeprices' => ['nullable', 'array'],
+            'wholeprices.*.minimum_qty' => ['required_if:is_wholeprice,true', 'integer', 'min:1'],
+            'wholeprices.*.wholeprice_price' => ['required_if:is_wholeprice,true', 'numeric', 'min:0'],
         ]);
 
         if ($request->boolean('remove_image')) {
@@ -101,7 +120,21 @@ class ProductController extends Controller
 
         $product->update($validated);
 
-        return response()->json($product->load(['category', 'unit', 'counter']));
+        if ($request->boolean('is_wholeprice') && $request->has('wholeprices')) {
+            $product->wholeprices()->delete();
+            foreach ($request->input('wholeprices') as $tier) {
+                if (! empty($tier['minimum_qty']) && isset($tier['wholeprice_price'])) {
+                    $product->wholeprices()->create([
+                        'minimum_qty' => $tier['minimum_qty'],
+                        'wholeprice_price' => $tier['wholeprice_price'],
+                    ]);
+                }
+            }
+        } else {
+            $product->wholeprices()->delete();
+        }
+
+        return response()->json($product->load(['category', 'unit', 'counter', 'wholeprices']));
     }
 
     /**

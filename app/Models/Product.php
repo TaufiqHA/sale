@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'stock',
     'status',
     'image',
+    'is_wholeprice',
 ])]
 class Product extends Model
 {
@@ -36,6 +37,7 @@ class Product extends Model
     protected $attributes = [
         'status' => true,
         'stock' => 0,
+        'is_wholeprice' => false,
     ];
 
     /**
@@ -47,6 +49,7 @@ class Product extends Model
     {
         return [
             'status' => 'boolean',
+            'is_wholeprice' => 'boolean',
             'buy_price' => 'decimal:2',
             'sell_price' => 'decimal:2',
             'stock' => 'integer',

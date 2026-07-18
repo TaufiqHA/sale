@@ -303,4 +303,47 @@ class SaleTest extends TestCase
         $response->assertStatus(204);
         $this->assertEquals(10, $product->fresh()->stock);
     }
+
+    public function test_sale_creation_with_wholeprice_item(): void
+    {
+        $user = User::factory()->create();
+        $counter = Counter::factory()->create();
+        $product = Product::factory()->create(['stock' => 20]);
+        $wholeprice = $product->wholeprices()->create([
+            'minimum_qty' => 10,
+            'wholeprice_price' => 5000.00,
+        ]);
+
+        $response = $this->actingAs($user)->postJson('/sales', [
+            'counter_id' => $counter->id,
+            'barcode' => '1234567890',
+            'type' => 'umum',
+            'date' => now()->toDateTimeString(),
+            'subtotal' => 50000.00,
+            'discount' => 0.00,
+            'shipping_cost' => 0.00,
+            'grand_total' => 50000.00,
+            'payment_method' => 'transfer',
+            'items' => [
+                [
+                    'product_id' => $product->id,
+                    'qty' => 10,
+                    'price' => 5000.00,
+                    'subtotal' => 50000.00,
+                    'is_wholeprice' => true,
+                    'wholeprice_id' => $wholeprice->id,
+                ],
+            ],
+        ]);
+
+        $response->assertStatus(201);
+        $this->assertEquals(10, $product->fresh()->stock);
+        $this->assertDatabaseHas('sale_items', [
+            'product_id' => $product->id,
+            'is_wholeprice' => true,
+            'wholeprice_id' => $wholeprice->id,
+            'qty' => 10,
+            'price' => 5000.00,
+        ]);
+    }
 }
