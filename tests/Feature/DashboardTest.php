@@ -62,6 +62,7 @@ class DashboardTest extends TestCase
         $response->assertStatus(200);
         $response->assertViewHas('counters');
         $response->assertViewHas('categories');
+        $response->assertViewHas('months');
     }
 
     /**
@@ -99,7 +100,7 @@ class DashboardTest extends TestCase
         // Create a Sale for Counter A
         $sale1 = Sale::factory()->create([
             'counter_id' => $counterA->id,
-            'date' => now()->format('Y-m-d H:i:s'),
+            'date' => '2026-07-20 10:00:00',
             'subtotal' => 30000,
             'discount' => 3000, // 10% discount
             'shipping_cost' => 5000,
@@ -118,7 +119,7 @@ class DashboardTest extends TestCase
         // Create a Sale for Counter B
         $sale2 = Sale::factory()->create([
             'counter_id' => $counterB->id,
-            'date' => now()->format('Y-m-d H:i:s'),
+            'date' => '2026-07-20 14:00:00',
             'subtotal' => 60000,
             'discount' => 0,
             'shipping_cost' => 0,
@@ -134,7 +135,25 @@ class DashboardTest extends TestCase
             'subtotal' => 60000,
         ]);
 
-        // Request stats without filters (returns combined values)
+        // Create a Sale for Counter A in previous month
+        $sale3 = Sale::factory()->create([
+            'counter_id' => $counterA->id,
+            'date' => '2026-06-20 10:00:00',
+            'subtotal' => 15000,
+            'discount' => 0,
+            'shipping_cost' => 0,
+            'grand_total' => 15000,
+        ]);
+
+        SaleItem::factory()->create([
+            'sale_id' => $sale3->id,
+            'product_id' => $productA->id,
+            'qty' => 1,
+            'price' => 15000,
+            'subtotal' => 15000,
+        ]);
+
+        // Request stats without filters (returns combined values for all 3 sales)
         $responseAll = $this->actingAs($user)->getJson('/administrator/dashboard/stats');
         $responseAll->assertStatus(200);
 
@@ -142,28 +161,44 @@ class DashboardTest extends TestCase
         // Total Omset:
         // sale 1: 30000 - 3000 = 27000
         // sale 2: 60000 - 0 = 60000
-        // Combined Omset = 87000
-        // Total Qty = 2 + 2 = 4
+        // sale 3: 15000 - 0 = 15000
+        // Combined Omset = 102000
+        // Total Qty = 2 + 2 + 1 = 5
         // Total Keuntungan (Estimasi):
-        // sale 1 item: Net Omset (27000) - Cost (2 * 10000 = 20000) = 7000
-        // sale 2 item: Net Omset (60000) - Cost (2 * 20000 = 40000) = 20000
-        // Combined Keuntungan = 27000
-        $responseAll->assertJsonPath('summary.total_omset', 87000);
-        $responseAll->assertJsonPath('summary.total_keuntungan', 27000);
-        $responseAll->assertJsonPath('summary.total_qty', 4);
+        // sale 1 item: Net Omset (27000) - Cost (20000) = 7000
+        // sale 2 item: Net Omset (60000) - Cost (40000) = 20000
+        // sale 3 item: Net Omset (15000) - Cost (10000) = 5000
+        // Combined Keuntungan = 32000
+        $responseAll->assertJsonPath('summary.total_omset', 102000);
+        $responseAll->assertJsonPath('summary.total_keuntungan', 32000);
+        $responseAll->assertJsonPath('summary.total_qty', 5);
 
-        // Request stats filtered by Counter A
+        // Request stats filtered by Counter A (includes sale 1 and sale 3)
         $responseCounterA = $this->actingAs($user)->getJson('/administrator/dashboard/stats?counter_id='.$counterA->id);
         $responseCounterA->assertStatus(200);
-        $responseCounterA->assertJsonPath('summary.total_omset', 27000);
-        $responseCounterA->assertJsonPath('summary.total_keuntungan', 7000);
-        $responseCounterA->assertJsonPath('summary.total_qty', 2);
+        $responseCounterA->assertJsonPath('summary.total_omset', 42000);
+        $responseCounterA->assertJsonPath('summary.total_keuntungan', 12000);
+        $responseCounterA->assertJsonPath('summary.total_qty', 3);
 
-        // Request stats filtered by Category B
+        // Request stats filtered by Category B (only sale 2)
         $responseCategoryB = $this->actingAs($user)->getJson('/administrator/dashboard/stats?category_id='.$categoryB->id);
         $responseCategoryB->assertStatus(200);
         $responseCategoryB->assertJsonPath('summary.total_omset', 60000);
         $responseCategoryB->assertJsonPath('summary.total_keuntungan', 20000);
         $responseCategoryB->assertJsonPath('summary.total_qty', 2);
+
+        // Request stats filtered by specific date (only sale 1 and sale 2)
+        $responseDate = $this->actingAs($user)->getJson('/administrator/dashboard/stats?date=2026-07-20');
+        $responseDate->assertStatus(200);
+        $responseDate->assertJsonPath('summary.total_omset', 87000);
+        $responseDate->assertJsonPath('summary.total_keuntungan', 27000);
+        $responseDate->assertJsonPath('summary.total_qty', 4);
+
+        // Request stats filtered by another specific date (only sale 3)
+        $responseDate3 = $this->actingAs($user)->getJson('/administrator/dashboard/stats?date=2026-06-20');
+        $responseDate3->assertStatus(200);
+        $responseDate3->assertJsonPath('summary.total_omset', 15000);
+        $responseDate3->assertJsonPath('summary.total_keuntungan', 5000);
+        $responseDate3->assertJsonPath('summary.total_qty', 1);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Counter;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -37,6 +38,12 @@ class DashboardController extends Controller
 
         $counterId = $request->input('counter_id');
         $categoryId = $request->input('category_id');
+        $date = $request->input('date');
+
+        $dateValue = null;
+        if ($date && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            $dateValue = $date;
+        }
 
         // 1. Fetch Summary Stats (Omset, Keuntungan, Qty)
         $summary = DB::table('sale_items')
@@ -48,6 +55,9 @@ class DashboardController extends Controller
             ->when($categoryId, function ($q) use ($categoryId) {
                 return $q->where('products.category_id', $categoryId);
             })
+            ->when($dateValue, function ($q) use ($dateValue) {
+                return $q->whereDate('sales.date', $dateValue);
+            })
             ->select(
                 DB::raw('COALESCE(SUM(sale_items.qty), 0) as total_qty'),
                 DB::raw('COALESCE(SUM(sale_items.subtotal * (1 - CASE WHEN sales.subtotal > 0 THEN sales.discount * 1.0 / sales.subtotal ELSE 0 END)), 0) as total_omset'),
@@ -55,10 +65,22 @@ class DashboardController extends Controller
             )
             ->first();
 
-        // 2. Fetch Chart Data (Last 7 Days)
+        // 2. Fetch Chart Data (Last 7 Days or 7 Days ending on Selected Date)
         $dates = [];
-        for ($i = 6; $i >= 0; $i--) {
-            $dates[] = now()->subDays($i)->format('Y-m-d');
+        if ($dateValue) {
+            $endDate = Carbon::parse($dateValue)->endOfDay();
+            $startDate = Carbon::parse($dateValue)->subDays(6)->startOfDay();
+
+            for ($i = 6; $i >= 0; $i--) {
+                $dates[] = Carbon::parse($dateValue)->subDays($i)->format('Y-m-d');
+            }
+        } else {
+            $startDate = now()->subDays(6)->startOfDay();
+            $endDate = now()->endOfDay();
+
+            for ($i = 6; $i >= 0; $i--) {
+                $dates[] = now()->subDays($i)->format('Y-m-d');
+            }
         }
 
         $dailySales = DB::table('sale_items')
@@ -70,8 +92,8 @@ class DashboardController extends Controller
             ->when($categoryId, function ($q) use ($categoryId) {
                 return $q->where('products.category_id', $categoryId);
             })
-            ->whereDate('sales.date', '>=', now()->subDays(6)->startOfDay())
-            ->whereDate('sales.date', '<=', now()->endOfDay())
+            ->whereDate('sales.date', '>=', $startDate)
+            ->whereDate('sales.date', '<=', $endDate)
             ->select(
                 DB::raw('DATE(sales.date) as date_only'),
                 DB::raw('COALESCE(SUM(sale_items.subtotal * (1 - CASE WHEN sales.subtotal > 0 THEN sales.discount * 1.0 / sales.subtotal ELSE 0 END)), 0) as omset')
@@ -82,11 +104,11 @@ class DashboardController extends Controller
             ->toArray();
 
         $chartData = [];
-        foreach ($dates as $date) {
-            $formattedDate = date('j M', strtotime($date));
+        foreach ($dates as $dateStr) {
+            $formattedDate = date('j M', strtotime($dateStr));
             $chartData[] = [
                 'date' => $formattedDate,
-                'omset' => round($dailySales[$date] ?? 0, 2),
+                'omset' => round($dailySales[$dateStr] ?? 0, 2),
             ];
         }
 
@@ -99,6 +121,9 @@ class DashboardController extends Controller
             })
             ->when($categoryId, function ($q) use ($categoryId) {
                 return $q->where('products.category_id', $categoryId);
+            })
+            ->when($dateValue, function ($q) use ($dateValue) {
+                return $q->whereDate('sales.date', $dateValue);
             })
             ->select(
                 'products.name as product_name',
@@ -119,6 +144,9 @@ class DashboardController extends Controller
             })
             ->when($categoryId, function ($q) use ($categoryId) {
                 return $q->where('products.category_id', $categoryId);
+            })
+            ->when($dateValue, function ($q) use ($dateValue) {
+                return $q->whereDate('sales.date', $dateValue);
             })
             ->select(
                 'sales.id as sale_id',

@@ -57,6 +57,16 @@
                     </ul>
                 </div>
             </div>
+
+            <!-- Daily Date Input wrapper -->
+            <div id="wrapper-filter-date" class="relative shrink-0 flex gap-2">
+                <input type="date" id="filter-date" onchange="fetchDashboardData()" class="w-full sm:w-48 bg-neutral-secondary-medium border border-default-medium text-body rounded-base text-sm px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+                <button type="button" onclick="resetDateFilter()" class="inline-flex items-center justify-center p-2.5 text-slate-500 bg-neutral-secondary-medium border border-default-medium rounded-base hover:bg-neutral-tertiary hover:text-heading cursor-pointer transition-colors duration-150" title="Reset Tanggal">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -184,9 +194,10 @@
     async function fetchDashboardData() {
         const counterId = document.getElementById('filter-counter-id').value;
         const categoryId = document.getElementById('filter-category-id').value;
+        const date = document.getElementById('filter-date').value;
 
         try {
-            const response = await fetch(`/administrator/dashboard/stats?counter_id=${counterId}&category_id=${categoryId}`, {
+            const response = await fetch(`/administrator/dashboard/stats?counter_id=${counterId}&category_id=${categoryId}&date=${date}`, {
                 headers: {
                     'Accept': 'application/json'
                 }
@@ -271,6 +282,16 @@
         }
         fetchDashboardData();
     }
+
+    function resetDateFilter() {
+        const input = document.getElementById('filter-date');
+        if (input) {
+            input.value = '';
+            fetchDashboardData();
+        }
+    }
+
+
 
     function updateChart(chartData) {
         const labels = chartData.map(item => item.date);
