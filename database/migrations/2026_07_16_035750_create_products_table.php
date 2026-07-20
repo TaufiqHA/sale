@@ -23,7 +23,7 @@ return new class extends Migration
             $table->decimal('buy_price', 15, 2);
             $table->decimal('sell_price', 15, 2);
             $table->boolean('is_wholeprice')->default(false);
-            $table->integer('stock')->default(0);
+            $table->decimal('stock', 15, 2)->default(0.00);
             $table->boolean('status')->default(true);
             $table->string('image')->nullable();
             $table->timestamps();

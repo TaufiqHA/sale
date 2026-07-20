@@ -32,7 +32,7 @@ class SaleController extends Controller
             'expeditions' => Expedition::all(),
             'marketplaces' => Marketplace::all(),
             'couriers' => Courier::all(),
-            'products' => Product::where('status', true)->with('wholeprices')->get(),
+            'products' => Product::where('status', true)->with(['wholeprices', 'unit'])->get(),
         ]);
     }
 
@@ -57,12 +57,16 @@ class SaleController extends Controller
             'payment_method' => ['required', 'in:tunai,transfer,compliment'],
             'items' => ['sometimes', 'array'],
             'items.*.product_id' => ['required', 'exists:products,id'],
-            'items.*.qty' => ['required', 'integer', 'min:1'],
+            'items.*.qty' => ['required', 'numeric', 'min:0.01'],
             'items.*.price' => ['required', 'numeric', 'min:0'],
             'items.*.subtotal' => ['required', 'numeric', 'min:0'],
             'items.*.is_wholeprice' => ['nullable', 'boolean'],
             'items.*.wholeprice_id' => ['nullable', 'exists:product_wholeprices,id'],
         ]);
+
+        if ($errorResponse = $this->validateItemQuantities($validated['items'] ?? [])) {
+            return $errorResponse;
+        }
 
         $sale = DB::transaction(function () use ($validated) {
             $sale = Sale::create(Arr::except($validated, ['items']));
@@ -93,7 +97,7 @@ class SaleController extends Controller
             'expeditions' => Expedition::all(),
             'marketplaces' => Marketplace::all(),
             'couriers' => Courier::all(),
-            'products' => Product::where('status', true)->with('wholeprices')->get(),
+            'products' => Product::where('status', true)->with(['wholeprices', 'unit'])->get(),
         ]);
     }
 
@@ -126,12 +130,16 @@ class SaleController extends Controller
             'payment_method' => ['required', 'in:tunai,transfer,compliment'],
             'items' => ['sometimes', 'array'],
             'items.*.product_id' => ['required', 'exists:products,id'],
-            'items.*.qty' => ['required', 'integer', 'min:1'],
+            'items.*.qty' => ['required', 'numeric', 'min:0.01'],
             'items.*.price' => ['required', 'numeric', 'min:0'],
             'items.*.subtotal' => ['required', 'numeric', 'min:0'],
             'items.*.is_wholeprice' => ['nullable', 'boolean'],
             'items.*.wholeprice_id' => ['nullable', 'exists:product_wholeprices,id'],
         ]);
+
+        if ($errorResponse = $this->validateItemQuantities($validated['items'] ?? [])) {
+            return $errorResponse;
+        }
 
         DB::transaction(function () use ($sale, $validated) {
             $sale->update(Arr::except($validated, ['items']));
@@ -182,5 +190,43 @@ class SaleController extends Controller
     public function delete(Sale $sale): JsonResponse
     {
         return $this->destroy($sale);
+    }
+
+    /**
+     * Validate that non-Kg item quantities are integers >= 1, and Kg items are > 0.
+     */
+    private function validateItemQuantities(array $items): ?JsonResponse
+    {
+        foreach ($items as $index => $item) {
+            $product = Product::with('unit')->find($item['product_id'] ?? null);
+            if (! $product) {
+                continue;
+            }
+
+            $unitName = strtolower($product->unit->name ?? '');
+            $qty = (float) ($item['qty'] ?? 0);
+
+            if ($unitName !== 'kg') {
+                if ($qty < 1 || fmod($qty, 1.0) != 0.0) {
+                    return response()->json([
+                        'message' => "Quantity untuk produk '{$product->name}' harus berupa angka bulat minimal 1 (bukan desimal).",
+                        'errors' => [
+                            "items.{$index}.qty" => ["Quantity untuk produk '{$product->name}' harus berupa angka bulat minimal 1."],
+                        ],
+                    ], 422);
+                }
+            } else {
+                if ($qty <= 0) {
+                    return response()->json([
+                        'message' => "Quantity untuk produk '{$product->name}' harus lebih dari 0.",
+                        'errors' => [
+                            "items.{$index}.qty" => ["Quantity untuk produk '{$product->name}' harus lebih dari 0."],
+                        ],
+                    ], 422);
+                }
+            }
+        }
+
+        return null;
     }
 }

@@ -30,7 +30,7 @@ class SaleItem extends Model
     protected function casts(): array
     {
         return [
-            'qty' => 'integer',
+            'qty' => 'float',
             'price' => 'decimal:2',
             'subtotal' => 'decimal:2',
             'is_wholeprice' => 'boolean',

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('sale_id')->constrained()->cascadeOnDelete();
             $table->foreignId('product_id')->constrained()->cascadeOnDelete();
-            $table->integer('qty');
+            $table->decimal('qty', 15, 2);
             $table->decimal('price', 15, 2)->comment('Harga jual saat transaksi');
             $table->boolean('is_wholeprice')->default(false);
             $table->foreignId('wholeprice_id')->nullable()->constrained('product_wholeprices')->nullOnDelete();

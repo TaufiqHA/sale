@@ -157,7 +157,7 @@
                         </div>
                         <div class="col-span-3 md:col-span-2">
                             <label for="input-item-qty" class="block mb-2 text-xs font-semibold text-heading">Qty</label>
-                            <input type="number" id="input-item-qty" min="1" value="1" oninput="calculateItemSubtotal()" class="bg-neutral-primary-soft border border-default text-heading text-sm rounded-base block w-full px-2.5 py-2 text-center">
+                            <input type="number" id="input-item-qty" min="1" step="1" value="1" oninput="calculateItemSubtotal()" class="bg-neutral-primary-soft border border-default text-heading text-sm rounded-base block w-full px-2.5 py-2 text-center">
                         </div>
                         <div class="col-span-6 md:col-span-3">
                             <label for="input-item-price" class="block mb-2 text-xs font-semibold text-heading">Harga</label>
@@ -700,6 +700,8 @@
         const grandTotalWrapper = document.getElementById("grand-total-input-wrapper");
         const discountWrapper = document.getElementById("discount-input-wrapper");
         const shippingCostWrapper = document.getElementById("shipping-cost-input-wrapper");
+        const paymentMethodWrapper = document.getElementById("payment-method-input-wrapper");
+        const paymentMethodInput = document.getElementById("input-payment-method");
         const priceInput = document.getElementById("input-item-price");
         
         if (type === "marketplace") {
@@ -709,6 +711,13 @@
             grandTotalWrapper.classList.add("hidden");
             discountWrapper.classList.add("hidden");
             shippingCostWrapper.classList.add("hidden");
+            
+            if (paymentMethodWrapper) {
+                paymentMethodWrapper.classList.add("hidden");
+            }
+            if (paymentMethodInput && (paymentMethodInput.value === "tunai" || !paymentMethodInput.value)) {
+                paymentMethodInput.value = "transfer";
+            }
             
             document.getElementById("input-customer-id").value = "";
             document.getElementById("input-expedition-id").value = "";
@@ -740,6 +749,10 @@
             grandTotalWrapper.classList.remove("hidden");
             discountWrapper.classList.remove("hidden");
             shippingCostWrapper.classList.remove("hidden");
+            
+            if (paymentMethodWrapper) {
+                paymentMethodWrapper.classList.remove("hidden");
+            }
             
             document.getElementById("input-marketplace-id").value = "";
             document.getElementById("input-courier-id").value = "";
@@ -841,6 +854,14 @@
             qtyInput.value = 1;
             
             const productObj = activeProducts.find(p => String(p.id) === String(productId));
+            if (productObj && productObj.unit && String(productObj.unit.name).toLowerCase() === 'kg') {
+                qtyInput.setAttribute("step", "any");
+                qtyInput.setAttribute("min", "0.01");
+            } else {
+                qtyInput.setAttribute("step", "1");
+                qtyInput.setAttribute("min", "1");
+            }
+
             if (type !== "marketplace" && productObj && productObj.is_wholeprice && productObj.wholeprices && productObj.wholeprices.length > 0) {
                 normalPriceLabel.innerText = formatCurrency(defaultPrice);
                 productObj.wholeprices.forEach((tier, index) => {
@@ -860,6 +881,8 @@
         } else {
             priceInput.value = "";
             qtyInput.value = 1;
+            qtyInput.setAttribute("step", "1");
+            qtyInput.setAttribute("min", "1");
         }
     }
 
@@ -889,12 +912,12 @@
         const priceInput = document.getElementById("input-item-price");
         const qtyInput = document.getElementById("input-item-qty");
         
-        const minQty = parseInt(tierRadio.getAttribute("data-min-qty")) || 1;
+        const minQty = parseFloat(tierRadio.getAttribute("data-min-qty")) || 1;
         const tierPrice = parseFloat(tierRadio.getAttribute("data-price")) || 0;
         
         priceInput.value = formatNumberInput(Math.round(tierPrice).toString());
         
-        const currentQty = parseInt(qtyInput.value) || 0;
+        const currentQty = parseFloat(qtyInput.value) || 0;
         if (currentQty < minQty) {
             qtyInput.value = minQty;
         }
@@ -906,8 +929,8 @@
         if (isWholepriceChecked) {
             const selectedTierRadio = document.querySelector('input[name="selected_wholeprice_tier"]:checked');
             if (selectedTierRadio) {
-                const minQty = parseInt(selectedTierRadio.getAttribute("data-min-qty")) || 1;
-                const currentQty = parseInt(qtyInput.value) || 0;
+                const minQty = parseFloat(selectedTierRadio.getAttribute("data-min-qty")) || 1;
+                const currentQty = parseFloat(qtyInput.value) || 0;
                 if (currentQty < minQty) {
                     showToast(`Quantity kurang dari minimal pembelian untuk harga grosir ini (${minQty}). Harga dialihkan kembali ke harga normal.`, "warning");
                     document.getElementById("price-type-normal").checked = true;
@@ -931,12 +954,26 @@
         const productId = selectedOption.value;
         const productName = selectedOption.innerText;
         const productImage = selectedOption.getAttribute("data-image") || "";
-        const qty = parseInt(qtyInput.value) || 0;
+        const qty = parseFloat(qtyInput.value) || 0;
         const price = parseFormattedNumber(priceInput.value);
         
-        if (qty <= 0) {
-            showToast("Quantity harus minimal 1!", "error");
-            return;
+        const productObj = activeProducts.find(p => String(p.id) === String(productId));
+        const isKg = productObj && productObj.unit && String(productObj.unit.name).toLowerCase() === 'kg';
+        
+        if (isKg) {
+            if (qty <= 0) {
+                showToast("Quantity untuk produk Kg harus lebih dari 0!", "error");
+                return;
+            }
+        } else {
+            if (qty < 1) {
+                showToast("Quantity minimal harus 1!", "error");
+                return;
+            }
+            if (!Number.isInteger(qty)) {
+                showToast("Quantity untuk produk ini harus berupa angka bulat (bukan desimal)!", "error");
+                return;
+            }
         }
         
         if (priceInput.value.trim() === "") {
