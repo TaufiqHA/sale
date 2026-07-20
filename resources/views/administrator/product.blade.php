@@ -15,7 +15,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
-                <input type="text" id="search-input" oninput="handleSearchFilterChange()" placeholder="Cari nama produk, SKU atau barcode..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 transition duration-150 text-sm bg-white placeholder:text-slate-400">
+                <input type="text" id="search-input" oninput="handleSearchFilterChange()" placeholder="Cari nama produk..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 transition duration-150 text-sm bg-white placeholder:text-slate-400">
             </div>
 
             <!-- Counter Filter Dropdown -->
@@ -88,7 +88,6 @@
             <thead class="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
                 <tr>
                     <th scope="col" class="px-6 py-3 font-medium w-16 text-center">Gambar</th>
-                    <th scope="col" class="px-6 py-3 font-medium">SKU / Barcode</th>
                     <th scope="col" class="px-6 py-3 font-medium">Nama Produk</th>
                     <th scope="col" class="px-6 py-3 font-medium">Kategori</th>
                     <th scope="col" class="px-6 py-3 font-medium">Satuan</th>
@@ -137,19 +136,7 @@
                         <p id="error-name" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                     </div>
 
-                    <!-- SKU -->
-                    <div class="col-span-2 sm:col-span-1">
-                        <label for="input-sku" class="block mb-2.5 text-sm font-medium text-heading">SKU</label>
-                        <input type="text" id="input-sku" name="sku" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="contoh: SKU-DRK-COCA" required>
-                        <p id="error-sku" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
-                    </div>
 
-                    <!-- Barcode -->
-                    <div class="col-span-2 sm:col-span-1">
-                        <label for="input-barcode" class="block mb-2.5 text-sm font-medium text-heading">Barcode</label>
-                        <input type="text" id="input-barcode" name="barcode" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="contoh: 8886007810123">
-                        <p id="error-barcode" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
-                    </div>
 
                     <!-- Category -->
                     <div class="col-span-2 sm:col-span-1">
@@ -451,36 +438,7 @@
             e.target.value = formatThousandSeparator(e.target.value);
         });
 
-        // Realtime SKU check
-        const skuInput = document.getElementById("input-sku");
-        skuInput.addEventListener("input", function(e) {
-            const skuVal = e.target.value.trim();
-            const currentId = document.getElementById("product-id").value;
-            const errorEl = document.getElementById("error-sku");
-            const btnSave = document.getElementById("btn-save");
 
-            if (!skuVal) {
-                errorEl.innerText = "";
-                errorEl.classList.add("hidden");
-                skuInput.classList.remove("border-rose-500", "focus:border-rose-500", "focus:ring-rose-500/10");
-                btnSave.disabled = false;
-                return;
-            }
-
-            const exists = activeProducts.some(p => p.sku.toLowerCase() === skuVal.toLowerCase() && String(p.id) !== String(currentId));
-
-            if (exists) {
-                errorEl.innerText = "SKU ini sudah terdaftar.";
-                errorEl.classList.remove("hidden");
-                skuInput.classList.add("border-rose-500", "focus:border-rose-500", "focus:ring-rose-500/10");
-                btnSave.disabled = true;
-            } else {
-                errorEl.innerText = "";
-                errorEl.classList.add("hidden");
-                skuInput.classList.remove("border-rose-500", "focus:border-rose-500", "focus:ring-rose-500/10");
-                btnSave.disabled = false;
-            }
-        });
     });
 
     async function initPage() {
@@ -611,7 +569,7 @@
         if (filteredProducts.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="9" class="px-6 py-12 text-center text-slate-400">
+                    <td colspan="10" class="px-6 py-12 text-center text-slate-400">
                         <div class="flex flex-col items-center justify-center gap-2">
                             <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -646,10 +604,6 @@
             row.innerHTML = `
                 <td class="px-6 py-4 text-center">
                     ${imageHtml}
-                </td>
-                <td class="px-6 py-4">
-                    <div class="font-bold text-body">${escapeHtml(product.sku)}</div>
-                    <div class="text-xs text-body opacity-60 mt-0.5">${product.barcode ? escapeHtml(product.barcode) : '<span class="text-body opacity-40">Tanpa Barcode</span>'}</div>
                 </td>
                 <th scope="row" class="px-6 py-4 font-medium text-heading whitespace-nowrap text-left">${escapeHtml(product.name)}</th>
                 <td class="px-6 py-4 text-xs font-semibold text-body">${escapeHtml(catName)}</td>
@@ -708,8 +662,6 @@
         document.getElementById("modal-title").innerText = "Ubah Produk";
         document.getElementById("product-id").value = product.id;
         document.getElementById("input-name").value = product.name;
-        document.getElementById("input-sku").value = product.sku;
-        document.getElementById("input-barcode").value = product.barcode || "";
         document.getElementById("input-category_id").value = product.category_id;
         document.getElementById("input-unit_id").value = product.unit_id;
         document.getElementById("input-counter_id").value = product.counter_id;
@@ -1093,8 +1045,6 @@
 
         const id = document.getElementById("product-id").value;
         const name = document.getElementById("input-name").value;
-        const sku = document.getElementById("input-sku").value;
-        const barcode = document.getElementById("input-barcode").value;
         const category_id = document.getElementById("input-category_id").value;
         const unit_id = document.getElementById("input-unit_id").value;
         const counter_id = document.getElementById("input-counter_id").value;
@@ -1108,10 +1058,6 @@
 
         const formData = new FormData();
         formData.append("name", name);
-        formData.append("sku", sku);
-        if (barcode) {
-            formData.append("barcode", barcode);
-        }
         formData.append("category_id", category_id);
         formData.append("unit_id", unit_id);
         formData.append("counter_id", counter_id);

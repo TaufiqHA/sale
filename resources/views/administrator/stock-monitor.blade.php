@@ -65,7 +65,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
-                <input type="text" id="search-input" oninput="handleSearchFilterChange()" placeholder="Cari nama produk, SKU, barcode..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 transition duration-150 text-sm bg-white placeholder:text-slate-400">
+                <input type="text" id="search-input" oninput="handleSearchFilterChange()" placeholder="Cari nama produk..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 transition duration-150 text-sm bg-white placeholder:text-slate-400">
             </div>
 
             <!-- Counter Filter -->
@@ -154,7 +154,6 @@
         <table class="w-full text-sm text-left rtl:text-right text-body">
             <thead class="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
                 <tr>
-                    <th scope="col" class="px-6 py-3 font-medium">SKU / Barcode</th>
                     <th scope="col" class="px-6 py-3 font-medium">Nama Produk</th>
                     <th scope="col" class="px-6 py-3 font-medium">Kategori</th>
                     <th scope="col" class="px-6 py-3 font-medium">Counter</th>
@@ -307,7 +306,7 @@
         if (filteredProducts.length === 0) {
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="7" class="px-6 py-12 text-center text-slate-400">
+                    <td colspan="6" class="px-6 py-12 text-center text-slate-400">
                         <div class="flex flex-col items-center justify-center gap-2">
                             <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -349,10 +348,6 @@
             const counterName = product.counter ? product.counter.name : '-';
 
             row.innerHTML = `
-                <td class="px-6 py-4">
-                    <div class="font-bold text-body">${escapeHtml(product.sku)}</div>
-                    <div class="text-xs text-body opacity-60 mt-0.5">${product.barcode ? escapeHtml(product.barcode) : '<span class="text-body opacity-40">Tanpa Barcode</span>'}</div>
-                </td>
                 <th scope="row" class="px-6 py-4 font-semibold text-heading whitespace-nowrap text-left">${escapeHtml(product.name)}</th>
                 <td class="px-6 py-4 text-xs font-semibold text-body">${escapeHtml(catName)}</td>
                 <td class="px-6 py-4 text-xs font-semibold text-body">${escapeHtml(counterName)}</td>

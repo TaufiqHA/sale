@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('category_id')->constrained()->cascadeOnDelete();
             $table->foreignId('unit_id')->constrained()->cascadeOnDelete();
             $table->foreignId('counter_id')->constrained()->cascadeOnDelete();
-            $table->string('sku')->unique();
+            $table->string('sku')->unique()->nullable();
             $table->string('barcode')->nullable()->unique();
             $table->string('name');
             $table->text('description')->nullable();
