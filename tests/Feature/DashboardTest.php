@@ -200,5 +200,26 @@ class DashboardTest extends TestCase
         $responseDate3->assertJsonPath('summary.total_omset', 15000);
         $responseDate3->assertJsonPath('summary.total_keuntungan', 5000);
         $responseDate3->assertJsonPath('summary.total_qty', 1);
+
+        // Request stats filtered by date range (Sale 1 and Sale 2)
+        $responseRange1 = $this->actingAs($user)->getJson('/administrator/dashboard/stats?start_date=2026-07-01&end_date=2026-07-20');
+        $responseRange1->assertStatus(200);
+        $responseRange1->assertJsonPath('summary.total_omset', 87000);
+        $responseRange1->assertJsonPath('summary.total_keuntungan', 27000);
+        $responseRange1->assertJsonPath('summary.total_qty', 4);
+
+        // Request stats filtered by date range (Sale 3 only)
+        $responseRange2 = $this->actingAs($user)->getJson('/administrator/dashboard/stats?start_date=2026-06-01&end_date=2026-06-30');
+        $responseRange2->assertStatus(200);
+        $responseRange2->assertJsonPath('summary.total_omset', 15000);
+        $responseRange2->assertJsonPath('summary.total_keuntungan', 5000);
+        $responseRange2->assertJsonPath('summary.total_qty', 1);
+
+        // Request stats filtered by full date range (Sale 1, 2, and 3)
+        $responseRange3 = $this->actingAs($user)->getJson('/administrator/dashboard/stats?start_date=2026-06-01&end_date=2026-07-20');
+        $responseRange3->assertStatus(200);
+        $responseRange3->assertJsonPath('summary.total_omset', 102000);
+        $responseRange3->assertJsonPath('summary.total_keuntungan', 32000);
+        $responseRange3->assertJsonPath('summary.total_qty', 5);
     }
 }

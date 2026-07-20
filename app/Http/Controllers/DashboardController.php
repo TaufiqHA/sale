@@ -24,7 +24,17 @@ class DashboardController extends Controller
         $counters = Counter::all();
         $categories = Category::all();
 
-        return view('administrator.dashboard', compact('counters', 'categories'));
+        $months = [];
+        $currentYear = Carbon::now()->year;
+        for ($m = 1; $m <= 12; $m++) {
+            $date = Carbon::create($currentYear, $m, 1);
+            $months[] = [
+                'value' => $date->format('Y-m'),
+                'label' => $date->translatedFormat('F Y'),
+            ];
+        }
+
+        return view('administrator.dashboard', compact('counters', 'categories', 'months'));
     }
 
     /**
@@ -38,11 +48,22 @@ class DashboardController extends Controller
 
         $counterId = $request->input('counter_id');
         $categoryId = $request->input('category_id');
+        $startDateVal = $request->input('start_date');
+        $endDateVal = $request->input('end_date');
         $date = $request->input('date');
 
-        $dateValue = null;
-        if ($date && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
-            $dateValue = $date;
+        // Backward compatibility for single date
+        if (! $startDateVal && ! $endDateVal && $date && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            $startDateVal = $date;
+            $endDateVal = $date;
+        }
+
+        // Validate formats
+        if ($startDateVal && ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $startDateVal)) {
+            $startDateVal = null;
+        }
+        if ($endDateVal && ! preg_match('/^\d{4}-\d{2}-\d{2}$/', $endDateVal)) {
+            $endDateVal = null;
         }
 
         // 1. Fetch Summary Stats (Omset, Keuntungan, Qty)
@@ -55,8 +76,9 @@ class DashboardController extends Controller
             ->when($categoryId, function ($q) use ($categoryId) {
                 return $q->where('products.category_id', $categoryId);
             })
-            ->when($dateValue, function ($q) use ($dateValue) {
-                return $q->whereDate('sales.date', $dateValue);
+            ->when($startDateVal && $endDateVal, function ($q) use ($startDateVal, $endDateVal) {
+                return $q->whereDate('sales.date', '>=', $startDateVal)
+                    ->whereDate('sales.date', '<=', $endDateVal);
             })
             ->select(
                 DB::raw('COALESCE(SUM(sale_items.qty), 0) as total_qty'),
@@ -65,14 +87,31 @@ class DashboardController extends Controller
             )
             ->first();
 
-        // 2. Fetch Chart Data (Last 7 Days or 7 Days ending on Selected Date)
+        // 2. Fetch Chart Data (Last 7 Days, Days in Range, or ending on Selected Date)
         $dates = [];
-        if ($dateValue) {
-            $endDate = Carbon::parse($dateValue)->endOfDay();
-            $startDate = Carbon::parse($dateValue)->subDays(6)->startOfDay();
+        if ($startDateVal && $endDateVal) {
+            if ($startDateVal === $endDateVal) {
+                $endDate = Carbon::parse($endDateVal)->endOfDay();
+                $startDate = Carbon::parse($startDateVal)->subDays(6)->startOfDay();
 
-            for ($i = 6; $i >= 0; $i--) {
-                $dates[] = Carbon::parse($dateValue)->subDays($i)->format('Y-m-d');
+                for ($i = 6; $i >= 0; $i--) {
+                    $dates[] = Carbon::parse($endDateVal)->subDays($i)->format('Y-m-d');
+                }
+            } else {
+                $startDate = Carbon::parse($startDateVal)->startOfDay();
+                $endDate = Carbon::parse($endDateVal)->endOfDay();
+
+                // Cap the chart range to 90 days to prevent overloading/rendering issues
+                $chartStartDate = $startDate->copy();
+                if ($chartStartDate->diffInDays($endDate) > 90) {
+                    $chartStartDate = $endDate->copy()->subDays(90)->startOfDay();
+                }
+
+                $current = $chartStartDate->copy();
+                while ($current->lte($endDate)) {
+                    $dates[] = $current->format('Y-m-d');
+                    $current->addDay();
+                }
             }
         } else {
             $startDate = now()->subDays(6)->startOfDay();
@@ -122,8 +161,9 @@ class DashboardController extends Controller
             ->when($categoryId, function ($q) use ($categoryId) {
                 return $q->where('products.category_id', $categoryId);
             })
-            ->when($dateValue, function ($q) use ($dateValue) {
-                return $q->whereDate('sales.date', $dateValue);
+            ->when($startDateVal && $endDateVal, function ($q) use ($startDateVal, $endDateVal) {
+                return $q->whereDate('sales.date', '>=', $startDateVal)
+                    ->whereDate('sales.date', '<=', $endDateVal);
             })
             ->select(
                 'products.name as product_name',
@@ -145,8 +185,9 @@ class DashboardController extends Controller
             ->when($categoryId, function ($q) use ($categoryId) {
                 return $q->where('products.category_id', $categoryId);
             })
-            ->when($dateValue, function ($q) use ($dateValue) {
-                return $q->whereDate('sales.date', $dateValue);
+            ->when($startDateVal && $endDateVal, function ($q) use ($startDateVal, $endDateVal) {
+                return $q->whereDate('sales.date', '>=', $startDateVal)
+                    ->whereDate('sales.date', '<=', $endDateVal);
             })
             ->select(
                 'sales.id as sale_id',
