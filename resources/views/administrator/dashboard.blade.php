@@ -356,7 +356,7 @@
                     html += `
                         <tr class="hover:bg-neutral-secondary-medium/20 transition-colors duration-150">
                             <td class="px-4 py-3.5 text-slate-500">${escapeHtml(formatDate(item.date))}</td>
-                            <td class="px-4 py-3.5 font-semibold text-[#1e50d0]">${escapeHtml(item.barcode)}</td>
+                            <td class="px-4 py-3.5 font-semibold text-brand">${escapeHtml(item.barcode)}</td>
                             <td class="px-4 py-3.5 text-right font-bold text-heading">${formatRupiah(item.filtered_total)}</td>
                         </tr>
                     `;
@@ -549,8 +549,8 @@
 
         const ctx = document.getElementById('salesChart').getContext('2d');
         const gradient = ctx.createLinearGradient(0, 0, 0, 320);
-        gradient.addColorStop(0, 'rgba(30, 80, 208, 0.2)');
-        gradient.addColorStop(1, 'rgba(30, 80, 208, 0.0)');
+        gradient.addColorStop(0, 'rgba(101, 147, 136, 0.2)');
+        gradient.addColorStop(1, 'rgba(101, 147, 136, 0.0)');
 
         salesChart = new Chart(ctx, {
             type: 'line',
@@ -559,9 +559,9 @@
                 datasets: [{
                     label: 'Omset',
                     data: dataPoints,
-                    borderColor: '#1e50d0',
+                    borderColor: '#659388',
                     borderWidth: 3,
-                    pointBackgroundColor: '#1e50d0',
+                    pointBackgroundColor: '#659388',
                     pointBorderColor: '#ffffff',
                     pointBorderWidth: 2,
                     pointRadius: 5,

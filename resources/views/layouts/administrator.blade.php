@@ -6,7 +6,7 @@
     <title>@yield('title', 'Dashboard') - Sale</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="h-full text-slate-800 antialiased selection:bg-[#1e50d0] selection:text-white">
+<body class="h-full text-slate-800 antialiased selection:bg-brand selection:text-white">
 
     <div class="min-h-screen bg-slate-50">
 

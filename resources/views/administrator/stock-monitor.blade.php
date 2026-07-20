@@ -65,7 +65,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                     </svg>
                 </div>
-                <input type="text" id="search-input" oninput="handleSearchFilterChange()" placeholder="Cari nama produk, SKU, barcode..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-[#1e50d0] focus:ring-2 focus:ring-[#1e50d0]/10 transition duration-150 text-sm bg-white placeholder:text-slate-400">
+                <input type="text" id="search-input" oninput="handleSearchFilterChange()" placeholder="Cari nama produk, SKU, barcode..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-brand focus:ring-2 focus:ring-brand/10 transition duration-150 text-sm bg-white placeholder:text-slate-400">
             </div>
 
             <!-- Counter Filter -->

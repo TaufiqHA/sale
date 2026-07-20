@@ -138,7 +138,7 @@
                     <div class="col-span-2 flex items-center gap-3 py-2">
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="input-status" name="status" class="sr-only peer" checked>
-                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#1e50d0]/10 rounded-full peer peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#1e50d0]"></div>
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand/10 rounded-full peer peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
                             <span class="ml-3 text-sm font-semibold text-slate-700">Aktif</span>
                         </label>
                         <p id="error-status" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
