@@ -38,6 +38,7 @@ Route::apiResource('customers', CustomerController::class)->middleware('auth');
 Route::apiResource('marketplaces', MarketplaceController::class)->except(['index'])->middleware('auth');
 Route::apiResource('couriers', CourierController::class)->except(['index'])->middleware('auth');
 Route::apiResource('expeditions', ExpeditionController::class)->except(['index'])->middleware('auth');
+Route::get('sales/create', [SaleController::class, 'create'])->middleware('auth')->name('sales.create');
 Route::apiResource('sales', SaleController::class)->middleware('auth');
 Route::apiResource('sale-items', SaleItemController::class)->except(['index'])->middleware('auth');
 Route::apiResource('productions', ProductionController::class)->middleware('auth');

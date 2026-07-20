@@ -1,380 +1,282 @@
 @extends('layouts.administrator')
 
-@section('title', 'Manajemen Penjualan')
+@section('title', 'Tambah Penjualan')
 
 @section('content')
-<div class="relative min-h-[calc(100vh-8rem)]">
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <!-- Search Form -->
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1 max-w-md">
-            <form id="search-form" onsubmit="event.preventDefault(); handleSearchChange();" class="relative flex-1">
-                <label for="search-input" class="block mb-2.5 text-sm font-medium text-heading sr-only">Search</label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <svg class="w-4 h-4 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
-                    </div>
-                    <input type="search" id="search-input" oninput="handleSearchChange()" class="block w-full p-3 ps-9 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" placeholder="Cari Penjualan (Barcode, Pelanggan, Counter...)" />
+<div class="max-w-5xl mx-auto">
+
+    <!-- Main Card Container -->
+    <div class="bg-neutral-primary-soft border border-default rounded-base shadow-sm p-4 md:p-6">
+        <form id="sale-form" onsubmit="handleFormSubmit(event)">
+            <!-- Header fields grid -->
+            <div class="grid gap-4 grid-cols-3 py-4 md:py-6">
+                <!-- Pilih Counter -->
+                <div class="col-span-3 md:col-span-1">
+                    <label for="input-counter-id" class="block mb-2 text-sm font-medium text-heading">Pilih Counter</label>
+                    <select id="input-counter-id" name="counter_id" onchange="onCounterChange()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs" required>
+                        <option value="">Pilih Counter...</option>
+                        @foreach($counters as $counter)
+                            @if($counter->status)
+                                <option value="{{ $counter->id }}">{{ $counter->name }}</option>
+                            @endif
+                        @endforeach
+                    </select>
+                    <p id="error-counter_id" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                 </div>
-            </form>
-        </div>
 
-        <a href="{{ route('sales.create') }}" class="inline-flex items-center justify-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer shrink-0 gap-1.5">
-            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
-            </svg>
-            Tambah Penjualan
-        </a>
-    </div>
-
-    <!-- Loading State (Table Skeleton) -->
-    <div id="loading-skeleton" class="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden mb-8 animate-pulse">
-        <div class="h-12 bg-slate-50 border-b border-slate-100"></div>
-        <div class="divide-y divide-slate-100">
-            @for ($i = 0; $i < 3; $i++)
-            <div class="px-6 py-5 flex items-center justify-between gap-6">
-                <div class="h-4 bg-slate-100 rounded-md w-12 shrink-0"></div>
-                <div class="h-4 bg-slate-100 rounded-md w-32 shrink-0"></div>
-                <div class="h-4 bg-slate-100 rounded-md w-28 shrink-0"></div>
-                <div class="h-4 bg-slate-100 rounded-md w-24 shrink-0"></div>
-                <div class="h-4 bg-slate-100 rounded-md w-48 shrink-0 flex-1"></div>
-                <div class="h-8 bg-slate-100 rounded-lg w-20 shrink-0"></div>
-            </div>
-            @endfor
-        </div>
-    </div>
-
-    <!-- Empty State -->
-    <div id="empty-state" class="hidden flex-col items-center justify-center py-16 px-4 bg-white border border-slate-100 rounded-2xl shadow-sm mb-8 text-center">
-        <div class="flex items-center justify-center p-4 bg-slate-50 text-slate-400 rounded-2xl mb-4">
-            <svg class="w-12 h-12" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5h.007m-.007 3h.007m-.007 3h.007m-2.25 9H22.5M12 15.75h.007m-.007 3h.007m-.007 3h.007m0-6.75H12M3.75 4.5V18M20.25 4.5V18M3.75 4.5h16.5M12 3v12.75"></path>
-            </svg>
-        </div>
-        <h3 class="text-base font-bold text-slate-800">Tidak Ada Penjualan Dibuat</h3>
-        <a href="{{ route('sales.create') }}" class="mt-4 inline-flex items-center justify-center text-white bg-brand box-border border border-transparent hover:bg-brand-strong focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer gap-1.5">
-            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
-            </svg>
-            Tambah Penjualan
-        </a>
-    </div>
-
-    <!-- Sales Table -->
-    <div id="sales-table-wrapper" class="hidden relative overflow-x-auto bg-neutral-primary-soft shadow-xs rounded-base border border-default mb-8">
-        <table class="w-full text-sm text-left rtl:text-right text-body">
-            <thead class="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
-                <tr>
-                    <th scope="col" class="px-6 py-3 font-medium">ID</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Counter</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Pelanggan</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Barcode</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Tipe</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Tanggal</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Total Akhir</th>
-                    <th scope="col" class="px-6 py-3 font-medium">Pembayaran</th>
-                    <th scope="col" class="px-6 py-3 font-medium text-right">Aksi</th>
-                </tr>
-            </thead>
-            <tbody id="sales-table-body">
-                <!-- Rendered dynamically -->
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- Modal (Create / Edit) -->
-<div id="sale-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true">
-    <!-- Backdrop with blur -->
-    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="modal-backdrop" onclick="closeModal()"></div>
-
-    <!-- Modal content wrapper -->
-    <div class="relative w-full max-w-5xl max-h-[95vh] flex flex-col transform scale-95 opacity-0 transition-all duration-300" id="modal-panel">
-        <div class="relative bg-neutral-primary-soft border border-default rounded-base shadow-sm p-4 md:p-6 flex flex-col overflow-hidden max-h-full">
-            <!-- Modal header -->
-            <div class="flex items-center justify-between border-b border-default pb-4 md:pb-5 shrink-0">
-                <div>
-                    <h3 id="modal-title" class="text-lg font-bold text-heading">
-                        Tambah Penjualan Baru
-                    </h3>
-                    <p class="text-xs text-body mt-0.5">Buat data transaksi penjualan baru</p>
+                <!-- Tanggal -->
+                <div class="col-span-3 md:col-span-1">
+                    <label for="input-date" class="block mb-2 text-sm font-medium text-heading">Tanggal</label>
+                    <input type="datetime-local" id="input-date" name="date" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs" required>
+                    <p id="error-date" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
                 </div>
-                <button type="button" onclick="closeModal()" class="text-body bg-transparent hover:bg-neutral-tertiary hover:text-heading rounded-base text-sm w-9 h-9 ms-auto inline-flex justify-center items-center cursor-pointer">
-                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
-                    <span class="sr-only">Tutup modal</span>
-                </button>
-            </div>
-            <!-- Modal body -->
-            <form id="sale-form" onsubmit="handleFormSubmit(event)" class="overflow-y-auto flex-1 pr-1">
-                <input type="hidden" id="sale-id" name="id">
 
-                <!-- Header fields grid -->
-                <div class="grid gap-4 grid-cols-3 py-4 md:py-6">
-                    <!-- Pilih Counter -->
-                    <div class="col-span-3 md:col-span-1">
-                        <label for="input-counter-id" class="block mb-2 text-sm font-medium text-heading">Pilih Counter</label>
-                        <select id="input-counter-id" name="counter_id" onchange="onCounterChange()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs" required>
-                            <option value="">Pilih Counter...</option>
-                            @foreach($counters as $counter)
-                                @if($counter->status)
-                                    <option value="{{ $counter->id }}">{{ $counter->name }}</option>
-                                @endif
-                            @endforeach
-                        </select>
-                        <p id="error-counter_id" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                <!-- Type (Enum: umum, marketplace) -->
+                <div class="col-span-3 md:col-span-1">
+                    <label for="input-type" class="block mb-2 text-sm font-medium text-heading">Tipe</label>
+                    <select id="input-type" name="type" onchange="onTypeChange()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs" required>
+                        <option value="umum">UMUM</option>
+                        <option value="marketplace">MARKETPLACE</option>
+                    </select>
+                    <p id="error-type" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                </div>
+
+                <!-- UMUM fields wrapper -->
+                <div id="umum-fields-wrapper" class="col-span-3 grid grid-cols-2 gap-4">
+                    <!-- Cari Data Pelanggan -->
+                    <div class="col-span-2 md:col-span-1">
+                        <label for="input-customer-id" class="block mb-2 text-sm font-medium text-heading">Cari Data Pelanggan</label>
+                        <div class="flex gap-2">
+                            <select id="input-customer-id" name="customer_id" onchange="onCustomerChange()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs">
+                                <option value="">Pilih Pelanggan...</option>
+                                @foreach($customers as $customer)
+                                    <option value="{{ $customer->id }}" data-counter-id="{{ $customer->counter_id }}" data-phone="{{ $customer->phone }}" data-address="{{ $customer->address }}">{{ $customer->name }}</option>
+                                @endforeach
+                            </select>
+                            <button type="button" id="btn-manage-customers" onclick="openManageCustomers()" class="inline-flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
+                                Kelola
+                            </button>
+                        </div>
+                        <p id="error-customer_id" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+
+                        <!-- Customer details preview boxes -->
+                        <div id="customer-details-preview" class="mt-3 space-y-2 hidden">
+                            <div id="customer-preview-phone" class="p-2.5 bg-slate-800/40 text-heading text-xs rounded-base border border-slate-700/50 font-medium"></div>
+                            <div id="customer-preview-address" class="p-2.5 bg-slate-800/40 text-heading text-xs rounded-base border border-slate-700/50 font-medium"></div>
+                        </div>
                     </div>
 
-                    <!-- Tanggal -->
-                    <div class="col-span-3 md:col-span-1">
-                        <label for="input-date" class="block mb-2 text-sm font-medium text-heading">Tanggal</label>
-                        <input type="datetime-local" id="input-date" name="date" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs" required>
-                        <p id="error-date" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    <!-- Expedition Select -->
+                    <div class="col-span-2 md:col-span-1">
+                        <label for="input-expedition-id" class="block mb-2 text-sm font-medium text-heading">Ekspedisi</label>
+                        <div class="flex gap-2">
+                            <select id="input-expedition-id" name="expedition_id" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs">
+                                <option value="">Pilih Ekspedisi...</option>
+                                @foreach($expeditions as $expedition)
+                                    <option value="{{ $expedition->id }}">{{ $expedition->name }}</option>
+                                @endforeach
+                            </select>
+                            <button type="button" onclick="openManageExpeditions()" class="inline-flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
+                                Kelola
+                            </button>
+                        </div>
+                        <p id="error-expedition_id" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+                </div>
+
+                <!-- MARKETPLACE fields wrapper -->
+                <div id="marketplace-fields-wrapper" class="col-span-3 grid grid-cols-2 gap-4 hidden">
+                    <!-- Left Side: Barcode -->
+                    <div class="col-span-2 md:col-span-1 flex flex-col justify-between">
+                        <div>
+                            <label for="input-barcode" class="block mb-2 text-sm font-medium text-heading">Masukkan Kode Barcode</label>
+                            <input type="text" id="input-barcode" name="barcode" oninput="onBarcodeChange()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="Masukkan Barcode">
+                            <p id="error-barcode" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                        </div>
+
+                        <!-- Barcode Visual Preview -->
+                        <div id="barcode-visual-preview" class="mt-3 flex flex-col items-center p-3 bg-white rounded-base border border-slate-200 hidden">
+                            <div id="barcode-preview-text" class="text-xs font-bold text-slate-800 tracking-widest mb-1"></div>
+                            <div id="barcode-preview-graphic" class="text-slate-900 w-full flex justify-center"></div>
+                        </div>
                     </div>
 
-                    <!-- Type (Enum: umum, marketplace) -->
-                    <div class="col-span-3 md:col-span-1">
-                        <label for="input-type" class="block mb-2 text-sm font-medium text-heading">Tipe</label>
-                        <select id="input-type" name="type" onchange="onTypeChange()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs" required>
-                            <option value="umum">UMUM</option>
-                            <option value="marketplace">MARKETPLACE</option>
-                        </select>
-                        <p id="error-type" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
-                    </div>
-
-                    <!-- UMUM fields wrapper -->
-                    <div id="umum-fields-wrapper" class="col-span-3 grid grid-cols-2 gap-4">
-                        <!-- Cari Data Pelanggan -->
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="input-customer-id" class="block mb-2 text-sm font-medium text-heading">Cari Data Pelanggan</label>
+                    <!-- Right Side: Marketplace & Courier -->
+                    <div class="col-span-2 md:col-span-1 space-y-4">
+                        <!-- Marketplace Select -->
+                        <div>
+                            <label for="input-marketplace-id" class="block mb-2 text-sm font-medium text-heading">Marketplace</label>
                             <div class="flex gap-2">
-                                <select id="input-customer-id" name="customer_id" onchange="onCustomerChange()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs">
-                                    <option value="">Pilih Pelanggan...</option>
-                                    @foreach($customers as $customer)
-                                        <option value="{{ $customer->id }}" data-counter-id="{{ $customer->counter_id }}" data-phone="{{ $customer->phone }}" data-address="{{ $customer->address }}">{{ $customer->name }}</option>
-                                    @endforeach
-                                </select>
-                                <button type="button" id="btn-manage-customers" onclick="openManageCustomers()" class="inline-flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
-                                    Kelola
-                                </button>
-                            </div>
-                            <p id="error-customer_id" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
-
-                            <!-- Customer details preview boxes (equivalent to the two rectangles) -->
-                            <div id="customer-details-preview" class="mt-3 space-y-2 hidden">
-                                <div id="customer-preview-phone" class="p-2.5 bg-slate-800/40 text-heading text-xs rounded-base border border-slate-700/50 font-medium"></div>
-                                <div id="customer-preview-address" class="p-2.5 bg-slate-800/40 text-heading text-xs rounded-base border border-slate-700/50 font-medium"></div>
-                            </div>
-                        </div>
-
-                        <!-- Expedition Select -->
-                        <div class="col-span-2 md:col-span-1">
-                            <label for="input-expedition-id" class="block mb-2 text-sm font-medium text-heading">Ekspedisi</label>
-                            <div class="flex gap-2">
-                                <select id="input-expedition-id" name="expedition_id" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs">
-                                    <option value="">Pilih Ekspedisi...</option>
-                                    @foreach($expeditions as $expedition)
-                                        <option value="{{ $expedition->id }}">{{ $expedition->name }}</option>
-                                    @endforeach
-                                </select>
-                                <button type="button" onclick="openManageExpeditions()" class="inline-flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
-                                    Kelola
-                                </button>
-                            </div>
-                            <p id="error-expedition_id" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
-                        </div>
-                    </div>
-
-                    <!-- MARKETPLACE fields wrapper -->
-                    <div id="marketplace-fields-wrapper" class="col-span-3 grid grid-cols-2 gap-4 hidden">
-                        <!-- Left Side: Barcode -->
-                        <div class="col-span-2 md:col-span-1 flex flex-col justify-between">
-                            <div>
-                                <label for="input-barcode" class="block mb-2 text-sm font-medium text-heading">Masukkan Kode Barcode</label>
-                                <input type="text" id="input-barcode" name="barcode" oninput="onBarcodeChange()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body" placeholder="Masukkan Barcode">
-                                <p id="error-barcode" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
-                            </div>
-
-                            <!-- Barcode Visual Preview -->
-                            <div id="barcode-visual-preview" class="mt-3 flex flex-col items-center p-3 bg-white rounded-base border border-slate-200">
-                                <div id="barcode-preview-text" class="text-xs font-bold text-slate-800 tracking-widest mb-1">123456789012</div>
-                                <div id="barcode-preview-graphic" class="text-slate-900 w-full flex justify-center"></div>
-                            </div>
-                        </div>
-
-                        <!-- Right Side: Marketplace & Courier -->
-                        <div class="col-span-2 md:col-span-1 space-y-4">
-                            <!-- Marketplace Select -->
-                            <div>
-                                <label for="input-marketplace-id" class="block mb-2 text-sm font-medium text-heading">Marketplace</label>
                                 <select id="input-marketplace-id" name="marketplace_id" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs">
                                     <option value="">Pilih Marketplace...</option>
                                     @foreach($marketplaces as $marketplace)
                                         <option value="{{ $marketplace->id }}">{{ $marketplace->name }}</option>
                                     @endforeach
                                 </select>
-                                <p id="error-marketplace_id" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
-                            </div>
-
-                            <!-- Courier Select -->
-                            <div>
-                                <label for="input-courier-id" class="block mb-2 text-sm font-medium text-heading">Kurir</label>
-                                <div class="flex gap-2">
-                                    <select id="input-courier-id" name="courier_id" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs">
-                                        <option value="">Pilih Kurir...</option>
-                                        @foreach($couriers as $courier)
-                                            <option value="{{ $courier->id }}">{{ $courier->name }} ({{ $courier->type }})</option>
-                                        @endforeach
-                                    </select>
-                                    <button type="button" onclick="openManageCouriers()" class="inline-flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
-                                        Kelola
-                                    </button>
-                                </div>
-                                <p id="error-courier_id" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- SALE ITEMS SECTION -->
-                    <div class="col-span-3 border-t border-default my-2"></div>
-                    <div class="col-span-3">
-                        <h4 class="text-sm font-bold text-heading mb-3 uppercase tracking-wider">ITEM PENJUALAN</h4>
-                        
-                        <!-- Item input row -->
-                        <div class="grid grid-cols-12 gap-3 items-end bg-neutral-secondary-medium p-3 rounded-base mb-4 border border-default-medium">
-                            <div class="col-span-12 md:col-span-6">
-                                <label for="select-product-id" class="block mb-2 text-xs font-semibold text-heading">-- Pilih Produk --</label>
-                                <select id="select-product-id" onchange="onProductChange()" class="bg-neutral-primary-soft border border-default text-heading text-sm rounded-base block w-full px-2.5 py-2">
-                                    <option value="">-- Pilih Produk --</option>
-                                    @foreach($products as $product)
-                                        <option value="{{ $product->id }}" data-price="{{ $product->sell_price }}">{{ $product->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-span-3 md:col-span-2">
-                                <label for="input-item-qty" class="block mb-2 text-xs font-semibold text-heading">Qty</label>
-                                <input type="number" id="input-item-qty" min="1" value="1" oninput="calculateItemSubtotal()" class="bg-neutral-primary-soft border border-default text-heading text-sm rounded-base block w-full px-2.5 py-2 text-center">
-                            </div>
-                            <div class="col-span-6 md:col-span-3">
-                                <label for="input-item-price" class="block mb-2 text-xs font-semibold text-heading">Harga</label>
-                                <input type="text" id="input-item-price" oninput="onPriceInput(this)" class="bg-neutral-primary-soft border border-default text-heading text-sm rounded-base block w-full px-2.5 py-2 text-right">
-                            </div>
-                            <div class="col-span-3 md:col-span-1 text-right">
-                                <button type="button" onclick="addSaleItem()" class="w-full inline-flex items-center justify-center p-2 bg-brand text-white hover:bg-brand-strong rounded-base font-bold cursor-pointer h-[38px]">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                                <button type="button" onclick="openManageMarketplaces()" class="inline-flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
+                                    Kelola
                                 </button>
                             </div>
+                            <p id="error-marketplace_id" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                        </div>
 
-                            <!-- Dynamic Wholeprice Radio Options Container -->
-                            <div id="item-wholeprice-wrapper" class="col-span-12 hidden bg-neutral-primary-soft p-3 rounded-lg border border-default-medium mt-1">
-                                <div class="text-xs font-semibold text-heading mb-2">Pilihan Tipe Harga:</div>
-                                <div class="flex flex-wrap gap-4">
-                                    <label class="inline-flex items-center cursor-pointer text-xs text-body font-medium">
-                                        <input type="radio" id="price-type-normal" name="price_type" value="normal" checked onchange="onPriceTypeChange('normal')" class="mr-2 text-brand focus:ring-brand">
-                                        Harga Normal (<span id="normal-price-label">Rp 0</span>)
-                                    </label>
-                                    <label class="inline-flex items-center cursor-pointer text-xs text-body font-medium">
-                                        <input type="radio" id="price-type-wholeprice" name="price_type" value="wholeprice" onchange="onPriceTypeChange('wholeprice')" class="mr-2 text-brand focus:ring-brand">
-                                        Harga Grosir
-                                    </label>
-                                </div>
-                                <div id="wholeprice-tiers-selection" class="hidden mt-3 pl-4 border-l-2 border-slate-200 flex flex-col gap-2">
-                                    <!-- Tiers dynamically rendered here -->
-                                </div>
+                        <!-- Courier Select -->
+                        <div>
+                            <label for="input-courier-id" class="block mb-2 text-sm font-medium text-heading">Kurir</label>
+                            <div class="flex gap-2">
+                                <select id="input-courier-id" name="courier_id" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs">
+                                    <option value="">Pilih Kurir...</option>
+                                    @foreach($couriers as $courier)
+                                        <option value="{{ $courier->id }}">{{ $courier->name }} ({{ $courier->type }})</option>
+                                    @endforeach
+                                </select>
+                                <button type="button" onclick="openManageCouriers()" class="inline-flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
+                                    Kelola
+                                </button>
+                            </div>
+                            <p id="error-courier_id" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SALE ITEMS SECTION -->
+                <div class="col-span-3 border-t border-default my-2"></div>
+                <div class="col-span-3">
+                    <h4 class="text-sm font-bold text-heading mb-3 uppercase tracking-wider">ITEM PENJUALAN</h4>
+                    
+                    <!-- Item input row -->
+                    <div class="grid grid-cols-12 gap-3 items-end bg-neutral-secondary-medium p-3 rounded-base mb-4 border border-default-medium">
+                        <div class="col-span-12 md:col-span-6">
+                            <label for="select-product-id" class="block mb-2 text-xs font-semibold text-heading">-- Pilih Produk --</label>
+                            <select id="select-product-id" onchange="onProductChange()" class="bg-neutral-primary-soft border border-default text-heading text-sm rounded-base block w-full px-2.5 py-2">
+                                <option value="">-- Pilih Produk --</option>
+                                @foreach($products as $product)
+                                    <option value="{{ $product->id }}" data-price="{{ $product->sell_price }}">{{ $product->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-span-3 md:col-span-2">
+                            <label for="input-item-qty" class="block mb-2 text-xs font-semibold text-heading">Qty</label>
+                            <input type="number" id="input-item-qty" min="1" value="1" oninput="calculateItemSubtotal()" class="bg-neutral-primary-soft border border-default text-heading text-sm rounded-base block w-full px-2.5 py-2 text-center">
+                        </div>
+                        <div class="col-span-6 md:col-span-3">
+                            <label for="input-item-price" class="block mb-2 text-xs font-semibold text-heading">Harga</label>
+                            <input type="text" id="input-item-price" oninput="onPriceInput(this)" readonly class="bg-slate-100 border border-default text-heading text-sm rounded-base block w-full px-2.5 py-2 text-right cursor-not-allowed">
+                        </div>
+                        <div class="col-span-3 md:col-span-1 text-right">
+                            <button type="button" onclick="addSaleItem()" class="w-full inline-flex items-center justify-center p-2 bg-brand text-white hover:bg-brand-strong rounded-base font-bold cursor-pointer h-[38px]">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                            </button>
+                        </div>
+
+                        <!-- Dynamic Wholeprice Radio Options Container -->
+                        <div id="item-wholeprice-wrapper" class="col-span-12 hidden bg-neutral-primary-soft p-3 rounded-lg border border-default-medium mt-1">
+                            <div class="text-xs font-semibold text-heading mb-2">Pilihan Tipe Harga:</div>
+                            <div class="flex flex-wrap gap-4">
+                                <label class="inline-flex items-center cursor-pointer text-xs text-body font-medium">
+                                    <input type="radio" id="price-type-normal" name="price_type" value="normal" checked onchange="onPriceTypeChange('normal')" class="mr-2 text-brand focus:ring-brand">
+                                    Harga Normal (<span id="normal-price-label">Rp 0</span>)
+                                </label>
+                                <label class="inline-flex items-center cursor-pointer text-xs text-body font-medium">
+                                    <input type="radio" id="price-type-wholeprice" name="price_type" value="wholeprice" onchange="onPriceTypeChange('wholeprice')" class="mr-2 text-brand focus:ring-brand">
+                                    Harga Grosir
+                                </label>
+                            </div>
+                            <div id="wholeprice-tiers-selection" class="hidden mt-3 pl-4 border-l-2 border-slate-200 flex flex-col gap-2">
+                                <!-- Tiers dynamically rendered here -->
                             </div>
                         </div>
-
-                        <!-- Items Table -->
-                        <div class="overflow-x-auto border border-default rounded-base max-h-48 overflow-y-auto">
-                            <table class="w-full min-w-[600px] md:min-w-full text-xs text-left text-body">
-                                <thead class="bg-neutral-secondary-medium text-heading uppercase font-semibold border-b border-default">
-                                    <tr>
-                                        <th class="px-4 py-2">Gambar</th>
-                                        <th class="px-4 py-2">Produk</th>
-                                        <th class="px-4 py-2 text-center">Qty</th>
-                                        <th class="px-4 py-2 text-right">Harga</th>
-                                        <th class="px-4 py-2 text-right">Subtotal</th>
-                                        <th class="px-4 py-2 text-center">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="sale-items-list-body">
-                                    <tr>
-                                        <td colspan="6" class="px-4 py-6 text-center text-body opacity-60">Belum ada item ditambahkan</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
                     </div>
 
-                    <div class="col-span-3 border-t border-default my-2"></div>
-
-                    <div class="col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
-                        <!-- Subtotal (Can be hidden dynamically) -->
-                        <div id="subtotal-input-wrapper" class="col-span-1">
-                            <label for="input-subtotal" class="block mb-2 text-sm font-medium text-heading">Subtotal *</label>
-                            <input type="text" id="input-subtotal" name="subtotal" readonly class="bg-slate-100 border border-default-medium text-heading text-sm rounded-base block w-full px-3 py-2.5 shadow-xs font-semibold" placeholder="0" required>
-                            <p id="error-subtotal" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
-                        </div>
-
-                        <!-- Discount -->
-                        <div class="col-span-1">
-                            <label for="input-discount" class="block mb-2 text-sm font-medium text-heading">Diskon</label>
-                            <input type="text" id="input-discount" name="discount" oninput="onPriceInput(this); calculateGrandTotal()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body font-semibold text-rose-700" placeholder="0" value="0">
-                            <p id="error-discount" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
-                        </div>
-
-                        <!-- Shipping Cost (Ongkir) -->
-                        <div class="col-span-1">
-                            <label for="input-shipping-cost" class="block mb-2 text-sm font-medium text-heading">Ongkir</label>
-                            <input type="text" id="input-shipping-cost" name="shipping_cost" oninput="onPriceInput(this); calculateGrandTotal()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body font-semibold text-slate-800" placeholder="0" value="0">
-                            <p id="error-shipping_cost" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
-                        </div>
-
-                        <!-- Grand Total (Can be hidden dynamically) -->
-                        <div id="grand-total-input-wrapper" class="col-span-1">
-                            <label for="input-grand-total" class="block mb-2 text-sm font-medium text-heading">Grand Total *</label>
-                            <input type="text" id="input-grand-total" name="grand_total" readonly class="bg-slate-100 border border-default-medium text-heading text-sm font-bold rounded-base block w-full px-3 py-2.5 shadow-xs text-brand" placeholder="0" required>
-                            <p id="error-grand_total" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
-                        </div>
-
-                        <!-- Payment Method -->
-                        <div id="payment-method-input-wrapper" class="col-span-1">
-                            <label for="input-payment-method" class="block mb-2 text-sm font-medium text-heading">Metode Pembayaran *</label>
-                            <select id="input-payment-method" name="payment_method" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs" required>
-                                <option value="tunai">TUNAI</option>
-                                <option value="transfer">TRANSFER</option>
-                                <option value="compliment">COMPLIMENT</option>
-                            </select>
-                            <p id="error-payment_method" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
-                        </div>
+                    <!-- Items Table -->
+                    <div class="overflow-x-auto border border-default rounded-base max-h-64 overflow-y-auto">
+                        <table class="w-full min-w-[600px] md:min-w-full text-xs text-left text-body">
+                            <thead class="bg-neutral-secondary-medium text-heading uppercase font-semibold border-b border-default">
+                                <tr>
+                                    <th class="px-4 py-2 w-16 text-center">Gambar</th>
+                                    <th class="px-4 py-2">Produk</th>
+                                    <th class="px-4 py-2 text-center w-20">Qty</th>
+                                    <th class="px-4 py-2 text-right w-28">Harga</th>
+                                    <th class="px-4 py-2 text-right w-28">Subtotal</th>
+                                    <th class="px-4 py-2 text-center w-20">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sale-items-list-body">
+                                <tr>
+                                    <td colspan="6" class="px-4 py-6 text-center text-body opacity-60">Belum ada item ditambahkan</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
-                <!-- Modal Footer -->
-                <div class="flex items-center space-x-4 border-t border-default pt-4 md:pt-6">
-                    <button type="submit" id="btn-save" class="inline-flex items-center text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">
-                        <svg class="w-4 h-4 me-1.5 -ms-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/></svg>
-                        Simpan Penjualan
-                    </button>
-                    <button type="button" onclick="closeModal()" class="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">Batal</button>
+                <div class="col-span-3 border-t border-default my-2"></div>
+
+                <!-- Totals Row Layout (Horizontal) -->
+                <div class="col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+                    <!-- Subtotal (Can be hidden dynamically) -->
+                    <div id="subtotal-input-wrapper" class="col-span-1">
+                        <label for="input-subtotal" class="block mb-2 text-sm font-medium text-heading">Subtotal *</label>
+                        <input type="text" id="input-subtotal" name="subtotal" readonly class="bg-slate-100 border border-default-medium text-heading text-sm rounded-base block w-full px-3 py-2.5 shadow-xs font-semibold" placeholder="0" required>
+                        <p id="error-subtotal" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+
+                    <!-- Discount -->
+                    <div id="discount-input-wrapper" class="col-span-1">
+                        <label for="input-discount" class="block mb-2 text-sm font-medium text-heading">Diskon</label>
+                        <input type="text" id="input-discount" name="discount" oninput="onPriceInput(this); calculateGrandTotal()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body font-semibold text-rose-700" placeholder="0" value="0">
+                        <p id="error-discount" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+
+                    <!-- Shipping Cost (Ongkir) -->
+                    <div id="shipping-cost-input-wrapper" class="col-span-1">
+                        <label for="input-shipping-cost" class="block mb-2 text-sm font-medium text-heading">Ongkir</label>
+                        <input type="text" id="input-shipping-cost" name="shipping_cost" oninput="onPriceInput(this); calculateGrandTotal()" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs placeholder:text-body font-semibold text-slate-800" placeholder="0" value="0">
+                        <p id="error-shipping_cost" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+
+                    <!-- Grand Total (Can be hidden dynamically) -->
+                    <div id="grand-total-input-wrapper" class="col-span-1">
+                        <label for="input-grand-total" class="block mb-2 text-sm font-medium text-heading">Grand Total *</label>
+                        <input type="text" id="input-grand-total" name="grand_total" readonly class="bg-slate-100 border border-default-medium text-heading text-sm font-bold rounded-base block w-full px-3 py-2.5 shadow-xs text-brand" placeholder="0" required>
+                        <p id="error-grand_total" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
+
+                    <!-- Payment Method -->
+                    <div id="payment-method-input-wrapper" class="col-span-1">
+                        <label for="input-payment-method" class="block mb-2 text-sm font-medium text-heading">Metode Pembayaran *</label>
+                        <select id="input-payment-method" name="payment_method" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs" required>
+                            <option value="tunai">TUNAI</option>
+                            <option value="transfer">TRANSFER</option>
+                            <option value="compliment">COMPLIMENT</option>
+                        </select>
+                        <p id="error-payment_method" class="mt-2 text-xs font-medium text-rose-500 hidden"></p>
+                    </div>
                 </div>
-            </form>
-        </div>
+            </div>
+
+            <!-- Form Footer / Actions -->
+            <div class="flex items-center space-x-4 border-default pt-6 mt-6">
+                <button type="submit" id="btn-save" class="inline-flex items-center text-white bg-brand hover:bg-brand-strong box-border border border-transparent focus:ring-4 focus:ring-brand-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">
+                    <svg class="w-4 h-4 me-1.5 -ms-0.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7 7V5"/>
+                    </svg>
+                    Simpan Penjualan
+                </button>
+                <a href="/sales" class="text-body bg-neutral-secondary-medium box-border border border-default-medium hover:bg-neutral-tertiary-medium hover:text-heading focus:ring-4 focus:ring-neutral-tertiary shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none cursor-pointer">Batal</a>
+            </div>
+        </form>
     </div>
 </div>
 
 <!-- Modal (Kelola Customers of Selected Counter) -->
 <div id="manage-customers-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true">
-    <!-- Backdrop with blur -->
     <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="manage-customers-backdrop" onclick="closeManageCustomers()"></div>
-
-    <!-- Modal content wrapper -->
     <div class="relative w-full max-w-xl max-h-[90vh] flex flex-col transform scale-95 opacity-0 transition-all duration-300 bg-neutral-primary-soft border border-default rounded-base shadow-sm p-4 md:p-6" id="manage-customers-panel">
         <!-- Modal header -->
         <div class="flex items-center justify-between border-b border-default pb-4 shrink-0">
             <div>
-                <h3 id="manage-customers-title" class="text-md font-bold text-heading">
-                    Kelola Pelanggan
-                </h3>
+                <h3 id="manage-customers-title" class="text-md font-bold text-heading">Kelola Pelanggan</h3>
                 <p id="manage-customers-subtitle" class="text-xs text-body mt-0.5"></p>
             </div>
             <button type="button" onclick="closeManageCustomers()" class="text-body bg-transparent hover:bg-neutral-tertiary hover:text-heading rounded-base text-sm w-8 h-8 ms-auto inline-flex justify-center items-center cursor-pointer">
@@ -434,7 +336,6 @@
 <!-- Modal (Kelola Expeditions) -->
 <div id="manage-expeditions-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true">
     <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="manage-expeditions-backdrop" onclick="closeManageExpeditions()"></div>
-
     <div class="relative w-full max-w-lg max-h-[90vh] flex flex-col transform scale-95 opacity-0 transition-all duration-300 bg-neutral-primary-soft border border-default rounded-base shadow-sm p-4 md:p-6" id="manage-expeditions-panel">
         <!-- Modal header -->
         <div class="flex items-center justify-between border-b border-default pb-4 shrink-0">
@@ -473,6 +374,7 @@
                             <tr>
                                 <th class="px-3 py-2">ID</th>
                                 <th class="px-3 py-2">Nama Ekspedisi</th>
+                                <th class="px-3 py-2 text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="inline-expedition-list-body">
@@ -488,7 +390,6 @@
 <!-- Modal (Kelola Couriers) -->
 <div id="manage-couriers-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true">
     <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="manage-couriers-backdrop" onclick="closeManageCouriers()"></div>
-
     <div class="relative w-full max-w-lg max-h-[90vh] flex flex-col transform scale-95 opacity-0 transition-all duration-300 bg-neutral-primary-soft border border-default rounded-base shadow-sm p-4 md:p-6" id="manage-couriers-panel">
         <!-- Modal header -->
         <div class="flex items-center justify-between border-b border-default pb-4 shrink-0">
@@ -537,6 +438,7 @@
                             <tr>
                                 <th class="px-3 py-2">Nama Kurir</th>
                                 <th class="px-3 py-2">Tipe</th>
+                                <th class="px-3 py-2 text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="inline-courier-list-body">
@@ -549,30 +451,56 @@
     </div>
 </div>
 
-<!-- Modal (Delete Confirmation) -->
-<div id="delete-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true">
-    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="delete-backdrop" onclick="closeDeleteModal()"></div>
-
-    <div class="relative w-full max-w-md bg-white rounded-2xl shadow-xl border border-slate-100 p-6 transform scale-95 opacity-0 transition-all duration-300" id="delete-panel">
-        <div class="flex items-start gap-4 mb-4">
-            <div class="p-3 bg-rose-50 text-rose-600 rounded-xl">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                </svg>
-            </div>
+<!-- Modal (Kelola Marketplaces) -->
+<div id="manage-marketplaces-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true">
+    <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="manage-marketplaces-backdrop" onclick="closeManageMarketplaces()"></div>
+    <div class="relative w-full max-w-lg max-h-[90vh] flex flex-col transform scale-95 opacity-0 transition-all duration-300 bg-neutral-primary-soft border border-default rounded-base shadow-sm p-4 md:p-6" id="manage-marketplaces-panel">
+        <!-- Modal header -->
+        <div class="flex items-center justify-between border-b border-default pb-4 shrink-0">
             <div>
-                <h3 class="text-base font-bold text-slate-800">Hapus Penjualan</h3>
-                <p class="text-sm text-slate-500 mt-1">Apakah Anda yakin ingin menghapus penjualan dengan Barcode <span id="delete-sale-barcode" class="font-semibold text-slate-700"></span>? Tindakan ini tidak dapat dibatalkan.</p>
+                <h3 class="text-md font-bold text-heading">Kelola Marketplace</h3>
+                <p class="text-xs text-body mt-0.5">Tambah dan lihat marketplace terdaftar</p>
             </div>
+            <button type="button" onclick="closeManageMarketplaces()" class="text-body bg-transparent hover:bg-neutral-tertiary hover:text-heading rounded-base text-sm w-8 h-8 ms-auto inline-flex justify-center items-center cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
         </div>
 
-        <div class="flex items-center justify-end gap-3 pt-2">
-            <button onclick="closeDeleteModal()" class="px-4 py-2.5 text-sm font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition duration-150">
-                Batal
-            </button>
-            <button onclick="handleDeleteConfirm()" id="btn-delete" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold rounded-xl transition duration-150">
-                Hapus
-            </button>
+        <!-- Modal body -->
+        <div class="overflow-y-auto flex-1 py-4 space-y-6">
+            <!-- Add Marketplace Form -->
+            <form id="inline-marketplace-form" onsubmit="handleInlineMarketplaceSubmit(event)" class="bg-neutral-secondary-medium p-4 rounded-base border border-default-medium space-y-3">
+                <h4 class="text-xs font-bold text-heading uppercase tracking-wider">Tambah Marketplace Baru</h4>
+                <div class="flex flex-col sm:flex-row gap-3 sm:items-end">
+                    <div class="w-full sm:flex-1">
+                        <label for="inline-marketplace-name" class="block mb-1 text-xs font-medium text-heading">Nama Marketplace *</label>
+                        <input type="text" id="inline-marketplace-name" required class="bg-neutral-primary-soft border border-default text-heading text-xs rounded-base block w-full px-2.5 py-2 placeholder:text-body" placeholder="contoh: Tokopedia, Shopee">
+                    </div>
+                    <button type="submit" class="inline-flex items-center justify-center text-white bg-brand hover:bg-brand-strong font-medium rounded-base text-xs px-3.5 py-2 cursor-pointer shadow-xs h-[34px] w-full sm:w-auto shrink-0">
+                        <svg class="w-3.5 h-3.5 me-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                        Simpan
+                    </button>
+                </div>
+            </form>
+
+            <!-- Marketplace List -->
+            <div class="space-y-2">
+                <h4 class="text-xs font-bold text-heading uppercase tracking-wider">Daftar Marketplace Terdaftar</h4>
+                <div class="overflow-x-auto border border-default rounded-base max-h-48 overflow-y-auto">
+                    <table class="w-full min-w-[300px] md:min-w-full text-xs text-left text-body">
+                        <thead class="bg-neutral-secondary-medium text-heading uppercase font-semibold border-b border-default">
+                            <tr>
+                                <th class="px-3 py-2">ID</th>
+                                <th class="px-3 py-2">Nama Marketplace</th>
+                                <th class="px-3 py-2 text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inline-marketplace-list-body">
+                            <!-- Rendered dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -583,45 +511,39 @@
 <!-- JavaScript Logic -->
 <script>
     const csrfToken = "{{ csrf_token() }}";
-    let activeSales = [];
-    let saleToDelete = null;
     let activeCustomers = @json($customers);
     let activeProducts = @json($products);
     let activeExpeditions = @json($expeditions);
     let activeCouriers = @json($couriers);
+    let activeMarketplaces = @json($marketplaces);
     let selectedCounterId = null;
     let saleItems = [];
 
     document.addEventListener("DOMContentLoaded", () => {
-        fetchSales();
+        // Hide wholeprice wrapper
+        document.getElementById("item-wholeprice-wrapper").classList.add("hidden");
+        
+        saleItems = [];
+        renderSaleItemsTable();
+
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById("input-date").value = now.toISOString().slice(0, 16);
+        document.getElementById("input-discount").value = "0";
+        document.getElementById("input-shipping-cost").value = "0";
+
+        selectedCounterId = null;
+        renderCustomerOptions();
+        renderProductOptions();
+        renderExpeditionOptions();
+        renderCourierOptions();
+        renderMarketplaceOptions();
+        
+        toggleItemPenjualanAccess();
+        onTypeChange();
+        calculateGrandTotal();
+        clearValidationErrors();
     });
-
-    async function fetchSales() {
-        const skeleton = document.getElementById("loading-skeleton");
-        const emptyState = document.getElementById("empty-state");
-        const tableWrapper = document.getElementById("sales-table-wrapper");
-
-        skeleton.classList.remove("hidden");
-        tableWrapper.classList.add("hidden");
-        emptyState.classList.add("hidden");
-
-        try {
-            const response = await fetch("/sales", {
-                headers: {
-                    "Accept": "application/json",
-                }
-            });
-
-            if (!response.ok) throw new Error("Gagal mengambil data penjualan.");
-
-            activeSales = await response.json();
-            renderSales();
-        } catch (error) {
-            showToast("Gagal memuat penjualan. Silakan coba lagi.", "error");
-        } finally {
-            skeleton.classList.add("hidden");
-        }
-    }
 
     function formatCurrency(amount) {
         return new Intl.NumberFormat('id-ID', {
@@ -630,109 +552,6 @@
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
         }).format(amount);
-    }
-
-    function renderSales() {
-        const emptyState = document.getElementById("empty-state");
-        const tableWrapper = document.getElementById("sales-table-wrapper");
-        const tbody = document.getElementById("sales-table-body");
-
-        tbody.innerHTML = "";
-
-        const searchInput = document.getElementById("search-input");
-        const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : "";
-
-        // Filter sales
-        const filteredSales = activeSales.filter(sale => {
-            if (searchQuery) {
-                const barcodeMatch = sale.barcode ? sale.barcode.toLowerCase().includes(searchQuery) : false;
-                const counterMatch = (sale.counter && sale.counter.name) ? sale.counter.name.toLowerCase().includes(searchQuery) : false;
-                const customerMatch = (sale.customer && sale.customer.name) ? sale.customer.name.toLowerCase().includes(searchQuery) : false;
-                const paymentMatch = sale.payment_method ? sale.payment_method.toLowerCase().includes(searchQuery) : false;
-                const typeMatch = sale.type ? sale.type.toLowerCase().includes(searchQuery) : false;
-                if (!barcodeMatch && !counterMatch && !customerMatch && !paymentMatch && !typeMatch) {
-                    return false;
-                }
-            }
-            return true;
-        });
-
-        if (activeSales.length === 0) {
-            emptyState.classList.remove("hidden");
-            tableWrapper.classList.add("hidden");
-            return;
-        }
-
-        emptyState.classList.add("hidden");
-        tableWrapper.classList.remove("hidden");
-
-        if (filteredSales.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="9" class="px-6 py-12 text-center text-body opacity-60">
-                        <div class="flex flex-col items-center justify-center gap-2">
-                            <svg class="w-8 h-8 opacity-40 text-body" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
-                            <span class="text-sm font-semibold">Tidak ada data penjualan yang cocok dengan kriteria Anda.</span>
-                        </div>
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        filteredSales.forEach(sale => {
-            const row = document.createElement("tr");
-            row.className = "bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium transition-colors duration-150";
-
-            const counterName = sale.counter ? escapeHtml(sale.counter.name) : '<span class="text-body opacity-50 font-normal">Tanpa Counter</span>';
-            const customerName = sale.customer ? escapeHtml(sale.customer.name) : '<span class="text-body opacity-50 font-normal">Umum</span>';
-            
-            // Format date
-            let formattedDate = '-';
-            if (sale.date) {
-                const d = new Date(sale.date);
-                formattedDate = d.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
-            }
-
-            // Badges for Type
-            const typeBadge = sale.type === 'marketplace'
-                ? `<span class="px-2.5 py-1 text-xs font-semibold text-indigo-700 bg-indigo-50 rounded-full">Marketplace</span>`
-                : `<span class="px-2.5 py-1 text-xs font-semibold text-slate-700 bg-slate-100 rounded-full">Umum</span>`;
-
-            // Badges for Payment
-            let paymentBadge = `<span class="px-2.5 py-1 text-xs font-semibold text-slate-700 bg-slate-100 rounded-full">${escapeHtml(sale.payment_method)}</span>`;
-            if (sale.payment_method === 'tunai') {
-                paymentBadge = `<span class="px-2.5 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 rounded-full">Tunai</span>`;
-            } else if (sale.payment_method === 'transfer') {
-                paymentBadge = `<span class="px-2.5 py-1 text-xs font-semibold text-blue-700 bg-blue-50 rounded-full">Transfer</span>`;
-            } else if (sale.payment_method === 'compliment') {
-                paymentBadge = `<span class="px-2.5 py-1 text-xs font-semibold text-amber-700 bg-amber-50 rounded-full">Compliment</span>`;
-            }
-
-            row.innerHTML = `
-                <td class="px-6 py-4 font-semibold text-body">#${sale.id}</td>
-                <td class="px-6 py-4 font-medium text-heading">${counterName}</td>
-                <td class="px-6 py-4 font-medium text-heading">${customerName}</td>
-                <td class="px-6 py-4 text-xs font-semibold text-body">${escapeHtml(sale.barcode)}</td>
-                <td class="px-6 py-4">${typeBadge}</td>
-                <td class="px-6 py-4 text-xs text-body">${formattedDate}</td>
-                <td class="px-6 py-4 font-bold text-slate-800">${formatCurrency(sale.grand_total)}</td>
-                <td class="px-6 py-4">${paymentBadge}</td>
-                <td class="px-6 py-4 text-right">
-                    <div class="flex items-center justify-end gap-3">
-                        <button onclick="openEditModal(${sale.id})" class="font-medium text-fg-brand hover:underline cursor-pointer" title="Ubah">Ubah</button>
-                        <button onclick="openDeleteModal(${sale.id}, '${escapeQuote(sale.barcode)}')" class="font-medium text-fg-danger hover:underline cursor-pointer" title="Hapus">Hapus</button>
-                    </div>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
-    }
-
-    function handleSearchChange() {
-        renderSales();
     }
 
     function onCounterChange() {
@@ -753,14 +572,13 @@
         toggleItemPenjualanAccess();
     }
 
+    // Render dropdown customers
     function renderCustomerOptions() {
         const customerSelect = document.getElementById("input-customer-id");
         const currentSelectedVal = customerSelect.value;
         
-        // Save None option
         customerSelect.innerHTML = '<option value="">Pilih Pelanggan...</option>';
         
-        // Filter customers based on selectedCounterId - return empty list if no counter is selected
         const filtered = selectedCounterId ? activeCustomers.filter(c => String(c.counter_id) === String(selectedCounterId)) : [];
         
         filtered.forEach(c => {
@@ -772,7 +590,6 @@
             customerSelect.appendChild(opt);
         });
         
-        // Restore selected value if still valid
         if (filtered.some(c => String(c.id) === String(currentSelectedVal))) {
             customerSelect.value = currentSelectedVal;
         } else {
@@ -781,13 +598,13 @@
         onCustomerChange();
     }
 
+    // Render dropdown products
     function renderProductOptions() {
         const productSelect = document.getElementById("select-product-id");
         const currentSelectedVal = productSelect.value;
         
         productSelect.innerHTML = '<option value="">-- Pilih Produk --</option>';
         
-        // Filter products based on selectedCounterId - return empty list if no counter is selected
         const filtered = selectedCounterId ? activeProducts.filter(p => String(p.counter_id) === String(selectedCounterId)) : [];
         
         filtered.forEach(p => {
@@ -809,7 +626,6 @@
     function toggleItemPenjualanAccess() {
         const isCounterSelected = !!selectedCounterId;
         
-        // Customer Select & Kelola Customer Button
         const customerSelect = document.getElementById("input-customer-id");
         const manageCustomerBtn = document.getElementById("btn-manage-customers");
         
@@ -827,7 +643,6 @@
             }
         }
         
-        // Item Penjualan fields
         const productSelect = document.getElementById("select-product-id");
         const qtyInput = document.getElementById("input-item-qty");
         const priceInput = document.getElementById("input-item-price");
@@ -878,43 +693,64 @@
     }
 
     function onTypeChange() {
-        const typeSelect = document.getElementById("input-type");
-        const type = typeSelect.value;
-        
+        const type = document.getElementById("input-type").value;
         const umumWrapper = document.getElementById("umum-fields-wrapper");
         const marketplaceWrapper = document.getElementById("marketplace-fields-wrapper");
         const subtotalWrapper = document.getElementById("subtotal-input-wrapper");
         const grandTotalWrapper = document.getElementById("grand-total-input-wrapper");
+        const discountWrapper = document.getElementById("discount-input-wrapper");
+        const shippingCostWrapper = document.getElementById("shipping-cost-input-wrapper");
+        const priceInput = document.getElementById("input-item-price");
         
         if (type === "marketplace") {
             umumWrapper.classList.add("hidden");
             marketplaceWrapper.classList.remove("hidden");
             subtotalWrapper.classList.add("hidden");
             grandTotalWrapper.classList.add("hidden");
+            discountWrapper.classList.add("hidden");
+            shippingCostWrapper.classList.add("hidden");
             
-            // Clear Customer & Expedition
             document.getElementById("input-customer-id").value = "";
             document.getElementById("input-expedition-id").value = "";
             onCustomerChange();
             
-            // Auto-generate barcode if empty
             const barcodeInput = document.getElementById("input-barcode");
-            if (!barcodeInput.value) {
-                barcodeInput.value = generateRandomBarcode();
+            if (barcodeInput.value.startsWith("UMUM-")) {
+                barcodeInput.value = "";
             }
             onBarcodeChange();
+            
+            // Editable and empty for marketplace
+            priceInput.removeAttribute("readonly");
+            priceInput.value = "";
+            priceInput.classList.remove("bg-slate-100", "cursor-not-allowed");
+            priceInput.classList.add("bg-neutral-primary-soft");
+            
+            // Hide wholeprice tiers
+            document.getElementById("item-wholeprice-wrapper").classList.add("hidden");
+            
+            // Reset discount and shipping cost
+            document.getElementById("input-discount").value = "0";
+            document.getElementById("input-shipping-cost").value = "0";
+            calculateGrandTotal();
         } else {
             umumWrapper.classList.remove("hidden");
             marketplaceWrapper.classList.add("hidden");
             subtotalWrapper.classList.remove("hidden");
             grandTotalWrapper.classList.remove("hidden");
+            discountWrapper.classList.remove("hidden");
+            shippingCostWrapper.classList.remove("hidden");
             
-            // Clear Marketplace & Courier
             document.getElementById("input-marketplace-id").value = "";
             document.getElementById("input-courier-id").value = "";
-            
-            // Set backend-required barcode field
             document.getElementById("input-barcode").value = "UMUM-" + Date.now();
+            
+            // Read-only for general sales
+            priceInput.setAttribute("readonly", true);
+            priceInput.classList.add("bg-slate-100", "cursor-not-allowed");
+            priceInput.classList.remove("bg-neutral-primary-soft");
+            
+            onProductChange();
         }
     }
 
@@ -986,7 +822,6 @@
         const normalPriceLabel = document.getElementById("normal-price-label");
         const tiersContainer = document.getElementById("wholeprice-tiers-selection");
         
-        // Reset wholeprice state
         wholepriceWrapper.classList.add("hidden");
         document.getElementById("price-type-normal").checked = true;
         tiersContainer.classList.add("hidden");
@@ -995,13 +830,18 @@
         if (selectedOption && selectedOption.value) {
             const productId = selectedOption.value;
             const defaultPrice = parseFloat(selectedOption.getAttribute("data-price")) || 0;
-            priceInput.value = formatNumberInput(Math.round(defaultPrice).toString());
+            
+            const type = document.getElementById("input-type").value;
+            if (type === "marketplace") {
+                priceInput.value = "";
+            } else {
+                priceInput.value = formatNumberInput(Math.round(defaultPrice).toString());
+            }
+            
             qtyInput.value = 1;
             
-            // Look up product in activeProducts to check if is_wholeprice is true
             const productObj = activeProducts.find(p => String(p.id) === String(productId));
-            if (productObj && productObj.is_wholeprice && productObj.wholeprices && productObj.wholeprices.length > 0) {
-                // Populate options
+            if (type !== "marketplace" && productObj && productObj.is_wholeprice && productObj.wholeprices && productObj.wholeprices.length > 0) {
                 normalPriceLabel.innerText = formatCurrency(defaultPrice);
                 productObj.wholeprices.forEach((tier, index) => {
                     const div = document.createElement("div");
@@ -1015,7 +855,6 @@
                     tiersContainer.appendChild(div);
                 });
                 
-                // Show wrapper
                 wholepriceWrapper.classList.remove("hidden");
             }
         } else {
@@ -1038,7 +877,6 @@
             }
         } else {
             tiersContainer.classList.remove("hidden");
-            // Select first tier by default
             const firstTierInput = tiersContainer.querySelector('input[name="selected_wholeprice_tier"]');
             if (firstTierInput) {
                 firstTierInput.checked = true;
@@ -1056,7 +894,6 @@
         
         priceInput.value = formatNumberInput(Math.round(tierPrice).toString());
         
-        // Auto update qty if it's less than minimum qty of the tier
         const currentQty = parseInt(qtyInput.value) || 0;
         if (currentQty < minQty) {
             qtyInput.value = minQty;
@@ -1102,12 +939,16 @@
             return;
         }
         
+        if (priceInput.value.trim() === "") {
+            showToast("Silakan masukkan harga terlebih dahulu!", "error");
+            return;
+        }
+        
         if (price < 0) {
             showToast("Harga tidak boleh negatif!", "error");
             return;
         }
 
-        // Check if wholeprice is used
         const isWholeprice = document.getElementById("price-type-wholeprice").checked;
         let wholepriceId = null;
         if (isWholeprice) {
@@ -1139,12 +980,10 @@
             });
         }
         
-        // Reset inputs
         productSelect.value = "";
         qtyInput.value = "1";
         priceInput.value = "";
         
-        // Hide wholeprice wrapper
         document.getElementById("item-wholeprice-wrapper").classList.add("hidden");
         
         renderSaleItemsTable();
@@ -1319,7 +1158,7 @@
     // INLINE EXPEDITION MANAGEMENT
     function openManageExpeditions() {
         document.getElementById("inline-expedition-form").reset();
-        renderInlineExpeditionList();
+        renderInlineEditionList();
         
         const modal = document.getElementById("manage-expeditions-modal");
         const backdrop = document.getElementById("manage-expeditions-backdrop");
@@ -1347,12 +1186,12 @@
         }, 300);
     }
 
-    function renderInlineExpeditionList() {
+    function renderInlineEditionList() {
         const tbody = document.getElementById("inline-expedition-list-body");
         tbody.innerHTML = "";
         
         if (activeExpeditions.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="2" class="px-3 py-4 text-center text-body opacity-60">Belum ada ekspedisi terdaftar.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="3" class="px-3 py-4 text-center text-body opacity-60">Belum ada ekspedisi terdaftar.</td></tr>';
             return;
         }
         
@@ -1362,6 +1201,9 @@
             row.innerHTML = `
                 <td class="px-3 py-2 font-medium text-heading">${e.id}</td>
                 <td class="px-3 py-2 text-body">${escapeHtml(e.name)}</td>
+                <td class="px-3 py-2 text-right">
+                    <button type="button" onclick="deleteInlineExpedition(${e.id})" class="text-rose-500 hover:text-rose-700 font-semibold cursor-pointer">Hapus</button>
+                </td>
             `;
             tbody.appendChild(row);
         });
@@ -1456,12 +1298,13 @@
         }, 300);
     }
 
+    // Render list of courier on manage modal
     function renderInlineCourierList() {
         const tbody = document.getElementById("inline-courier-list-body");
         tbody.innerHTML = "";
         
         if (activeCouriers.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="2" class="px-3 py-4 text-center text-body opacity-60">Belum ada kurir terdaftar.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="3" class="px-3 py-4 text-center text-body opacity-60">Belum ada kurir terdaftar.</td></tr>';
             return;
         }
         
@@ -1471,6 +1314,9 @@
             row.innerHTML = `
                 <td class="px-3 py-2 font-medium text-heading">${escapeHtml(c.name)}</td>
                 <td class="px-3 py-2 text-body uppercase text-[10px] font-semibold">${c.type}</td>
+                <td class="px-3 py-2 text-right">
+                    <button type="button" onclick="deleteInlineCourier(${c.id})" class="text-rose-500 hover:text-rose-700 font-semibold cursor-pointer">Hapus</button>
+                </td>
             `;
             tbody.appendChild(row);
         });
@@ -1535,101 +1381,15 @@
         }
     }
 
-    // Modal Helpers
-    function openAddModal() {
-        document.getElementById("modal-title").innerText = "Tambah Penjualan Baru";
-        document.getElementById("sale-id").value = "";
-        document.getElementById("sale-form").reset();
+    // INLINE MARKETPLACE MANAGEMENT
+    function openManageMarketplaces() {
+        document.getElementById("inline-marketplace-form").reset();
+        renderInlineMarketplaceList();
         
-        // Hide wholeprice wrapper
-        document.getElementById("item-wholeprice-wrapper").classList.add("hidden");
+        const modal = document.getElementById("manage-marketplaces-modal");
+        const backdrop = document.getElementById("manage-marketplaces-backdrop");
+        const panel = document.getElementById("manage-marketplaces-panel");
         
-        saleItems = [];
-        renderSaleItemsTable();
-
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        document.getElementById("input-date").value = now.toISOString().slice(0, 16);
-        document.getElementById("input-discount").value = "0";
-        document.getElementById("input-shipping-cost").value = "0";
-
-        selectedCounterId = null;
-        renderCustomerOptions();
-        renderProductOptions();
-        renderExpeditionOptions();
-        renderCourierOptions();
-        
-        toggleItemPenjualanAccess();
-        onTypeChange();
-        calculateGrandTotal();
-        clearValidationErrors();
-        showModal();
-     }
- 
-     function openEditModal(id) {
-         const sale = activeSales.find(s => s.id === id);
-         if (!sale) return;
- 
-         document.getElementById("modal-title").innerText = "Ubah Penjualan";
-         document.getElementById("sale-id").value = sale.id;
-         document.getElementById("input-counter-id").value = sale.counter_id;
-         selectedCounterId = sale.counter_id;
-         
-         renderCustomerOptions();
-         document.getElementById("input-customer-id").value = sale.customer_id || "";
-         onCustomerChange();
-         
-         renderProductOptions();
-         renderExpeditionOptions();
-        document.getElementById("input-expedition-id").value = sale.expedition_id || "";
-        
-        renderCourierOptions();
-        document.getElementById("input-courier-id").value = sale.courier_id || "";
-        
-        document.getElementById("input-barcode").value = sale.barcode || "";
-        
-        if (sale.date) {
-            const d = new Date(sale.date);
-            d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-            document.getElementById("input-date").value = d.toISOString().slice(0, 16);
-        } else {
-            document.getElementById("input-date").value = "";
-        }
-
-        document.getElementById("input-type").value = sale.type;
-        document.getElementById("input-payment-method").value = sale.payment_method;
-        document.getElementById("input-marketplace-id").value = sale.marketplace_id || "";
-        document.getElementById("input-discount").value = formatNumberInput(Math.round(sale.discount || 0).toString()) || "0";
-        document.getElementById("input-shipping-cost").value = formatNumberInput(Math.round(sale.shipping_cost || 0).toString()) || "0";
-
-        // Hide wholeprice wrapper
-        document.getElementById("item-wholeprice-wrapper").classList.add("hidden");
-
-        // Load items
-        saleItems = sale.items ? sale.items.map(item => ({
-            product_id: item.product_id,
-            product_name: item.product ? item.product.name : 'Unknown Product',
-            product_image: item.product ? item.product.image : null,
-            qty: parseInt(item.qty),
-            price: parseFloat(item.price),
-            subtotal: parseFloat(item.subtotal),
-            is_wholeprice: item.is_wholeprice ? 1 : 0,
-            wholeprice_id: item.wholeprice_id || null
-        })) : [];
-        
-        renderSaleItemsTable();
-        toggleItemPenjualanAccess();
-        onTypeChange();
-        calculateGrandTotal();
-        clearValidationErrors();
-        showModal();
-    }
-
-    function showModal() {
-        const modal = document.getElementById("sale-modal");
-        const backdrop = document.getElementById("modal-backdrop");
-        const panel = document.getElementById("modal-panel");
-
         modal.classList.remove("hidden");
         setTimeout(() => {
             backdrop.classList.replace("opacity-0", "opacity-100");
@@ -1638,31 +1398,181 @@
         }, 10);
     }
 
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") {
-            closeModal();
-            closeManageCustomers();
-            closeManageExpeditions();
-            closeManageCouriers();
-            closeDeleteModal();
-        }
-    });
-
-    function closeModal() {
-        const modal = document.getElementById("sale-modal");
-        const backdrop = document.getElementById("modal-backdrop");
-        const panel = document.getElementById("modal-panel");
-
+    function closeManageMarketplaces() {
+        const modal = document.getElementById("manage-marketplaces-modal");
+        const backdrop = document.getElementById("manage-marketplaces-backdrop");
+        const panel = document.getElementById("manage-marketplaces-panel");
+        
         backdrop.classList.replace("opacity-100", "opacity-0");
         panel.classList.replace("scale-100", "scale-95");
         panel.classList.replace("opacity-100", "opacity-0");
-
+        
         setTimeout(() => {
             modal.classList.add("hidden");
         }, 300);
     }
 
-    // Form Handling
+    function renderInlineMarketplaceList() {
+        const tbody = document.getElementById("inline-marketplace-list-body");
+        tbody.innerHTML = "";
+        
+        if (activeMarketplaces.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" class="px-3 py-4 text-center text-body opacity-60">Belum ada marketplace terdaftar.</td></tr>';
+            return;
+        }
+        
+        activeMarketplaces.forEach(m => {
+            const row = document.createElement("tr");
+            row.className = "border-b border-default hover:bg-neutral-secondary-medium/50";
+            row.innerHTML = `
+                <td class="px-3 py-2 font-medium text-heading">${m.id}</td>
+                <td class="px-3 py-2 text-body">${escapeHtml(m.name)}</td>
+                <td class="px-3 py-2 text-right">
+                    <button type="button" onclick="deleteInlineMarketplace(${m.id})" class="text-rose-500 hover:text-rose-700 font-semibold cursor-pointer">Hapus</button>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    async function handleInlineMarketplaceSubmit(event) {
+        event.preventDefault();
+        
+        const name = document.getElementById("inline-marketplace-name").value.trim();
+        const data = { name };
+        
+        try {
+            const response = await fetch("/marketplaces", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "X-CSRF-TOKEN": csrfToken
+                },
+                body: JSON.stringify(data)
+            });
+            
+            const result = await response.json();
+            
+            if (response.status === 422) {
+                const firstErrKey = Object.keys(result.errors)[0];
+                showToast(result.errors[firstErrKey][0], "error");
+                return;
+            }
+            
+            if (!response.ok) throw new Error("Could not save marketplace.");
+            
+            activeMarketplaces.push(result);
+            showToast("Marketplace berhasil ditambahkan!", "success");
+            
+            renderMarketplaceOptions();
+            document.getElementById("input-marketplace-id").value = result.id;
+            
+            closeManageMarketplaces();
+        } catch (error) {
+            showToast(error.message, "error");
+        }
+    }
+
+    function renderMarketplaceOptions() {
+        const marketplaceSelect = document.getElementById("input-marketplace-id");
+        const currentSelectedVal = marketplaceSelect.value;
+        
+        marketplaceSelect.innerHTML = '<option value="">Pilih Marketplace...</option>';
+        activeMarketplaces.forEach(m => {
+            const opt = document.createElement("option");
+            opt.value = m.id;
+            opt.innerText = m.name;
+            marketplaceSelect.appendChild(opt);
+        });
+        
+        if (activeMarketplaces.some(m => String(m.id) === String(currentSelectedVal))) {
+            marketplaceSelect.value = currentSelectedVal;
+        } else {
+            marketplaceSelect.value = "";
+        }
+    }
+
+    // INLINE DELETE ACTIONS
+    async function deleteInlineExpedition(id) {
+        if (!confirm("Apakah Anda yakin ingin menghapus ekspedisi ini?")) return;
+        
+        try {
+            const response = await fetch(`/expeditions/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "X-CSRF-TOKEN": csrfToken,
+                    "Accept": "application/json"
+                }
+            });
+            
+            if (!response.ok) throw new Error("Gagal menghapus ekspedisi.");
+            
+            activeExpeditions = activeExpeditions.filter(e => String(e.id) !== String(id));
+            showToast("Ekspedisi berhasil dihapus!", "success");
+            renderExpeditionOptions();
+            renderInlineEditionList();
+        } catch (error) {
+            showToast(error.message, "error");
+        }
+    }
+
+    async function deleteInlineCourier(id) {
+        if (!confirm("Apakah Anda yakin ingin menghapus kurir ini?")) return;
+        
+        try {
+            const response = await fetch(`/couriers/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "X-CSRF-TOKEN": csrfToken,
+                    "Accept": "application/json"
+                }
+            });
+            
+            if (!response.ok) throw new Error("Gagal menghapus kurir.");
+            
+            activeCouriers = activeCouriers.filter(c => String(c.id) !== String(id));
+            showToast("Kurir berhasil dihapus!", "success");
+            renderCourierOptions();
+            renderInlineCourierList();
+        } catch (error) {
+            showToast(error.message, "error");
+        }
+    }
+
+    async function deleteInlineMarketplace(id) {
+        if (!confirm("Apakah Anda yakin ingin menghapus marketplace ini?")) return;
+        
+        try {
+            const response = await fetch(`/marketplaces/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "X-CSRF-TOKEN": csrfToken,
+                    "Accept": "application/json"
+                }
+            });
+            
+            if (!response.ok) throw new Error("Gagal menghapus marketplace.");
+            
+            activeMarketplaces = activeMarketplaces.filter(m => String(m.id) !== String(id));
+            showToast("Marketplace berhasil dihapus!", "success");
+            renderMarketplaceOptions();
+            renderInlineMarketplaceList();
+        } catch (error) {
+            showToast(error.message, "error");
+        }
+    }
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            closeManageCustomers();
+            closeManageExpeditions();
+            closeManageCouriers();
+            closeManageMarketplaces();
+        }
+    });
+
+    // Form Submit handling
     async function handleFormSubmit(event) {
         event.preventDefault();
         clearValidationErrors();
@@ -1672,7 +1582,6 @@
             return;
         }
 
-        const id = document.getElementById("sale-id").value;
         const counter_id = document.getElementById("input-counter-id").value;
         const customer_id = document.getElementById("input-customer-id").value || null;
         const expedition_id = document.getElementById("input-expedition-id").value || null;
@@ -1704,10 +1613,6 @@
             items: saleItems
         };
 
-        const isEdit = !!id;
-        const url = isEdit ? `/sales/${id}` : "/sales";
-        const method = isEdit ? "PUT" : "POST";
-
         const btnSave = document.getElementById("btn-save");
         const originalBtnText = btnSave.innerHTML;
         btnSave.disabled = true;
@@ -1720,8 +1625,8 @@
         `;
 
         try {
-            const response = await fetch(url, {
-                method: method,
+            const response = await fetch("/sales", {
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Accept": "application/json",
@@ -1739,9 +1644,10 @@
 
             if (!response.ok) throw new Error("Gagal menyimpan detail penjualan.");
 
-            showToast(`Penjualan berhasil ${isEdit ? 'diperbarui' : 'dibuat'}!`, "success");
-            closeModal();
-            fetchSales();
+            showToast("Penjualan berhasil dibuat!", "success");
+            setTimeout(() => {
+                window.location.href = "/sales";
+            }, 1000);
         } catch (error) {
             showToast(error.message, "error");
         } finally {
@@ -1779,68 +1685,6 @@
         });
     }
 
-    // Delete Flow
-    function openDeleteModal(id, barcode) {
-        saleToDelete = id;
-        document.getElementById("delete-sale-barcode").innerText = barcode;
-
-        const modal = document.getElementById("delete-modal");
-        const backdrop = document.getElementById("delete-backdrop");
-        const panel = document.getElementById("delete-panel");
-
-        modal.classList.remove("hidden");
-        setTimeout(() => {
-            backdrop.classList.replace("opacity-0", "opacity-100");
-            panel.classList.replace("scale-95", "scale-100");
-            panel.classList.replace("opacity-0", "opacity-100");
-        }, 10);
-    }
-
-    function closeDeleteModal() {
-        const modal = document.getElementById("delete-modal");
-        const backdrop = document.getElementById("delete-backdrop");
-        const panel = document.getElementById("delete-panel");
-
-        backdrop.classList.replace("opacity-100", "opacity-0");
-        panel.classList.replace("scale-100", "scale-95");
-        panel.classList.replace("opacity-100", "opacity-0");
-
-        setTimeout(() => {
-            modal.classList.add("hidden");
-            saleToDelete = null;
-        }, 300);
-    }
-
-    async function handleDeleteConfirm() {
-        if (!saleToDelete) return;
-
-        const btnDelete = document.getElementById("btn-delete");
-        const originalText = btnDelete.innerText;
-        btnDelete.disabled = true;
-        btnDelete.innerText = "Menghapus...";
-
-        try {
-            const response = await fetch(`/sales/${saleToDelete}`, {
-                method: "DELETE",
-                headers: {
-                    "Accept": "application/json",
-                    "X-CSRF-TOKEN": csrfToken,
-                }
-            });
-
-            if (!response.ok) throw new Error("Gagal menghapus penjualan.");
-
-            showToast("Penjualan berhasil dihapus.", "success");
-            closeDeleteModal();
-            fetchSales();
-        } catch (error) {
-            showToast(error.message, "error");
-        } finally {
-            btnDelete.disabled = false;
-            btnDelete.innerText = originalText;
-        }
-    }
-
     // Toast System
     function showToast(message, type = "success") {
         const container = document.getElementById("toast-container");
@@ -1864,13 +1708,11 @@
 
         container.appendChild(toast);
 
-        // Trigger entrance
         setTimeout(() => {
             toast.classList.replace("translate-y-2", "translate-y-0");
             toast.classList.replace("opacity-0", "opacity-100");
         }, 10);
 
-        // Auto removal
         setTimeout(() => {
             toast.classList.replace("translate-y-0", "translate-y-2");
             toast.classList.replace("opacity-100", "opacity-0");
@@ -1886,11 +1728,6 @@
                           .replace(/>/g, "&gt;")
                           .replace(/"/g, "&quot;")
                           .replace(/'/g, "&#039;");
-    }
-
-    function escapeQuote(str) {
-        if (!str) return '';
-        return String(str).replace(/'/g, "\\'");
     }
 </script>
 @endsection

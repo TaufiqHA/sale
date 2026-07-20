@@ -83,11 +83,18 @@ class SaleController extends Controller
     }
 
     /**
-     * Alias for store.
+     * Show the form for creating a new resource.
      */
-    public function create(Request $request): JsonResponse
+    public function create(): View
     {
-        return $this->store($request);
+        return view('administrator.createSale', [
+            'counters' => Counter::all(),
+            'customers' => Customer::all(),
+            'expeditions' => Expedition::all(),
+            'marketplaces' => Marketplace::all(),
+            'couriers' => Courier::all(),
+            'products' => Product::where('status', true)->with('wholeprices')->get(),
+        ]);
     }
 
     /**
