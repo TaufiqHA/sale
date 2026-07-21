@@ -52,6 +52,15 @@
 
         <!-- Search & Filters -->
         <div class="flex flex-col sm:flex-row items-center gap-3 flex-1 justify-end">
+            <!-- Bulk Print Button -->
+            <button id="btn-bulk-print" onclick="previewBulkDocuments()" class="hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-brand hover:bg-brand-hover rounded-xl shadow-xs transition-all cursor-pointer whitespace-nowrap w-full sm:w-auto">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                </svg>
+                <span>Cetak Massal</span>
+                <span id="bulk-selected-badge" class="px-2 py-0.5 text-xs rounded-full bg-white/20 text-white font-extrabold">0</span>
+            </button>
+
             <!-- Filter Tipe Resi (Only visible on Resi tab) -->
             <div id="resi-type-filter-wrapper" class="hidden w-full sm:w-48">
                 <select id="resi-type-filter" onchange="handleFilterChange()" class="block w-full p-2.5 bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-brand focus:border-brand">
@@ -106,7 +115,10 @@
         <table class="w-full text-sm text-left text-slate-700">
             <thead class="text-xs uppercase tracking-wider text-slate-500 bg-slate-50/80 border-b border-slate-200">
                 <tr>
-                    <th scope="col" class="px-4 py-3.5 font-semibold">#</th>
+                    <th scope="col" class="px-4 py-3.5 w-10 text-center">
+                        <input type="checkbox" id="select-all-invoice" onchange="toggleSelectAll('invoice', this.checked)" class="w-4 h-4 rounded border-slate-300 text-brand focus:ring-brand cursor-pointer">
+                    </th>
+                    <th scope="col" class="px-3 py-3.5 font-semibold">#</th>
                     <th scope="col" class="px-6 py-3.5 font-semibold">No. Invoice</th>
                     <th scope="col" class="px-6 py-3.5 font-semibold">Barcode Penjualan</th>
                     <th scope="col" class="px-6 py-3.5 font-semibold">Pelanggan / Counter</th>
@@ -127,7 +139,10 @@
         <table class="w-full text-sm text-left text-slate-700">
             <thead class="text-xs uppercase tracking-wider text-slate-500 bg-slate-50/80 border-b border-slate-200">
                 <tr>
-                    <th scope="col" class="px-4 py-3.5 font-semibold">#</th>
+                    <th scope="col" class="px-4 py-3.5 w-10 text-center">
+                        <input type="checkbox" id="select-all-resi" onchange="toggleSelectAll('resi', this.checked)" class="w-4 h-4 rounded border-slate-300 text-brand focus:ring-brand cursor-pointer">
+                    </th>
+                    <th scope="col" class="px-3 py-3.5 font-semibold">#</th>
                     <th scope="col" class="px-6 py-3.5 font-semibold">No. Resi</th>
                     <th scope="col" class="px-6 py-3.5 font-semibold">Barcode Penjualan</th>
                     <th scope="col" class="px-6 py-3.5 font-semibold">Tipe Penjualan</th>
@@ -164,7 +179,7 @@
             </div>
 
             <!-- Modal Printable Body -->
-            <div id="printable-area" class="p-6 overflow-y-auto max-h-[75vh] flex flex-col items-center justify-start min-h-[300px] text-slate-800 bg-slate-100/60">
+            <div id="printable-area" class="p-6 overflow-y-auto max-h-[75vh] flex flex-col items-center justify-start min-h-[300px] text-slate-800 bg-slate-100/60 gap-6">
                 <!-- Content dynamically injected -->
             </div>
 
@@ -197,8 +212,8 @@
         width: 18cm !important;
         height: 12cm !important;
         box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-        border: 1px solid #000000 !important;
-        margin: 0 auto 1.5rem auto !important;
+        border: none !important;
+        margin: 0 auto !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
@@ -207,8 +222,8 @@
         width: 9cm !important;
         height: 8cm !important;
         box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-        border: 1px solid #000000 !important;
-        margin: 0 auto 1.5rem auto !important;
+        border: none !important;
+        margin: 0 auto !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
@@ -227,8 +242,15 @@
             padding: 0 !important;
             width: 100% !important;
             height: 100% !important;
-            overflow: hidden !important;
+            overflow: visible !important;
             background: #ffffff !important;
+        }
+
+        /* Reset layout offsets from parent containers during print */
+        div, main, section, article {
+            position: static !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
         body * {
@@ -252,7 +274,7 @@
             backdrop-filter: none !important;
             display: block !important;
             opacity: 1 !important;
-            overflow: hidden !important;
+            overflow: visible !important;
             z-index: 99999 !important;
         }
 
@@ -265,13 +287,14 @@
         #modal-panel {
             max-width: none !important;
             width: 100% !important;
-            height: 100% !important;
+            height: auto !important;
             transform: none !important;
             box-shadow: none !important;
             border: none !important;
             background: transparent !important;
             margin: 0 !important;
             padding: 0 !important;
+            position: static !important;
         }
 
         #modal-panel > div {
@@ -280,12 +303,13 @@
             background: transparent !important;
             margin: 0 !important;
             padding: 0 !important;
-            height: 100% !important;
+            height: auto !important;
+            position: static !important;
         }
 
         #printable-area {
             max-height: none !important;
-            overflow: hidden !important;
+            overflow: visible !important;
             padding: 0 !important;
             margin: 0 !important;
             border: none !important;
@@ -294,39 +318,52 @@
             display: block !important;
             float: none !important;
             width: 100% !important;
-            height: 100% !important;
+            height: auto !important;
+            position: static !important;
         }
 
         .print-document-invoice {
             display: block !important;
-            width: 18cm !important;
-            height: 12cm !important;
-            max-height: 12cm !important;
-            margin: 0 auto !important;
+            width: 17cm !important;
+            height: 11cm !important;
+            max-height: 11cm !important;
+            margin: 0.5cm auto !important;
+            border: none !important;
             box-sizing: border-box !important;
             box-shadow: none !important;
             page-break-inside: avoid !important;
             break-inside: avoid !important;
-            page-break-after: avoid !important;
-            break-after: avoid !important;
+            page-break-after: always !important;
+            break-after: page !important;
             overflow: hidden !important;
+        }
+
+        .print-document-invoice:last-child {
+            page-break-after: auto !important;
+            break-after: auto !important;
         }
 
         .print-document-resi {
             display: flex !important;
             flex-direction: column !important;
             justify-content: space-between !important;
-            width: 9cm !important;
-            height: 8cm !important;
-            max-height: 8cm !important;
-            margin: 0 auto !important;
+            width: 8.2cm !important;
+            height: 7.2cm !important;
+            max-height: 7.2cm !important;
+            margin: 0.4cm auto !important;
+            border: none !important;
             box-sizing: border-box !important;
             box-shadow: none !important;
             page-break-inside: avoid !important;
             break-inside: avoid !important;
-            page-break-after: avoid !important;
-            break-after: avoid !important;
+            page-break-after: always !important;
+            break-after: page !important;
             overflow: hidden !important;
+        }
+
+        .print-document-resi:last-child {
+            page-break-after: auto !important;
+            break-after: auto !important;
         }
     }
 </style>
@@ -337,7 +374,10 @@
     let activeStatusFilter = 'unprinted'; // 'unprinted' | 'printed' | 'all'
     let rawInvoices = [];
     let rawResis = [];
-    let activeDocumentItem = null;
+    let selectedInvoiceIds = new Set();
+    let selectedResiIds = new Set();
+    let activePrintItems = [];
+    let activePrintType = 'invoice';
     let currentFilteredItems = [];
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -461,6 +501,60 @@
         renderActiveTab();
     }
 
+    function toggleSelectAll(type, checked) {
+        const selectedSet = type === 'invoice' ? selectedInvoiceIds : selectedResiIds;
+        if (checked) {
+            currentFilteredItems.forEach(item => selectedSet.add(item.id));
+        } else {
+            currentFilteredItems.forEach(item => selectedSet.delete(item.id));
+        }
+        updateBulkPrintUI();
+        renderActiveTab();
+    }
+
+    function toggleItemSelect(type, id, checked) {
+        const selectedSet = type === 'invoice' ? selectedInvoiceIds : selectedResiIds;
+        if (checked) {
+            selectedSet.add(id);
+        } else {
+            selectedSet.delete(id);
+        }
+        updateBulkPrintUI();
+        updateSelectAllCheckboxState();
+    }
+
+    function updateSelectAllCheckboxState() {
+        const selectAllCheckbox = document.getElementById(activeMainTab === 'invoice' ? 'select-all-invoice' : 'select-all-resi');
+        if (!selectAllCheckbox) return;
+        const selectedSet = activeMainTab === 'invoice' ? selectedInvoiceIds : selectedResiIds;
+
+        if (currentFilteredItems.length > 0 && currentFilteredItems.every(item => selectedSet.has(item.id))) {
+            selectAllCheckbox.checked = true;
+            selectAllCheckbox.indeterminate = false;
+        } else if (currentFilteredItems.some(item => selectedSet.has(item.id))) {
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = true;
+        } else {
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = false;
+        }
+    }
+
+    function updateBulkPrintUI() {
+        const btnBulk = document.getElementById('btn-bulk-print');
+        const badgeCount = document.getElementById('bulk-selected-badge');
+        const selectedSet = activeMainTab === 'invoice' ? selectedInvoiceIds : selectedResiIds;
+        const count = selectedSet.size;
+
+        if (count > 0) {
+            btnBulk.classList.remove('hidden');
+            badgeCount.textContent = count;
+        } else {
+            btnBulk.classList.add('hidden');
+            badgeCount.textContent = '0';
+        }
+    }
+
     function renderActiveTab() {
         const query = (document.getElementById('search-input').value || '').toLowerCase().trim();
         const invoiceWrapper = document.getElementById('invoice-table-wrapper');
@@ -552,6 +646,9 @@
                 renderResiTable(filtered);
             }
         }
+
+        updateSelectAllCheckboxState();
+        updateBulkPrintUI();
     }
 
     function renderInvoiceTable(data) {
@@ -562,6 +659,7 @@
             const tr = document.createElement('tr');
             tr.className = 'hover:bg-slate-50/80 transition-colors';
 
+            const isChecked = selectedInvoiceIds.has(item.id);
             const createdDate = item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID', {
                 year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
             }) : '-';
@@ -577,7 +675,10 @@
             const buttonLabel = printedCount > 0 ? 'Detail / Cetak Ulang' : 'Detail / Cetak';
 
             tr.innerHTML = `
-                <td class="px-4 py-4 text-xs font-semibold text-slate-400">${index + 1}</td>
+                <td class="px-4 py-4 text-center">
+                    <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-brand focus:ring-brand cursor-pointer" value="${item.id}" ${isChecked ? 'checked' : ''} onchange="toggleItemSelect('invoice', ${item.id}, this.checked)">
+                </td>
+                <td class="px-3 py-4 text-xs font-semibold text-slate-400">${index + 1}</td>
                 <td class="px-6 py-4 font-bold text-brand">${escapeHtml(item.invoice_number)}</td>
                 <td class="px-6 py-4 font-mono text-xs text-slate-600">${escapeHtml(item.sale?.barcode || '-')}</td>
                 <td class="px-6 py-4 font-medium text-slate-800">${escapeHtml(customerName)}</td>
@@ -609,6 +710,7 @@
             const tr = document.createElement('tr');
             tr.className = 'hover:bg-slate-50/80 transition-colors';
 
+            const isChecked = selectedResiIds.has(item.id);
             const createdDate = item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID', {
                 year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
             }) : '-';
@@ -631,7 +733,10 @@
             const buttonLabel = printedCount > 0 ? 'Detail / Cetak Ulang' : 'Detail / Cetak';
 
             tr.innerHTML = `
-                <td class="px-4 py-4 text-xs font-semibold text-slate-400">${index + 1}</td>
+                <td class="px-4 py-4 text-center">
+                    <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-brand focus:ring-brand cursor-pointer" value="${item.id}" ${isChecked ? 'checked' : ''} onchange="toggleItemSelect('resi', ${item.id}, this.checked)">
+                </td>
+                <td class="px-3 py-4 text-xs font-semibold text-slate-400">${index + 1}</td>
                 <td class="px-6 py-4 font-bold text-brand">${escapeHtml(item.receipt_number)}</td>
                 <td class="px-6 py-4 font-mono text-xs text-slate-600">${escapeHtml(item.sale?.barcode || '-')}</td>
                 <td class="px-6 py-4">${typeBadge}</td>
@@ -704,7 +809,7 @@
         `;
 
         return `
-            <div class="print-document-invoice" style="width: 18cm; height: 12cm; background: #ffffff; border: 1px solid #000000; padding: 12px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 11px; color: #000000; line-height: 1.3;">
+            <div class="print-document-invoice" style="width: 18cm; height: 12cm; background: #ffffff; border: none; padding: 12px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 11px; color: #000000; line-height: 1.3;">
                 <!-- Header Section -->
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px;">
                     <tr>
@@ -812,7 +917,7 @@
 
         if (!isMarketplace) {
             return `
-                <div class="print-document-resi" style="width: 9cm; height: 8cm; background: #ffffff; border: 1px solid #000000; padding: 6px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 11px; color: #000000; display: flex; flex-direction: column; justify-content: space-between;">
+                <div class="print-document-resi" style="width: 9cm; height: 8cm; background: #ffffff; border: none; padding: 6px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 11px; color: #000000; display: flex; flex-direction: column; justify-content: space-between;">
                     <div>
                         <!-- Recipient Box -->
                         <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; margin-bottom: 4px; font-size: 11px;">
@@ -857,7 +962,7 @@
             const canvasId = `resi-barcode-canvas-${item.id}`;
 
             return `
-                <div class="print-document-resi" style="width: 9cm; height: 8cm; background: #ffffff; border: 1px solid #000000; padding: 6px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 11px; color: #000000; display: flex; flex-direction: column; justify-content: space-between;">
+                <div class="print-document-resi" style="width: 9cm; height: 8cm; background: #ffffff; border: none; padding: 6px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 11px; color: #000000; display: flex; flex-direction: column; justify-content: space-between;">
                     <div>
                         <!-- No RESI Header -->
                         <div style="border: 1px solid #000000; text-align: center; padding: 4px; font-weight: bold; font-size: 12px; background-color: #ffffff;">
@@ -894,34 +999,36 @@
     }
 
     function previewDocument(type, id) {
+        let item = null;
         if (type === 'invoice') {
-            activeDocumentItem = rawInvoices.find(x => x.id === id);
+            item = rawInvoices.find(x => x.id === id);
         } else {
-            activeDocumentItem = rawResis.find(x => x.id === id);
+            item = rawResis.find(x => x.id === id);
         }
 
-        if (!activeDocumentItem) return;
+        if (!item) return;
 
-        activeDocumentItem._type = type;
+        activePrintItems = [item];
+        activePrintType = type;
         const area = document.getElementById('printable-area');
 
-        const isResiMarketplace = type === 'resi' && activeDocumentItem.type === 'marketplace';
-        const isPrinted = (activeDocumentItem.printed_count || 0) > 0;
+        const isResiMarketplace = type === 'resi' && item.type === 'marketplace';
+        const isPrinted = (item.printed_count || 0) > 0;
 
         if (type === 'invoice') {
             document.getElementById('modal-title').textContent = isPrinted ? 'Invoice Penjualan (Cetak Ulang)' : 'Invoice Penjualan (Umum)';
-            document.getElementById('modal-subtitle').textContent = `No. Invoice: ${activeDocumentItem.invoice_number} | Ukuran Fisik Cetak: 18cm x 12cm${isPrinted ? ` | Sudah dicetak ${activeDocumentItem.printed_count}x` : ''}`;
-            area.innerHTML = generateInvoiceHTML(activeDocumentItem);
+            document.getElementById('modal-subtitle').textContent = `No. Invoice: ${item.invoice_number} | Ukuran Fisik Cetak: 18cm x 12cm${isPrinted ? ` | Sudah dicetak ${item.printed_count}x` : ''}`;
+            area.innerHTML = generateInvoiceHTML(item);
         } else if (isResiMarketplace) {
             document.getElementById('modal-title').textContent = isPrinted ? 'Resi Pengiriman (Marketplace - Cetak Ulang)' : 'Resi Pengiriman (Marketplace)';
-            document.getElementById('modal-subtitle').textContent = `No. Resi: ${activeDocumentItem.receipt_number} | Ukuran Fisik Cetak: 9cm x 8cm${isPrinted ? ` | Sudah dicetak ${activeDocumentItem.printed_count}x` : ''}`;
-            area.innerHTML = generateResiHTML(activeDocumentItem);
+            document.getElementById('modal-subtitle').textContent = `No. Resi: ${item.receipt_number} | Ukuran Fisik Cetak: 9cm x 8cm${isPrinted ? ` | Sudah dicetak ${item.printed_count}x` : ''}`;
+            area.innerHTML = generateResiHTML(item);
 
             setTimeout(() => {
                 try {
                     if (window.JsBarcode) {
-                        const canvasId = `#resi-barcode-canvas-${activeDocumentItem.id}`;
-                        const barcodeVal = activeDocumentItem.receipt_number || activeDocumentItem.sale?.barcode || 'RESI-001';
+                        const canvasId = `#resi-barcode-canvas-${item.id}`;
+                        const barcodeVal = item.receipt_number || item.sale?.barcode || 'RESI-001';
                         JsBarcode(canvasId, barcodeVal, {
                             format: "CODE128",
                             height: 38,
@@ -935,8 +1042,49 @@
             }, 50);
         } else {
             document.getElementById('modal-title').textContent = isPrinted ? 'Resi Pengiriman (Umum - Cetak Ulang)' : 'Resi Pengiriman (Umum)';
-            document.getElementById('modal-subtitle').textContent = `No. Resi: ${activeDocumentItem.receipt_number} | Ukuran Fisik Cetak: 9cm x 8cm${isPrinted ? ` | Sudah dicetak ${activeDocumentItem.printed_count}x` : ''}`;
-            area.innerHTML = generateResiHTML(activeDocumentItem);
+            document.getElementById('modal-subtitle').textContent = `No. Resi: ${item.receipt_number} | Ukuran Fisik Cetak: 9cm x 8cm${isPrinted ? ` | Sudah dicetak ${item.printed_count}x` : ''}`;
+            area.innerHTML = generateResiHTML(item);
+        }
+
+        openModal();
+    }
+
+    function previewBulkDocuments() {
+        const type = activeMainTab;
+        const selectedSet = type === 'invoice' ? selectedInvoiceIds : selectedResiIds;
+        if (selectedSet.size === 0) return;
+
+        const dataset = type === 'invoice' ? rawInvoices : rawResis;
+        activePrintItems = dataset.filter(item => selectedSet.has(item.id));
+        activePrintType = type;
+
+        const area = document.getElementById('printable-area');
+        document.getElementById('modal-title').textContent = `Pratinjau Bulk Cetak ${type === 'invoice' ? 'Invoice' : 'Resi Pengiriman'} (${activePrintItems.length} Dokumen)`;
+        document.getElementById('modal-subtitle').textContent = `Ukuran Fisik Cetak: ${type === 'invoice' ? '18cm x 12cm' : '9cm x 8cm'} per Halaman (Page Break Otomatis)`;
+
+        area.innerHTML = activePrintItems.map(item => type === 'invoice' ? generateInvoiceHTML(item) : generateResiHTML(item)).join('');
+
+        if (type === 'resi') {
+            setTimeout(() => {
+                activePrintItems.forEach(item => {
+                    if (item.type === 'marketplace') {
+                        try {
+                            if (window.JsBarcode) {
+                                const canvasId = `#resi-barcode-canvas-${item.id}`;
+                                const barcodeVal = item.receipt_number || item.sale?.barcode || 'RESI-001';
+                                JsBarcode(canvasId, barcodeVal, {
+                                    format: "CODE128",
+                                    height: 38,
+                                    displayValue: false,
+                                    margin: 0
+                                });
+                            }
+                        } catch (e) {
+                            console.error("Barcode render error:", e);
+                        }
+                    }
+                });
+            }, 50);
         }
 
         openModal();
@@ -950,36 +1098,34 @@
             document.head.appendChild(dynamicPageStyle);
         }
 
-        if (activeDocumentItem) {
-            const type = activeDocumentItem._type;
-            const id = activeDocumentItem.id;
-            const updatedCount = (activeDocumentItem.printed_count || 0) + 1;
-
+        if (activePrintItems.length > 0) {
+            const type = activePrintType;
             if (type === 'invoice') {
-                dynamicPageStyle.innerHTML = '@page { size: 18cm 12cm; margin: 0; }';
+                dynamicPageStyle.innerHTML = '@page { size: 18cm 12cm; margin: 0.5cm; }';
             } else {
-                dynamicPageStyle.innerHTML = '@page { size: 9cm 8cm; margin: 0; }';
+                dynamicPageStyle.innerHTML = '@page { size: 9cm 8cm; margin: 0.4cm; }';
             }
 
-            const endpoint = type === 'invoice' ? `/invoices/${id}` : `/recipts/${id}`;
+            const endpoint = type === 'invoice' ? '/invoices/bulk-print' : '/recipts/bulk-print';
+            const ids = activePrintItems.map(item => item.id);
+
             try {
                 await fetch(endpoint, {
-                    method: 'PUT',
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify({
-                        sales_id: activeDocumentItem.sales_id,
-                        [type === 'invoice' ? 'invoice_number' : 'receipt_number']: type === 'invoice' ? activeDocumentItem.invoice_number : activeDocumentItem.receipt_number,
-                        type: activeDocumentItem.type,
-                        printed_count: updatedCount
-                    })
+                    body: JSON.stringify({ ids: ids })
                 });
             } catch (err) {
                 console.error('Gagal memperbarui printed_count:', err);
             }
+
+            // Clear selection for printed items
+            const selectedSet = type === 'invoice' ? selectedInvoiceIds : selectedResiIds;
+            ids.forEach(id => selectedSet.delete(id));
 
             window.print();
             closeModal();
