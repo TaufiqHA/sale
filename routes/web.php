@@ -18,6 +18,7 @@ use App\Http\Controllers\ReciptsController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SaleItemController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -41,6 +42,7 @@ Route::get('/administrator/invoice', [InvoicesController::class, 'invoiceView'])
 Route::apiResource('categories', CategoryController::class)->middleware('auth');
 Route::apiResource('units', UnitController::class)->middleware('auth');
 Route::apiResource('counters', CounterController::class)->middleware('auth');
+Route::apiResource('users', UserController::class)->middleware('auth');
 Route::apiResource('products', ProductController::class)->middleware('auth');
 Route::apiResource('customers', CustomerController::class)->middleware('auth');
 Route::apiResource('marketplaces', MarketplaceController::class)->except(['index'])->middleware('auth');

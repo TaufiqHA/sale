@@ -99,6 +99,14 @@
                   <span class="flex-1 ms-3 whitespace-nowrap">Data Counter</span>
                </a>
             </li>
+             <li>
+                <a href="{{ route('users.index') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('users.*') ? 'bg-brand-hover text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-brand-hover hover:text-white font-medium' }}">
+                   <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('users.*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 1 1 0 5.292M15 21H3v-1a6 6 0 0 1 12 0v1zm0 0h6v-1a6 6 0 0 0-9-5.197M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0z"/>
+                   </svg>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Manajemen User</span>
+                </a>
+             </li>
             @endif
          </ul>
       </div>
