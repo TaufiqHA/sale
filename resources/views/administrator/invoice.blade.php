@@ -4,14 +4,16 @@
 
 @section('content')
 <div class="relative min-h-[calc(100vh-8rem)]">
-    <!-- Header & Main Document Tabs -->
+    <!-- ==========================================================================
+         HEADER & MAIN TABS
+         ========================================================================== -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
             <h1 class="text-2xl font-bold text-heading">Invoice & Resi Pengiriman</h1>
             <p class="text-sm text-body mt-1">Kelola dan cetak invoice (penjualan umum) serta resi pengiriman (umum & marketplace).</p>
         </div>
 
-        <!-- Tier 1: Main Document Tabs -->
+        <!-- Tab Selector: Invoice vs Resi -->
         <div class="flex items-center gap-2 p-1.5 bg-slate-200/80 rounded-2xl shrink-0 self-start md:self-auto">
             <button id="main-tab-invoice" onclick="switchMainTab('invoice')" class="flex items-center gap-2.5 px-5 py-2.5 text-sm font-bold rounded-xl transition-all cursor-pointer bg-brand text-white shadow-xs">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -30,9 +32,11 @@
         </div>
     </div>
 
-    <!-- Controls Bar (Tier 2 Status Filters & Search) -->
+    <!-- ==========================================================================
+         CONTROLS BAR (STATUS FILTERS & SEARCH)
+         ========================================================================== -->
     <div class="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm mb-4 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-        <!-- Tier 2: Status Filter Segmented Control -->
+        <!-- Status Filters -->
         <div class="flex items-center gap-1.5 p-1 bg-slate-100/90 rounded-xl shrink-0 overflow-x-auto">
             <button id="status-pill-unprinted" onclick="switchStatusFilter('unprinted')" class="flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer bg-amber-500 text-white shadow-xs whitespace-nowrap">
                 <span class="w-2 h-2 rounded-full bg-amber-200 animate-pulse"></span>
@@ -50,7 +54,7 @@
             </button>
         </div>
 
-        <!-- Search & Filters -->
+        <!-- Action & Search -->
         <div class="flex flex-col sm:flex-row items-center gap-3 flex-1 justify-end">
             <!-- Bulk Print Button -->
             <button id="btn-bulk-print" onclick="previewBulkDocuments()" class="hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-semibold text-white bg-brand hover:bg-brand-hover rounded-xl shadow-xs transition-all cursor-pointer whitespace-nowrap w-full sm:w-auto">
@@ -61,7 +65,7 @@
                 <span id="bulk-selected-badge" class="px-2 py-0.5 text-xs rounded-full bg-white/20 text-white font-extrabold">0</span>
             </button>
 
-            <!-- Filter Tipe Resi (Only visible on Resi tab) -->
+            <!-- Filter Tipe Resi (Resi tab specific) -->
             <div id="resi-type-filter-wrapper" class="hidden w-full sm:w-48">
                 <select id="resi-type-filter" onchange="handleFilterChange()" class="block w-full p-2.5 bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-brand focus:border-brand">
                     <option value="all">Semua Tipe Resi</option>
@@ -82,7 +86,9 @@
         </div>
     </div>
 
-    <!-- Loading Skeleton -->
+    <!-- ==========================================================================
+         SHARED UI COMPONENTS (LOADING & EMPTY STATES)
+         ========================================================================== -->
     <div id="loading-skeleton" class="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden mb-8 animate-pulse">
         <div class="h-12 bg-slate-50 border-b border-slate-100"></div>
         <div class="divide-y divide-slate-100">
@@ -99,7 +105,6 @@
         </div>
     </div>
 
-    <!-- Empty State -->
     <div id="empty-state" class="hidden flex-col items-center justify-center py-16 px-4 bg-white border border-slate-100 rounded-2xl shadow-sm mb-8 text-center">
         <div class="flex items-center justify-center p-4 bg-indigo-50 text-indigo-500 rounded-2xl mb-4">
             <svg class="w-12 h-12" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
@@ -110,7 +115,9 @@
         <p id="empty-desc" class="text-sm text-slate-500 mt-1 max-w-sm">Invoice dan resi akan dibuat secara otomatis saat transaksi penjualan ditambahkan.</p>
     </div>
 
-    <!-- Invoice Table Container -->
+    <!-- ==========================================================================
+         INVOICE DATA TABLE
+         ========================================================================== -->
     <div id="invoice-table-wrapper" class="hidden relative overflow-x-auto bg-white shadow-sm rounded-2xl border border-slate-200/80 mb-8">
         <table class="w-full text-sm text-left text-slate-700">
             <thead class="text-xs uppercase tracking-wider text-slate-500 bg-slate-50/80 border-b border-slate-200">
@@ -129,12 +136,14 @@
                 </tr>
             </thead>
             <tbody id="invoice-table-body" class="divide-y divide-slate-100">
-                <!-- Rendered dynamically -->
+                <!-- Rendered dynamically via InvoiceModule -->
             </tbody>
         </table>
     </div>
 
-    <!-- Resi Table Container -->
+    <!-- ==========================================================================
+         RESI DATA TABLE
+         ========================================================================== -->
     <div id="resi-table-wrapper" class="hidden relative overflow-x-auto bg-white shadow-sm rounded-2xl border border-slate-200/80 mb-8">
         <table class="w-full text-sm text-left text-slate-700">
             <thead class="text-xs uppercase tracking-wider text-slate-500 bg-slate-50/80 border-b border-slate-200">
@@ -153,13 +162,15 @@
                 </tr>
             </thead>
             <tbody id="resi-table-body" class="divide-y divide-slate-100">
-                <!-- Rendered dynamically -->
+                <!-- Rendered dynamically via ResiModule -->
             </tbody>
         </table>
     </div>
 </div>
 
-<!-- Preview & Print Modal -->
+<!-- ==========================================================================
+     DOCUMENT PREVIEW & PRINT MODAL
+     ========================================================================== -->
 <div id="document-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true">
     <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="modal-backdrop" onclick="closeModal()"></div>
 
@@ -199,6 +210,9 @@
     </div>
 </div>
 
+<!-- ==========================================================================
+     STYLES (INVOICE & RESI SEPARATED)
+     ========================================================================== -->
 <style>
     *,
     *::before,
@@ -208,6 +222,9 @@
         color-adjust: exact !important;
     }
 
+    /* --------------------------------------------------------------------------
+       INVOICE SPECIFIC STYLES (Screen preview)
+       -------------------------------------------------------------------------- */
     .print-document-invoice {
         width: 18cm !important;
         height: 12cm !important;
@@ -218,6 +235,9 @@
         print-color-adjust: exact !important;
     }
 
+    /* --------------------------------------------------------------------------
+       RESI SPECIFIC STYLES (Screen preview)
+       -------------------------------------------------------------------------- */
     .print-document-resi {
         width: 9cm !important;
         height: 8cm !important;
@@ -228,6 +248,9 @@
         print-color-adjust: exact !important;
     }
 
+    /* --------------------------------------------------------------------------
+       PRINT MEDIA STYLES
+       -------------------------------------------------------------------------- */
     @media print {
         *,
         *::before,
@@ -237,37 +260,35 @@
             color-adjust: exact !important;
         }
 
-        html, body {
+        /* Explicitly hide non-printable UI components to avoid blank layout spacing */
+        aside,
+        header,
+        nav,
+        .relative.min-h-\[calc\(100vh-8rem\)\],
+        #modal-backdrop,
+        #modal-panel > div > div.flex.items-center.justify-between,
+        #modal-panel > div > div.flex.items-center.justify-end {
+            display: none !important;
+        }
+
+        /* Reset parent wrappers layout */
+        html, body, .min-h-screen, .sm\:ml-64, main {
             margin: 0 !important;
             padding: 0 !important;
             width: 100% !important;
-            height: 100% !important;
-            overflow: visible !important;
+            height: auto !important;
+            min-height: 0 !important;
             background: #ffffff !important;
-        }
-
-        /* Reset layout offsets from parent containers during print */
-        div, main, section, article {
-            position: static !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
-
-        body * {
-            visibility: hidden !important;
-        }
-
-        #document-modal,
-        #document-modal * {
-            visibility: visible !important;
+            overflow: visible !important;
+            border: none !important;
         }
 
         #document-modal {
-            position: fixed !important;
-            left: 0 !important;
+            position: absolute !important;
             top: 0 !important;
+            left: 0 !important;
             width: 100% !important;
-            height: 100% !important;
+            height: auto !important;
             background: #ffffff !important;
             padding: 0 !important;
             margin: 0 !important;
@@ -278,13 +299,8 @@
             z-index: 99999 !important;
         }
 
-        #modal-backdrop,
-        #modal-panel > div > div.flex.items-center.justify-between,
-        #modal-panel > div > div.flex.items-center.justify-end {
-            display: none !important;
-        }
-
-        #modal-panel {
+        #modal-panel,
+        #modal-panel > div {
             max-width: none !important;
             width: 100% !important;
             height: auto !important;
@@ -295,16 +311,7 @@
             margin: 0 !important;
             padding: 0 !important;
             position: static !important;
-        }
-
-        #modal-panel > div {
-            border: none !important;
-            box-shadow: none !important;
-            background: transparent !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            height: auto !important;
-            position: static !important;
+            overflow: visible !important;
         }
 
         #printable-area {
@@ -322,12 +329,14 @@
             position: static !important;
         }
 
+        /* Invoice Print Layout */
         .print-document-invoice {
             display: block !important;
             width: 17cm !important;
             height: 11cm !important;
             max-height: 11cm !important;
-            margin: 0.5cm auto !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
             border: none !important;
             box-sizing: border-box !important;
             box-shadow: none !important;
@@ -339,10 +348,11 @@
         }
 
         .print-document-invoice:last-child {
-            page-break-after: auto !important;
-            break-after: auto !important;
+            page-break-after: avoid !important;
+            break-after: avoid !important;
         }
 
+        /* Resi Print Layout */
         .print-document-resi {
             display: flex !important;
             flex-direction: column !important;
@@ -350,7 +360,8 @@
             width: 8.2cm !important;
             height: 7.2cm !important;
             max-height: 7.2cm !important;
-            margin: 0.4cm auto !important;
+            margin: 0 auto !important;
+            padding: 0 !important;
             border: none !important;
             box-sizing: border-box !important;
             box-shadow: none !important;
@@ -362,23 +373,23 @@
         }
 
         .print-document-resi:last-child {
-            page-break-after: auto !important;
-            break-after: auto !important;
+            page-break-after: avoid !important;
+            break-after: avoid !important;
         }
     }
 </style>
 
+<!-- External Barcode Library -->
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
 <script>
+    /* ==========================================================================
+       GLOBAL STATE & UTILITIES
+       ========================================================================== */
     let activeMainTab = 'invoice'; // 'invoice' | 'resi'
     let activeStatusFilter = 'unprinted'; // 'unprinted' | 'printed' | 'all'
-    let rawInvoices = [];
-    let rawResis = [];
-    let selectedInvoiceIds = new Set();
-    let selectedResiIds = new Set();
     let activePrintItems = [];
     let activePrintType = 'invoice';
-    let currentFilteredItems = [];
 
     document.addEventListener('DOMContentLoaded', () => {
         loadData();
@@ -387,21 +398,14 @@
     async function loadData() {
         showLoading(true);
         try {
-            const [invRes, rcpRes] = await Promise.all([
-                fetch('/invoices', { headers: { 'Accept': 'application/json' } }),
-                fetch('/recipts', { headers: { 'Accept': 'application/json' } })
+            await Promise.all([
+                InvoiceModule.load(),
+                ResiModule.load()
             ]);
 
-            if (invRes.ok) {
-                rawInvoices = await invRes.json();
-            }
-            if (rcpRes.ok) {
-                rawResis = await rcpRes.json();
-            }
-
             // Update main tab badges
-            document.getElementById('badge-invoice-total').textContent = rawInvoices.length;
-            document.getElementById('badge-resi-total').textContent = rawResis.length;
+            document.getElementById('badge-invoice-total').textContent = InvoiceModule.data.length;
+            document.getElementById('badge-resi-total').textContent = ResiModule.data.length;
 
             updateStatusBadges();
             renderActiveTab();
@@ -413,14 +417,10 @@
     }
 
     function updateStatusBadges() {
-        const dataset = activeMainTab === 'invoice' ? rawInvoices : rawResis;
-        const unprinted = dataset.filter(i => (i.printed_count || 0) === 0).length;
-        const printed = dataset.filter(i => (i.printed_count || 0) > 0).length;
-        const total = dataset.length;
-
-        document.getElementById('badge-status-unprinted').textContent = unprinted;
-        document.getElementById('badge-status-printed').textContent = printed;
-        document.getElementById('badge-status-all').textContent = total;
+        const module = activeMainTab === 'invoice' ? InvoiceModule : ResiModule;
+        document.getElementById('badge-status-unprinted').textContent = module.getUnprintedCount();
+        document.getElementById('badge-status-printed').textContent = module.getPrintedCount();
+        document.getElementById('badge-status-all').textContent = module.getTotalCount();
     }
 
     function switchMainTab(tabName) {
@@ -502,23 +502,15 @@
     }
 
     function toggleSelectAll(type, checked) {
-        const selectedSet = type === 'invoice' ? selectedInvoiceIds : selectedResiIds;
-        if (checked) {
-            currentFilteredItems.forEach(item => selectedSet.add(item.id));
-        } else {
-            currentFilteredItems.forEach(item => selectedSet.delete(item.id));
-        }
+        const module = type === 'invoice' ? InvoiceModule : ResiModule;
+        module.selectAll(checked);
         updateBulkPrintUI();
         renderActiveTab();
     }
 
     function toggleItemSelect(type, id, checked) {
-        const selectedSet = type === 'invoice' ? selectedInvoiceIds : selectedResiIds;
-        if (checked) {
-            selectedSet.add(id);
-        } else {
-            selectedSet.delete(id);
-        }
+        const module = type === 'invoice' ? InvoiceModule : ResiModule;
+        module.toggleSelect(id, checked);
         updateBulkPrintUI();
         updateSelectAllCheckboxState();
     }
@@ -526,12 +518,12 @@
     function updateSelectAllCheckboxState() {
         const selectAllCheckbox = document.getElementById(activeMainTab === 'invoice' ? 'select-all-invoice' : 'select-all-resi');
         if (!selectAllCheckbox) return;
-        const selectedSet = activeMainTab === 'invoice' ? selectedInvoiceIds : selectedResiIds;
+        const module = activeMainTab === 'invoice' ? InvoiceModule : ResiModule;
 
-        if (currentFilteredItems.length > 0 && currentFilteredItems.every(item => selectedSet.has(item.id))) {
+        if (module.filteredItems.length > 0 && module.filteredItems.every(item => module.selectedIds.has(Number(item.id)))) {
             selectAllCheckbox.checked = true;
             selectAllCheckbox.indeterminate = false;
-        } else if (currentFilteredItems.some(item => selectedSet.has(item.id))) {
+        } else if (module.filteredItems.some(item => module.selectedIds.has(Number(item.id)))) {
             selectAllCheckbox.checked = false;
             selectAllCheckbox.indeterminate = true;
         } else {
@@ -543,8 +535,8 @@
     function updateBulkPrintUI() {
         const btnBulk = document.getElementById('btn-bulk-print');
         const badgeCount = document.getElementById('bulk-selected-badge');
-        const selectedSet = activeMainTab === 'invoice' ? selectedInvoiceIds : selectedResiIds;
-        const count = selectedSet.size;
+        const module = activeMainTab === 'invoice' ? InvoiceModule : ResiModule;
+        const count = module.selectedIds.size;
 
         if (count > 0) {
             btnBulk.classList.remove('hidden');
@@ -563,23 +555,7 @@
 
         if (activeMainTab === 'invoice') {
             resiWrapper.classList.add('hidden');
-
-            let filtered = rawInvoices.filter(item => {
-                const printedCount = item.printed_count || 0;
-                let matchesStatus = true;
-                if (activeStatusFilter === 'unprinted') matchesStatus = printedCount === 0;
-                if (activeStatusFilter === 'printed') matchesStatus = printedCount > 0;
-
-                const invNo = (item.invoice_number || '').toLowerCase();
-                const barcode = (item.sale?.barcode || '').toLowerCase();
-                const cust = (item.sale?.customer?.name || '').toLowerCase();
-                const counter = (item.sale?.counter?.name || '').toLowerCase();
-
-                const matchesQuery = invNo.includes(query) || barcode.includes(query) || cust.includes(query) || counter.includes(query);
-                return matchesStatus && matchesQuery;
-            });
-
-            currentFilteredItems = filtered;
+            const filtered = InvoiceModule.filter(query, activeStatusFilter);
 
             if (filtered.length === 0) {
                 invoiceWrapper.classList.add('hidden');
@@ -599,31 +575,12 @@
                 emptyState.classList.add('hidden');
                 emptyState.classList.remove('flex');
                 invoiceWrapper.classList.remove('hidden');
-                renderInvoiceTable(filtered);
+                InvoiceModule.renderTable(filtered);
             }
         } else {
             invoiceWrapper.classList.add('hidden');
             const typeFilter = document.getElementById('resi-type-filter').value;
-
-            let filtered = rawResis.filter(item => {
-                const printedCount = item.printed_count || 0;
-                let matchesStatus = true;
-                if (activeStatusFilter === 'unprinted') matchesStatus = printedCount === 0;
-                if (activeStatusFilter === 'printed') matchesStatus = printedCount > 0;
-
-                const resiNo = (item.receipt_number || '').toLowerCase();
-                const barcode = (item.sale?.barcode || '').toLowerCase();
-                const type = (item.type || '').toLowerCase();
-                const cust = (item.sale?.customer?.name || '').toLowerCase();
-                const mp = (item.sale?.marketplace?.name || '').toLowerCase();
-
-                const matchesQuery = resiNo.includes(query) || barcode.includes(query) || type.includes(query) || cust.includes(query) || mp.includes(query);
-                const matchesFilter = typeFilter === 'all' || item.type === typeFilter;
-
-                return matchesStatus && matchesQuery && matchesFilter;
-            });
-
-            currentFilteredItems = filtered;
+            const filtered = ResiModule.filter(query, activeStatusFilter, typeFilter);
 
             if (filtered.length === 0) {
                 resiWrapper.classList.add('hidden');
@@ -643,7 +600,7 @@
                 emptyState.classList.add('hidden');
                 emptyState.classList.remove('flex');
                 resiWrapper.classList.remove('hidden');
-                renderResiTable(filtered);
+                ResiModule.renderTable(filtered);
             }
         }
 
@@ -651,359 +608,13 @@
         updateBulkPrintUI();
     }
 
-    function renderInvoiceTable(data) {
-        const tbody = document.getElementById('invoice-table-body');
-        tbody.innerHTML = '';
-
-        data.forEach((item, index) => {
-            const tr = document.createElement('tr');
-            tr.className = 'hover:bg-slate-50/80 transition-colors';
-
-            const isChecked = selectedInvoiceIds.has(item.id);
-            const createdDate = item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID', {
-                year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-            }) : '-';
-
-            const grandTotal = item.sale?.grand_total ? 'Rp ' + Number(item.sale.grand_total).toLocaleString('id-ID') : 'Rp 0';
-            const customerName = item.sale?.customer?.name || item.sale?.counter?.name || 'Umum';
-
-            const printedCount = item.printed_count || 0;
-            const badgeClass = printedCount > 0 
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
-                : 'bg-amber-50 text-amber-700 border border-amber-200';
-            const badgeText = printedCount > 0 ? `${printedCount}x Dicetak` : 'Belum Dicetak';
-            const buttonLabel = printedCount > 0 ? 'Detail / Cetak Ulang' : 'Detail / Cetak';
-
-            tr.innerHTML = `
-                <td class="px-4 py-4 text-center">
-                    <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-brand focus:ring-brand cursor-pointer" value="${item.id}" ${isChecked ? 'checked' : ''} onchange="toggleItemSelect('invoice', ${item.id}, this.checked)">
-                </td>
-                <td class="px-3 py-4 text-xs font-semibold text-slate-400">${index + 1}</td>
-                <td class="px-6 py-4 font-bold text-brand">${escapeHtml(item.invoice_number)}</td>
-                <td class="px-6 py-4 font-mono text-xs text-slate-600">${escapeHtml(item.sale?.barcode || '-')}</td>
-                <td class="px-6 py-4 font-medium text-slate-800">${escapeHtml(customerName)}</td>
-                <td class="px-6 py-4 text-xs text-slate-500">${createdDate}</td>
-                <td class="px-6 py-4 font-semibold text-slate-900">${grandTotal}</td>
-                <td class="px-6 py-4">
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${badgeClass}">
-                        ${badgeText}
-                    </span>
-                </td>
-                <td class="px-6 py-4 text-right">
-                    <div class="flex items-center justify-end gap-2">
-                        <button onclick="previewDocument('invoice', ${item.id})" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition cursor-pointer">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                            ${buttonLabel}
-                        </button>
-                    </div>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function renderResiTable(data) {
-        const tbody = document.getElementById('resi-table-body');
-        tbody.innerHTML = '';
-
-        data.forEach((item, index) => {
-            const tr = document.createElement('tr');
-            tr.className = 'hover:bg-slate-50/80 transition-colors';
-
-            const isChecked = selectedResiIds.has(item.id);
-            const createdDate = item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID', {
-                year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
-            }) : '-';
-
-            const isMarketplace = item.type === 'marketplace';
-            const typeBadge = isMarketplace
-                ? `<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-purple-50 text-purple-700 border border-purple-200">Marketplace (${escapeHtml(item.sale?.marketplace?.name || '-')})</span>`
-                : `<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-200">Umum / Toko</span>`;
-
-            const courierExpedition = [
-                item.sale?.expedition?.name,
-                item.sale?.courier?.name
-            ].filter(Boolean).join(' - ') || 'Reguler';
-
-            const printedCount = item.printed_count || 0;
-            const badgeClass = printedCount > 0 
-                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
-                : 'bg-amber-50 text-amber-700 border border-amber-200';
-            const badgeText = printedCount > 0 ? `${printedCount}x Dicetak` : 'Belum Dicetak';
-            const buttonLabel = printedCount > 0 ? 'Detail / Cetak Ulang' : 'Detail / Cetak';
-
-            tr.innerHTML = `
-                <td class="px-4 py-4 text-center">
-                    <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-brand focus:ring-brand cursor-pointer" value="${item.id}" ${isChecked ? 'checked' : ''} onchange="toggleItemSelect('resi', ${item.id}, this.checked)">
-                </td>
-                <td class="px-3 py-4 text-xs font-semibold text-slate-400">${index + 1}</td>
-                <td class="px-6 py-4 font-bold text-brand">${escapeHtml(item.receipt_number)}</td>
-                <td class="px-6 py-4 font-mono text-xs text-slate-600">${escapeHtml(item.sale?.barcode || '-')}</td>
-                <td class="px-6 py-4">${typeBadge}</td>
-                <td class="px-6 py-4 font-medium text-slate-800">${escapeHtml(courierExpedition)}</td>
-                <td class="px-6 py-4 text-xs text-slate-500">${createdDate}</td>
-                <td class="px-6 py-4">
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${badgeClass}">
-                        ${badgeText}
-                    </span>
-                </td>
-                <td class="px-6 py-4 text-right">
-                    <div class="flex items-center justify-end gap-2">
-                        <button onclick="previewDocument('resi', ${item.id})" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition cursor-pointer">
-                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                            ${buttonLabel}
-                        </button>
-                    </div>
-                </td>
-            `;
-            tbody.appendChild(tr);
-        });
-    }
-
-    function formatIndoNumber(val) {
-        if (val === null || val === undefined || isNaN(val)) return '0';
-        const num = Number(val);
-        return num.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
-    }
-
-    function generateInvoiceHTML(item) {
-        const sale = item.sale || {};
-        const items = sale.items || [];
-
-        const createdDateStr = item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID', {
-            day: '2-digit', month: '2-digit', year: 'numeric'
-        }) : (sale.date ? new Date(sale.date).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-');
-
-        const customerName = sale.customer?.name || 'Ibu / Bapak / kakak';
-        const customerPhone = sale.customer?.phone || '';
-        const customerAddress = sale.customer?.address || 'Jl. Madava II, RESIDEN CITY, jakarta Utara';
-        const expeditionName = sale.expedition?.name || sale.courier?.name || 'KALOG';
-        const counterName = sale.counter?.name || 'COUNTER';
-
-        const subtotalNum = Number(sale.subtotal || 0);
-        const shippingNum = Number(sale.shipping_cost || 0);
-        const totalWithShippingNum = subtotalNum + shippingNum;
-        const discountNum = Number(sale.discount || 0);
-        const grandTotalNum = Number(sale.grand_total || (totalWithShippingNum - discountNum));
-
-        let itemsRows = items.length > 0 ? items.map((itm, idx) => {
-            const qtyVal = Number(itm.qty || 0);
-            const unitName = itm.product?.unit?.name || 'Kg';
-            const priceNum = Number(itm.price || 0);
-            const subtotalItemNum = Number(itm.subtotal || (qtyVal * priceNum));
-
-            return `
-                <tr>
-                    <td style="border: 1px solid #000000; padding: 4px 6px; text-align: center;">${idx + 1}</td>
-                    <td style="border: 1px solid #000000; padding: 4px 6px; font-style: italic;">${escapeHtml(itm.product?.name || 'Produk')}</td>
-                    <td style="border: 1px solid #000000; padding: 4px 6px; text-align: right;">${formatIndoNumber(qtyVal)}</td>
-                    <td style="border: 1px solid #000000; padding: 4px 6px; text-align: center;">${escapeHtml(unitName)}</td>
-                    <td style="border: 1px solid #000000; padding: 4px 6px; text-align: right;">${priceNum > 0 ? formatIndoNumber(priceNum) : '-'}</td>
-                    <td style="border: 1px solid #000000; padding: 4px 6px; text-align: right;">${subtotalItemNum > 0 ? formatIndoNumber(subtotalItemNum) : '-'}</td>
-                </tr>
-            `;
-        }).join('') : `
-            <tr>
-                <td colspan="6" style="border: 1px solid #000000; padding: 8px; text-align: center; color: #6b7280;">Tidak ada detail item</td>
-            </tr>
-        `;
-
-        return `
-            <div class="print-document-invoice" style="width: 18cm; height: 12cm; background: #ffffff; border: none; padding: 12px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 11px; color: #000000; line-height: 1.3;">
-                <!-- Header Section -->
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px;">
-                    <tr>
-                        <td style="vertical-align: top; width: 60%; padding: 0;">
-                            <div style="font-size: 11px;">Kepada Yth : &nbsp; Ibu / Bapak / kakak</div>
-                            <div style="font-size: 13px; font-weight: bold; margin-top: 2px;">
-                                ${escapeHtml(customerName)} 
-                                <span style="font-weight: bold; margin-left: 12px;">${escapeHtml(customerPhone)}</span>
-                            </div>
-                            <div style="font-size: 11px; margin-top: 2px; line-height: 1.2;">${escapeHtml(customerAddress)}</div>
-                        </td>
-                        <td style="vertical-align: top; width: 40%; padding: 0;">
-                            <table style="margin-left: auto; border-collapse: collapse; text-align: center; font-size: 11px;">
-                                <tr>
-                                    <td style="background-color: #ffff00; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #000000; padding: 3px 12px; font-weight: bold; min-width: 150px;">
-                                        Tanggal : &nbsp; ${createdDateStr}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="background-color: #ffff00; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #000000; border-top: none; padding: 3px 12px; font-weight: bold; text-align: right;">
-                                        No Transaksi : &nbsp; ${escapeHtml(item.invoice_number || sale.barcode || '-')}
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- Table Items -->
-                <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 11px; border: 1px solid #000000;">
-                    <thead>
-                        <tr style="background-color: #ffc000; -webkit-print-color-adjust: exact; print-color-adjust: exact; text-align: center; font-weight: bold;">
-                            <th style="border: 1px solid #000000; padding: 4px 6px; width: 6%;">No</th>
-                            <th style="border: 1px solid #000000; padding: 4px 6px; text-align: center; width: 38%;">Nama Barang</th>
-                            <th style="border: 1px solid #000000; padding: 4px 6px; width: 10%;">Qty</th>
-                            <th style="border: 1px solid #000000; padding: 4px 6px; width: 22%;" colspan="2">Satuan</th>
-                            <th style="border: 1px solid #000000; padding: 4px 6px; width: 24%;">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${itemsRows}
-                        <!-- Ongkir Row -->
-                        <tr>
-                            <td colspan="5" style="border: 1px solid #000000; text-align: right; padding: 3px 8px; font-weight: normal;">Ongkir</td>
-                            <td style="border: 1px solid #000000; text-align: right; padding: 3px 8px;">${formatIndoNumber(shippingNum)}</td>
-                        </tr>
-                        <!-- Total Row -->
-                        <tr>
-                            <td colspan="5" style="border: 1px solid #000000; text-align: right; padding: 3px 8px; font-weight: normal;">Total</td>
-                            <td style="border: 1px solid #000000; text-align: right; padding: 3px 8px;">${formatIndoNumber(totalWithShippingNum)}</td>
-                        </tr>
-                        <!-- Disc Row -->
-                        <tr style="-webkit-print-color-adjust: exact; print-color-adjust: exact;">
-                            <td colspan="5" style="border: 1px solid #000000; text-align: right; padding: 3px 8px; color: #ff0000; font-weight: normal;">Disc</td>
-                            <td style="border: 1px solid #000000; text-align: right; padding: 3px 8px; color: #ff0000;">${discountNum > 0 ? formatIndoNumber(discountNum) : '-'}</td>
-                        </tr>
-                        <!-- Sub Total Row -->
-                        <tr style="background-color: #dce6f1; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: bold;">
-                            <td colspan="5" style="border: 1px solid #000000; text-align: right; padding: 4px 8px;">Sub Total</td>
-                            <td style="border: 1px solid #000000; text-align: right; padding: 4px 8px;">${formatIndoNumber(grandTotalNum)}</td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <!-- Footer Section -->
-                <table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 12px;">
-                    <tr>
-                        <td style="vertical-align: bottom; width: 65%; padding: 0;">
-                            <div style="font-style: italic; color: #111827; margin-bottom: 12px;">Pembayaran dianggap lunas setelah adanya bukti transfer</div>
-                            <div style="font-weight: normal;">Expedisi &nbsp; : &nbsp;&nbsp;&nbsp;&nbsp; <span style="font-weight: normal; text-transform: uppercase;">${escapeHtml(expeditionName)}</span></div>
-                        </td>
-                        <td style="vertical-align: bottom; width: 35%; padding: 0; text-align: center;">
-                            <div style="margin-bottom: 24px;">Hormat Kami</div>
-                            <div style="font-weight: normal; text-transform: uppercase;">${escapeHtml(counterName)}</div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        `;
-    }
-
-    function generateResiHTML(item) {
-        const sale = item.sale || {};
-        const items = sale.items || [];
-        const isMarketplace = item.type === 'marketplace';
-
-        const customerName = sale.customer?.name || 'Ibu / Bapak / kakak';
-        const customerPhone = sale.customer?.phone || '';
-        const customerAddress = sale.customer?.address || 'Jl. Madava II, RESIDEN CITY, jakarta Utara';
-        const expeditionName = sale.expedition?.name || sale.courier?.name || 'KALOG';
-        const marketplaceName = sale.marketplace?.name || 'Marketplace';
-        const courierName = sale.courier?.name || sale.expedition?.name || 'Kurir';
-
-        let itemsRowsResi = items.length > 0 ? items.map(itm => `
-            <tr>
-                <td style="border: 1px solid #000000; padding: 3px 6px; text-transform: lowercase;">${escapeHtml(itm.product?.name || 'Barang')}</td>
-                <td style="border: 1px solid #000000; padding: 3px 6px; text-align: right; width: 75px;">${formatIndoNumber(itm.qty)} ${escapeHtml(itm.product?.unit?.name || 'Kg')}</td>
-                <td style="border: 1px solid #000000; padding: 3px 6px; text-align: center; width: 45px; font-weight: bold;">${formatIndoNumber(itm.qty)}</td>
-            </tr>
-        `).join('') : `
-            <tr>
-                <td colspan="3" style="border: 1px solid #000000; padding: 4px; text-align: center; color: #6b7280;">Tidak ada barang</td>
-            </tr>
-        `;
-
-        if (!isMarketplace) {
-            return `
-                <div class="print-document-resi" style="width: 9cm; height: 8cm; background: #ffffff; border: none; padding: 6px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 11px; color: #000000; display: flex; flex-direction: column; justify-content: space-between;">
-                    <div>
-                        <!-- Recipient Box -->
-                        <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; margin-bottom: 4px; font-size: 11px;">
-                            <tr>
-                                <td style="width: 80px; padding: 2px 4px; border-bottom: 1px solid #000000;">Penerima</td>
-                                <td style="padding: 2px 4px; border-bottom: 1px solid #000000;">: ${escapeHtml(customerName)}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 2px 4px; border-bottom: 1px solid #000000;">Alamat</td>
-                                <td style="padding: 2px 4px; border-bottom: 1px solid #000000;">: ${escapeHtml(customerAddress)}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 2px 4px; border-bottom: 1px solid #000000;">No HP</td>
-                                <td style="padding: 2px 4px; border-bottom: 1px solid #000000;">: ${escapeHtml(customerPhone)}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 2px 4px;">No Transaksi</td>
-                                <td style="padding: 2px 4px;">: ${escapeHtml(sale.barcode || item.receipt_number || '-')}</td>
-                            </tr>
-                        </table>
-
-                        <!-- Items Table -->
-                        <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; font-size: 11px;">
-                            <tbody>
-                                ${itemsRowsResi}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Expedisi Bottom Row -->
-                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; font-size: 11px; margin-top: 4px;">
-                        <tr>
-                            <td style="text-align: center; padding: 4px; font-weight: normal;">
-                                Expedisi &nbsp;&nbsp; ${escapeHtml(expeditionName)}
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            `;
-        } else {
-            const barcodeVal = item.receipt_number || sale.barcode || 'RESI-001';
-            const canvasId = `resi-barcode-canvas-${item.id}`;
-
-            return `
-                <div class="print-document-resi" style="width: 9cm; height: 8cm; background: #ffffff; border: none; padding: 6px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 11px; color: #000000; display: flex; flex-direction: column; justify-content: space-between;">
-                    <div>
-                        <!-- No RESI Header -->
-                        <div style="border: 1px solid #000000; text-align: center; padding: 4px; font-weight: bold; font-size: 12px; background-color: #ffffff;">
-                            No RESI &nbsp; ${escapeHtml(barcodeVal)}
-                        </div>
-
-                        <!-- Barcode Display -->
-                        <div style="border: 1px solid #000000; border-top: none; text-align: center; padding: 4px 0; background-color: #ffffff; display: flex; align-items: center; justify-content: center; min-height: 48px;">
-                            <svg id="${canvasId}" style="max-height: 42px; width: 85%;"></svg>
-                        </div>
-
-                        <!-- Items Table -->
-                        <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; border-top: none; font-size: 11px;">
-                            <tbody>
-                                ${itemsRowsResi}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Marketplace & Courier Bottom Row -->
-                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; font-size: 11px; margin-top: 4px;">
-                        <tr>
-                            <td style="width: 50%; border-right: 1px solid #000000; text-align: center; padding: 4px; font-weight: normal;">
-                                ${escapeHtml(marketplaceName)}
-                            </td>
-                            <td style="width: 50%; text-align: center; padding: 4px; font-weight: normal;">
-                                ${escapeHtml(courierName)}
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            `;
-        }
-    }
-
     function previewDocument(type, id) {
         let item = null;
+        const targetId = Number(id);
         if (type === 'invoice') {
-            item = rawInvoices.find(x => x.id === id);
+            item = InvoiceModule.data.find(x => Number(x.id) === targetId);
         } else {
-            item = rawResis.find(x => x.id === id);
+            item = ResiModule.data.find(x => Number(x.id) === targetId);
         }
 
         if (!item) return;
@@ -1018,32 +629,16 @@
         if (type === 'invoice') {
             document.getElementById('modal-title').textContent = isPrinted ? 'Invoice Penjualan (Cetak Ulang)' : 'Invoice Penjualan (Umum)';
             document.getElementById('modal-subtitle').textContent = `No. Invoice: ${item.invoice_number} | Ukuran Fisik Cetak: 18cm x 12cm${isPrinted ? ` | Sudah dicetak ${item.printed_count}x` : ''}`;
-            area.innerHTML = generateInvoiceHTML(item);
+            area.innerHTML = InvoiceModule.generateHTML(item);
         } else if (isResiMarketplace) {
             document.getElementById('modal-title').textContent = isPrinted ? 'Resi Pengiriman (Marketplace - Cetak Ulang)' : 'Resi Pengiriman (Marketplace)';
             document.getElementById('modal-subtitle').textContent = `No. Resi: ${item.receipt_number} | Ukuran Fisik Cetak: 9cm x 8cm${isPrinted ? ` | Sudah dicetak ${item.printed_count}x` : ''}`;
-            area.innerHTML = generateResiHTML(item);
-
-            setTimeout(() => {
-                try {
-                    if (window.JsBarcode) {
-                        const canvasId = `#resi-barcode-canvas-${item.id}`;
-                        const barcodeVal = item.receipt_number || item.sale?.barcode || 'RESI-001';
-                        JsBarcode(canvasId, barcodeVal, {
-                            format: "CODE128",
-                            height: 38,
-                            displayValue: false,
-                            margin: 0
-                        });
-                    }
-                } catch (e) {
-                    console.error("Barcode render error:", e);
-                }
-            }, 50);
+            area.innerHTML = ResiModule.generateHTML(item);
+            ResiModule.renderBarcodes([item]);
         } else {
             document.getElementById('modal-title').textContent = isPrinted ? 'Resi Pengiriman (Umum - Cetak Ulang)' : 'Resi Pengiriman (Umum)';
             document.getElementById('modal-subtitle').textContent = `No. Resi: ${item.receipt_number} | Ukuran Fisik Cetak: 9cm x 8cm${isPrinted ? ` | Sudah dicetak ${item.printed_count}x` : ''}`;
-            area.innerHTML = generateResiHTML(item);
+            area.innerHTML = ResiModule.generateHTML(item);
         }
 
         openModal();
@@ -1051,40 +646,20 @@
 
     function previewBulkDocuments() {
         const type = activeMainTab;
-        const selectedSet = type === 'invoice' ? selectedInvoiceIds : selectedResiIds;
-        if (selectedSet.size === 0) return;
+        const module = type === 'invoice' ? InvoiceModule : ResiModule;
+        if (module.selectedIds.size === 0) return;
 
-        const dataset = type === 'invoice' ? rawInvoices : rawResis;
-        activePrintItems = dataset.filter(item => selectedSet.has(item.id));
+        activePrintItems = module.data.filter(item => module.selectedIds.has(Number(item.id)));
         activePrintType = type;
 
         const area = document.getElementById('printable-area');
         document.getElementById('modal-title').textContent = `Pratinjau Bulk Cetak ${type === 'invoice' ? 'Invoice' : 'Resi Pengiriman'} (${activePrintItems.length} Dokumen)`;
         document.getElementById('modal-subtitle').textContent = `Ukuran Fisik Cetak: ${type === 'invoice' ? '18cm x 12cm' : '9cm x 8cm'} per Halaman (Page Break Otomatis)`;
 
-        area.innerHTML = activePrintItems.map(item => type === 'invoice' ? generateInvoiceHTML(item) : generateResiHTML(item)).join('');
+        area.innerHTML = activePrintItems.map(item => type === 'invoice' ? InvoiceModule.generateHTML(item) : ResiModule.generateHTML(item)).join('');
 
         if (type === 'resi') {
-            setTimeout(() => {
-                activePrintItems.forEach(item => {
-                    if (item.type === 'marketplace') {
-                        try {
-                            if (window.JsBarcode) {
-                                const canvasId = `#resi-barcode-canvas-${item.id}`;
-                                const barcodeVal = item.receipt_number || item.sale?.barcode || 'RESI-001';
-                                JsBarcode(canvasId, barcodeVal, {
-                                    format: "CODE128",
-                                    height: 38,
-                                    displayValue: false,
-                                    margin: 0
-                                });
-                            }
-                        } catch (e) {
-                            console.error("Barcode render error:", e);
-                        }
-                    }
-                });
-            }, 50);
+            ResiModule.renderBarcodes(activePrintItems);
         }
 
         openModal();
@@ -1107,7 +682,7 @@
             }
 
             const endpoint = type === 'invoice' ? '/invoices/bulk-print' : '/recipts/bulk-print';
-            const ids = activePrintItems.map(item => item.id);
+            const ids = activePrintItems.map(item => Number(item.id));
 
             try {
                 await fetch(endpoint, {
@@ -1124,8 +699,8 @@
             }
 
             // Clear selection for printed items
-            const selectedSet = type === 'invoice' ? selectedInvoiceIds : selectedResiIds;
-            ids.forEach(id => selectedSet.delete(id));
+            const module = type === 'invoice' ? InvoiceModule : ResiModule;
+            ids.forEach(id => module.selectedIds.delete(id));
 
             window.print();
             closeModal();
@@ -1176,6 +751,12 @@
         }
     }
 
+    function formatIndoNumber(val) {
+        if (val === null || val === undefined || isNaN(val)) return '0';
+        const num = Number(val);
+        return num.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    }
+
     function escapeHtml(str) {
         if (!str) return '';
         return String(str)
@@ -1185,5 +766,507 @@
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
     }
+
+    /* ==========================================================================
+       INVOICE MODULE
+       ========================================================================== */
+    const InvoiceModule = {
+        data: [],
+        selectedIds: new Set(),
+        filteredItems: [],
+
+        async load() {
+            try {
+                const res = await fetch('/invoices', { headers: { 'Accept': 'application/json' } });
+                if (res.ok) {
+                    this.data = await res.json();
+                }
+            } catch (err) {
+                console.error('Error loading invoices:', err);
+            }
+        },
+
+        getUnprintedCount() {
+            return this.data.filter(i => (i.printed_count || 0) === 0).length;
+        },
+
+        getPrintedCount() {
+            return this.data.filter(i => (i.printed_count || 0) > 0).length;
+        },
+
+        getTotalCount() {
+            return this.data.length;
+        },
+
+        filter(query, statusFilter) {
+            this.filteredItems = this.data.filter(item => {
+                const printedCount = item.printed_count || 0;
+                let matchesStatus = true;
+                if (statusFilter === 'unprinted') matchesStatus = printedCount === 0;
+                if (statusFilter === 'printed') matchesStatus = printedCount > 0;
+
+                const invNo = (item.invoice_number || '').toLowerCase();
+                const barcode = (item.sale?.barcode || '').toLowerCase();
+                const cust = (item.sale?.customer?.name || '').toLowerCase();
+                const counter = (item.sale?.counter?.name || '').toLowerCase();
+
+                const matchesQuery = invNo.includes(query) || barcode.includes(query) || cust.includes(query) || counter.includes(query);
+                return matchesStatus && matchesQuery;
+            });
+            return this.filteredItems;
+        },
+
+        selectAll(checked) {
+            if (checked) {
+                this.filteredItems.forEach(item => this.selectedIds.add(Number(item.id)));
+            } else {
+                this.filteredItems.forEach(item => this.selectedIds.delete(Number(item.id)));
+            }
+        },
+
+        toggleSelect(id, checked) {
+            const numId = Number(id);
+            if (checked) {
+                this.selectedIds.add(numId);
+            } else {
+                this.selectedIds.delete(numId);
+            }
+        },
+
+        renderTable(data) {
+            const tbody = document.getElementById('invoice-table-body');
+            tbody.innerHTML = '';
+
+            data.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50/80 transition-colors';
+
+                const isChecked = this.selectedIds.has(Number(item.id));
+                const createdDate = item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID', {
+                    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                }) : '-';
+
+                const grandTotal = item.sale?.grand_total ? 'Rp ' + Number(item.sale.grand_total).toLocaleString('id-ID') : 'Rp 0';
+                const customerName = item.sale?.customer?.name || item.sale?.counter?.name || 'Umum';
+
+                const printedCount = item.printed_count || 0;
+                const badgeClass = printedCount > 0 
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                    : 'bg-amber-50 text-amber-700 border border-amber-200';
+                const badgeText = printedCount > 0 ? `${printedCount}x Dicetak` : 'Belum Dicetak';
+                const buttonLabel = printedCount > 0 ? 'Detail / Cetak Ulang' : 'Detail / Cetak';
+
+                tr.innerHTML = `
+                    <td class="px-4 py-4 text-center">
+                        <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-brand focus:ring-brand cursor-pointer" value="${item.id}" ${isChecked ? 'checked' : ''} onchange="toggleItemSelect('invoice', ${item.id}, this.checked)">
+                    </td>
+                    <td class="px-3 py-4 text-xs font-semibold text-slate-400">${index + 1}</td>
+                    <td class="px-6 py-4 font-bold text-brand">${escapeHtml(item.invoice_number)}</td>
+                    <td class="px-6 py-4 font-mono text-xs text-slate-600">${escapeHtml(item.sale?.barcode || '-')}</td>
+                    <td class="px-6 py-4 font-medium text-slate-800">${escapeHtml(customerName)}</td>
+                    <td class="px-6 py-4 text-xs text-slate-500">${createdDate}</td>
+                    <td class="px-6 py-4 font-semibold text-slate-900">${grandTotal}</td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${badgeClass}">
+                            ${badgeText}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                            <button onclick="previewDocument('invoice', ${item.id})" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                ${buttonLabel}
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        },
+
+        generateHTML(item) {
+            const sale = item.sale || {};
+            const items = sale.items || [];
+
+            const createdDateStr = item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID', {
+                day: '2-digit', month: '2-digit', year: 'numeric'
+            }) : (sale.date ? new Date(sale.date).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-');
+
+            const customerName = sale.customer?.name || 'Ibu / Bapak / kakak';
+            const customerPhone = sale.customer?.phone || '';
+            const customerAddress = sale.customer?.address || 'Jl. Madava II, RESIDEN CITY, jakarta Utara';
+            const expeditionName = sale.expedition?.name || sale.courier?.name || 'KALOG';
+            const counterName = sale.counter?.name || 'COUNTER';
+
+            const subtotalNum = Number(sale.subtotal || 0);
+            const shippingNum = Number(sale.shipping_cost || 0);
+            const totalWithShippingNum = subtotalNum + shippingNum;
+            const discountNum = Number(sale.discount || 0);
+            const grandTotalNum = Number(sale.grand_total || (totalWithShippingNum - discountNum));
+
+            let itemsRows = items.length > 0 ? items.map((itm, idx) => {
+                const qtyVal = Number(itm.qty || 0);
+                const unitName = itm.product?.unit?.name || 'Kg';
+                const priceNum = Number(itm.price || 0);
+                const subtotalItemNum = Number(itm.subtotal || (qtyVal * priceNum));
+
+                return `
+                    <tr>
+                        <td style="border: 1px solid #000000; padding: 4px 6px; text-align: center;">${idx + 1}</td>
+                        <td style="border: 1px solid #000000; padding: 4px 6px; font-style: italic;">${escapeHtml(itm.product?.name || 'Produk')}</td>
+                        <td style="border: 1px solid #000000; padding: 4px 6px; text-align: right;">${formatIndoNumber(qtyVal)}</td>
+                        <td style="border: 1px solid #000000; padding: 4px 6px; text-align: center;">${escapeHtml(unitName)}</td>
+                        <td style="border: 1px solid #000000; padding: 4px 6px; text-align: right;">${priceNum > 0 ? formatIndoNumber(priceNum) : '-'}</td>
+                        <td style="border: 1px solid #000000; padding: 4px 6px; text-align: right;">${subtotalItemNum > 0 ? formatIndoNumber(subtotalItemNum) : '-'}</td>
+                    </tr>
+                `;
+            }).join('') : `
+                <tr>
+                    <td colspan="6" style="border: 1px solid #000000; padding: 8px; text-align: center; color: #6b7280;">Tidak ada detail item</td>
+                </tr>
+            `;
+
+            return `
+                <div class="print-document-invoice" style="width: 18cm; height: 12cm; background: #ffffff; border: none; padding: 12px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 11px; color: #000000; line-height: 1.3;">
+                    <!-- Header Section -->
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px;">
+                        <tr>
+                            <td style="vertical-align: top; width: 60%; padding: 0;">
+                                <div style="font-size: 11px;">Kepada Yth : &nbsp; Ibu / Bapak / kakak</div>
+                                <div style="font-size: 13px; font-weight: bold; margin-top: 2px;">
+                                    ${escapeHtml(customerName)} 
+                                    <span style="font-weight: bold; margin-left: 12px;">${escapeHtml(customerPhone)}</span>
+                                </div>
+                                <div style="font-size: 11px; margin-top: 2px; line-height: 1.2;">${escapeHtml(customerAddress)}</div>
+                            </td>
+                            <td style="vertical-align: top; width: 40%; padding: 0;">
+                                <table style="margin-left: auto; border-collapse: collapse; text-align: center; font-size: 11px;">
+                                    <tr>
+                                        <td style="background-color: #ffff00; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #000000; padding: 3px 12px; font-weight: bold; min-width: 150px;">
+                                            Tanggal : &nbsp; ${createdDateStr}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color: #ffff00; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #000000; border-top: none; padding: 3px 12px; font-weight: bold; text-align: right;">
+                                            No Transaksi : &nbsp; ${escapeHtml(item.invoice_number || sale.barcode || '-')}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Table Items -->
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 11px; border: 1px solid #000000;">
+                        <thead>
+                            <tr style="background-color: #ffc000; -webkit-print-color-adjust: exact; print-color-adjust: exact; text-align: center; font-weight: bold;">
+                                <th style="border: 1px solid #000000; padding: 4px 6px; width: 6%;">No</th>
+                                <th style="border: 1px solid #000000; padding: 4px 6px; text-align: center; width: 38%;">Nama Barang</th>
+                                <th style="border: 1px solid #000000; padding: 4px 6px; width: 10%;">Qty</th>
+                                <th style="border: 1px solid #000000; padding: 4px 6px; width: 22%;" colspan="2">Satuan</th>
+                                <th style="border: 1px solid #000000; padding: 4px 6px; width: 24%;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${itemsRows}
+                            <!-- Ongkir Row -->
+                            <tr>
+                                <td colspan="5" style="border: 1px solid #000000; text-align: right; padding: 3px 8px; font-weight: normal;">Ongkir</td>
+                                <td style="border: 1px solid #000000; text-align: right; padding: 3px 8px;">${formatIndoNumber(shippingNum)}</td>
+                            </tr>
+                            <!-- Total Row -->
+                            <tr>
+                                <td colspan="5" style="border: 1px solid #000000; text-align: right; padding: 3px 8px; font-weight: normal;">Total</td>
+                                <td style="border: 1px solid #000000; text-align: right; padding: 3px 8px;">${formatIndoNumber(totalWithShippingNum)}</td>
+                            </tr>
+                            <!-- Disc Row -->
+                            <tr style="-webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                                <td colspan="5" style="border: 1px solid #000000; text-align: right; padding: 3px 8px; color: #ff0000; font-weight: normal;">Disc</td>
+                                <td style="border: 1px solid #000000; text-align: right; padding: 3px 8px; color: #ff0000;">${discountNum > 0 ? formatIndoNumber(discountNum) : '-'}</td>
+                            </tr>
+                            <!-- Sub Total Row -->
+                            <tr style="background-color: #dce6f1; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: bold;">
+                                <td colspan="5" style="border: 1px solid #000000; text-align: right; padding: 4px 8px;">Sub Total</td>
+                                <td style="border: 1px solid #000000; text-align: right; padding: 4px 8px;">${formatIndoNumber(grandTotalNum)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Footer Section -->
+                    <table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 12px;">
+                        <tr>
+                            <td style="vertical-align: bottom; width: 65%; padding: 0;">
+                                <div style="font-style: italic; color: #111827; margin-bottom: 12px;">Pembayaran dianggap lunas setelah adanya bukti transfer</div>
+                                <div style="font-weight: normal;">Expedisi &nbsp; : &nbsp;&nbsp;&nbsp;&nbsp; <span style="font-weight: normal; text-transform: uppercase;">${escapeHtml(expeditionName)}</span></div>
+                            </td>
+                            <td style="vertical-align: bottom; width: 35%; padding: 0; text-align: center;">
+                                <div style="margin-bottom: 24px;">Hormat Kami</div>
+                                <div style="font-weight: normal; text-transform: uppercase;">${escapeHtml(counterName)}</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            `;
+        }
+    };
+
+    /* ==========================================================================
+       RESI MODULE
+       ========================================================================== */
+    const ResiModule = {
+        data: [],
+        selectedIds: new Set(),
+        filteredItems: [],
+
+        async load() {
+            try {
+                const res = await fetch('/recipts', { headers: { 'Accept': 'application/json' } });
+                if (res.ok) {
+                    this.data = await res.json();
+                }
+            } catch (err) {
+                console.error('Error loading resis:', err);
+            }
+        },
+
+        getUnprintedCount() {
+            return this.data.filter(i => (i.printed_count || 0) === 0).length;
+        },
+
+        getPrintedCount() {
+            return this.data.filter(i => (i.printed_count || 0) > 0).length;
+        },
+
+        getTotalCount() {
+            return this.data.length;
+        },
+
+        filter(query, statusFilter, typeFilter) {
+            this.filteredItems = this.data.filter(item => {
+                const printedCount = item.printed_count || 0;
+                let matchesStatus = true;
+                if (statusFilter === 'unprinted') matchesStatus = printedCount === 0;
+                if (statusFilter === 'printed') matchesStatus = printedCount > 0;
+
+                const resiNo = (item.receipt_number || '').toLowerCase();
+                const barcode = (item.sale?.barcode || '').toLowerCase();
+                const type = (item.type || '').toLowerCase();
+                const cust = (item.sale?.customer?.name || '').toLowerCase();
+                const mp = (item.sale?.marketplace?.name || '').toLowerCase();
+
+                const matchesQuery = resiNo.includes(query) || barcode.includes(query) || type.includes(query) || cust.includes(query) || mp.includes(query);
+                const matchesFilter = typeFilter === 'all' || item.type === typeFilter;
+
+                return matchesStatus && matchesQuery && matchesFilter;
+            });
+            return this.filteredItems;
+        },
+
+        selectAll(checked) {
+            if (checked) {
+                this.filteredItems.forEach(item => this.selectedIds.add(Number(item.id)));
+            } else {
+                this.filteredItems.forEach(item => this.selectedIds.delete(Number(item.id)));
+            }
+        },
+
+        toggleSelect(id, checked) {
+            const numId = Number(id);
+            if (checked) {
+                this.selectedIds.add(numId);
+            } else {
+                this.selectedIds.delete(numId);
+            }
+        },
+
+        renderTable(data) {
+            const tbody = document.getElementById('resi-table-body');
+            tbody.innerHTML = '';
+
+            data.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50/80 transition-colors';
+
+                const isChecked = this.selectedIds.has(Number(item.id));
+                const createdDate = item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID', {
+                    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                }) : '-';
+
+                const isMarketplace = item.type === 'marketplace';
+                const typeBadge = isMarketplace
+                    ? `<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-purple-50 text-purple-700 border border-purple-200">Marketplace (${escapeHtml(item.sale?.marketplace?.name || '-')})</span>`
+                    : `<span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-50 text-blue-700 border border-blue-200">Umum / Toko</span>`;
+
+                const courierExpedition = [
+                    item.sale?.expedition?.name,
+                    item.sale?.courier?.name
+                ].filter(Boolean).join(' - ') || 'Reguler';
+
+                const printedCount = item.printed_count || 0;
+                const badgeClass = printedCount > 0 
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                    : 'bg-amber-50 text-amber-700 border border-amber-200';
+                const badgeText = printedCount > 0 ? `${printedCount}x Dicetak` : 'Belum Dicetak';
+                const buttonLabel = printedCount > 0 ? 'Detail / Cetak Ulang' : 'Detail / Cetak';
+
+                tr.innerHTML = `
+                    <td class="px-4 py-4 text-center">
+                        <input type="checkbox" class="w-4 h-4 rounded border-slate-300 text-brand focus:ring-brand cursor-pointer" value="${item.id}" ${isChecked ? 'checked' : ''} onchange="toggleItemSelect('resi', ${item.id}, this.checked)">
+                    </td>
+                    <td class="px-3 py-4 text-xs font-semibold text-slate-400">${index + 1}</td>
+                    <td class="px-6 py-4 font-bold text-brand">${escapeHtml(item.receipt_number)}</td>
+                    <td class="px-6 py-4 font-mono text-xs text-slate-600">${escapeHtml(item.sale?.barcode || '-')}</td>
+                    <td class="px-6 py-4">${typeBadge}</td>
+                    <td class="px-6 py-4 font-medium text-slate-800">${escapeHtml(courierExpedition)}</td>
+                    <td class="px-6 py-4 text-xs text-slate-500">${createdDate}</td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${badgeClass}">
+                            ${badgeText}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-2">
+                            <button onclick="previewDocument('resi', ${item.id})" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition cursor-pointer">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                ${buttonLabel}
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        },
+
+        generateHTML(item) {
+            const sale = item.sale || {};
+            const items = sale.items || [];
+            const isMarketplace = item.type === 'marketplace';
+
+            const customerName = sale.customer?.name || 'Ibu / Bapak / kakak';
+            const customerPhone = sale.customer?.phone || '';
+            const customerAddress = sale.customer?.address || 'Jl. Madava II, RESIDEN CITY, jakarta Utara';
+            const expeditionName = sale.expedition?.name || sale.courier?.name || 'KALOG';
+            const marketplaceName = sale.marketplace?.name || 'Marketplace';
+            const courierName = sale.courier?.name || sale.expedition?.name || 'Kurir';
+
+            let itemsRowsResi = items.length > 0 ? items.map(itm => `
+                <tr>
+                    <td style="border: 1px solid #000000; padding: 3px 6px; text-transform: lowercase;">${escapeHtml(itm.product?.name || 'Barang')}</td>
+                    <td style="border: 1px solid #000000; padding: 3px 6px; text-align: right; width: 75px;">${formatIndoNumber(itm.qty)} ${escapeHtml(itm.product?.unit?.name || 'Kg')}</td>
+                    <td style="border: 1px solid #000000; padding: 3px 6px; text-align: center; width: 45px; font-weight: bold;">${formatIndoNumber(itm.qty)}</td>
+                </tr>
+            `).join('') : `
+                <tr>
+                    <td colspan="3" style="border: 1px solid #000000; padding: 4px; text-align: center; color: #6b7280;">Tidak ada barang</td>
+                </tr>
+            `;
+
+            if (!isMarketplace) {
+                return `
+                    <div class="print-document-resi" style="width: 9cm; height: 8cm; background: #ffffff; border: none; padding: 6px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 11px; color: #000000; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <!-- Recipient Box -->
+                            <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; margin-bottom: 4px; font-size: 11px;">
+                                <tr>
+                                    <td style="width: 80px; padding: 2px 4px; border-bottom: 1px solid #000000;">Penerima</td>
+                                    <td style="padding: 2px 4px; border-bottom: 1px solid #000000;">: ${escapeHtml(customerName)}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 2px 4px; border-bottom: 1px solid #000000;">Alamat</td>
+                                    <td style="padding: 2px 4px; border-bottom: 1px solid #000000;">: ${escapeHtml(customerAddress)}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 2px 4px; border-bottom: 1px solid #000000;">No HP</td>
+                                    <td style="padding: 2px 4px; border-bottom: 1px solid #000000;">: ${escapeHtml(customerPhone)}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 2px 4px;">No Transaksi</td>
+                                    <td style="padding: 2px 4px;">: ${escapeHtml(sale.barcode || item.receipt_number || '-')}</td>
+                                </tr>
+                            </table>
+
+                            <!-- Items Table -->
+                            <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; font-size: 11px;">
+                                <tbody>
+                                    ${itemsRowsResi}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Expedisi Bottom Row -->
+                        <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; font-size: 11px; margin-top: 4px;">
+                            <tr>
+                                <td style="text-align: center; padding: 4px; font-weight: normal;">
+                                    Expedisi &nbsp;&nbsp; ${escapeHtml(expeditionName)}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                `;
+            } else {
+                const barcodeVal = item.receipt_number || sale.barcode || 'RESI-001';
+                const canvasId = `resi-barcode-canvas-${item.id}`;
+
+                return `
+                    <div class="print-document-resi" style="width: 9cm; height: 8cm; background: #ffffff; border: none; padding: 6px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 11px; color: #000000; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <!-- No RESI Header -->
+                            <div style="border: 1px solid #000000; text-align: center; padding: 4px; font-weight: bold; font-size: 12px; background-color: #ffffff;">
+                                No RESI &nbsp; ${escapeHtml(barcodeVal)}
+                            </div>
+
+                            <!-- Barcode Display -->
+                            <div style="border: 1px solid #000000; border-top: none; text-align: center; padding: 4px 0; background-color: #ffffff; display: flex; align-items: center; justify-content: center; min-height: 48px;">
+                                <svg id="${canvasId}" style="max-height: 42px; width: 85%;"></svg>
+                            </div>
+
+                            <!-- Items Table -->
+                            <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; border-top: none; font-size: 11px;">
+                                <tbody>
+                                    ${itemsRowsResi}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Marketplace & Courier Bottom Row -->
+                        <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; font-size: 11px; margin-top: 4px;">
+                            <tr>
+                                <td style="width: 50%; border-right: 1px solid #000000; text-align: center; padding: 4px; font-weight: normal;">
+                                    ${escapeHtml(marketplaceName)}
+                                </td>
+                                <td style="width: 50%; text-align: center; padding: 4px; font-weight: normal;">
+                                    ${escapeHtml(courierName)}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                `;
+            }
+        },
+
+        renderBarcodes(items) {
+            setTimeout(() => {
+                items.forEach(item => {
+                    if (item.type === 'marketplace') {
+                        try {
+                            if (window.JsBarcode) {
+                                const canvasId = `#resi-barcode-canvas-${item.id}`;
+                                const barcodeVal = item.receipt_number || item.sale?.barcode || 'RESI-001';
+                                JsBarcode(canvasId, barcodeVal, {
+                                    format: "CODE128",
+                                    height: 38,
+                                    displayValue: false,
+                                    margin: 0
+                                });
+                            }
+                        } catch (e) {
+                            console.error("Barcode render error:", e);
+                        }
+                    }
+                });
+            }, 50);
+        }
+    };
 </script>
 @endsection
+
