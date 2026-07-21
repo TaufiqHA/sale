@@ -13,6 +13,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\ProductionItemController;
 use App\Http\Controllers\ProductWholepriceController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReciptsController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SaleItemController;
@@ -29,6 +30,10 @@ Route::get('/me', [AuthController::class, 'me'])->middleware('auth')->name('me')
 
 Route::get('/administrator/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('administrator.dashboard');
 Route::get('/administrator/dashboard/stats', [DashboardController::class, 'stats'])->middleware('auth')->name('administrator.dashboard.stats');
+
+Route::get('/administrator/profile', [ProfileController::class, 'index'])->middleware('auth')->name('administrator.profile');
+Route::put('/administrator/profile', [ProfileController::class, 'update'])->middleware('auth')->name('administrator.profile.update');
+Route::put('/administrator/profile/password', [ProfileController::class, 'updatePassword'])->middleware('auth')->name('administrator.profile.password');
 
 Route::get('/administrator/stock-monitor', [ProductController::class, 'stockMonitor'])->middleware('auth')->name('administrator.stock-monitor');
 Route::get('/administrator/invoice', [InvoicesController::class, 'invoiceView'])->middleware('auth')->name('administrator.invoice');

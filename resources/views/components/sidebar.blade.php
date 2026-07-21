@@ -99,17 +99,17 @@
 
       <!-- User Profile & Logout at bottom -->
       <div class="p-2 border-t border-white/10 flex flex-col gap-3 mt-auto">
-          <div class="flex items-center gap-3">
-              <div class="h-9 w-9 rounded-full bg-white/10 flex items-center justify-center text-white">
+          <a href="{{ route('administrator.profile') }}" class="flex items-center gap-3 p-2 rounded-md transition-all group {{ request()->routeIs('administrator.profile') ? 'bg-brand-hover text-white font-semibold shadow-sm' : 'hover:bg-brand-hover hover:text-white' }}">
+              <div class="h-9 w-9 rounded-full bg-white/10 flex items-center justify-center text-white shrink-0 group-hover:bg-white/20 transition-colors">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                   </svg>
               </div>
               <div class="truncate flex-1">
                   <p class="text-sm font-semibold text-white truncate">{{ auth()->user()->name }}</p>
-                  <p class="text-xs text-white/60 capitalize">{{ auth()->user()->role }}</p>
+                  <p class="text-xs text-white/60 capitalize group-hover:text-white/80">{{ auth()->user()->role }}</p>
               </div>
-          </div>
+          </a>
           <form action="{{ route('logout') }}" method="POST" class="w-full">
               @csrf
               <button type="submit" class="w-full flex items-center justify-center gap-2 px-3 py-2 text-sm font-semibold text-white bg-white/10 hover:bg-white/20 active:scale-[0.98] rounded-md transition duration-150 cursor-pointer border-0">
