@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable([
     'counter_id',
@@ -103,5 +104,15 @@ class Sale extends Model
     public function items(): HasMany
     {
         return $this->hasMany(SaleItem::class);
+    }
+
+    /**
+     * Get the invoice associated with the sale.
+     *
+     * @return HasOne<Invoices, $this>
+     */
+    public function invoice(): HasOne
+    {
+        return $this->hasOne(Invoices::class, 'sales_id');
     }
 }

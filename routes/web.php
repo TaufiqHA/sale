@@ -7,6 +7,7 @@ use App\Http\Controllers\CourierController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExpeditionController;
+use App\Http\Controllers\InvoicesController;
 use App\Http\Controllers\MarketplaceController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductionController;
@@ -44,3 +45,4 @@ Route::apiResource('sale-items', SaleItemController::class)->except(['index'])->
 Route::apiResource('productions', ProductionController::class)->middleware('auth');
 Route::apiResource('production-items', ProductionItemController::class)->except(['index'])->middleware('auth');
 Route::apiResource('product-wholeprices', ProductWholepriceController::class)->except(['index'])->middleware('auth');
+Route::apiResource('invoices', InvoicesController::class)->middleware('auth');
