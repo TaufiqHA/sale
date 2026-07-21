@@ -120,4 +120,28 @@ class ReciptsTest extends TestCase
             'id' => $recipt->id,
         ]);
     }
+
+    public function test_authenticated_user_can_bulk_print_recipts(): void
+    {
+        $user = User::factory()->create();
+        $recipts = Recipts::factory()->count(3)->create(['printed_count' => 0]);
+
+        $ids = $recipts->pluck('id')->toArray();
+
+        $response = $this->actingAs($user)->postJson('/recipts/bulk-print', [
+            'ids' => $ids,
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'count' => 3,
+            ]);
+
+        foreach ($ids as $id) {
+            $this->assertDatabaseHas('recipts', [
+                'id' => $id,
+                'printed_count' => 1,
+            ]);
+        }
+    }
 }

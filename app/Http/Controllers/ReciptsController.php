@@ -83,4 +83,22 @@ class ReciptsController extends Controller
     {
         return $this->destroy($recipt);
     }
+
+    /**
+     * Increment printed_count for multiple recipts.
+     */
+    public function bulkPrint(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['exists:recipts,id'],
+        ]);
+
+        Recipts::whereIn('id', $validated['ids'])->increment('printed_count');
+
+        return response()->json([
+            'message' => 'Receipt printed count updated successfully.',
+            'count' => count($validated['ids']),
+        ]);
+    }
 }

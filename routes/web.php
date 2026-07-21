@@ -47,5 +47,7 @@ Route::apiResource('sale-items', SaleItemController::class)->except(['index'])->
 Route::apiResource('productions', ProductionController::class)->middleware('auth');
 Route::apiResource('production-items', ProductionItemController::class)->except(['index'])->middleware('auth');
 Route::apiResource('product-wholeprices', ProductWholepriceController::class)->except(['index'])->middleware('auth');
+Route::post('invoices/bulk-print', [InvoicesController::class, 'bulkPrint'])->middleware('auth');
+Route::post('recipts/bulk-print', [ReciptsController::class, 'bulkPrint'])->middleware('auth');
 Route::apiResource('invoices', InvoicesController::class)->middleware('auth');
 Route::apiResource('recipts', ReciptsController::class)->middleware('auth');

@@ -92,4 +92,22 @@ class InvoicesController extends Controller
     {
         return $this->destroy($invoice);
     }
+
+    /**
+     * Increment printed_count for multiple invoices.
+     */
+    public function bulkPrint(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'ids' => ['required', 'array'],
+            'ids.*' => ['exists:invoices,id'],
+        ]);
+
+        Invoices::whereIn('id', $validated['ids'])->increment('printed_count');
+
+        return response()->json([
+            'message' => 'Invoice printed count updated successfully.',
+            'count' => count($validated['ids']),
+        ]);
+    }
 }

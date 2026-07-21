@@ -120,4 +120,28 @@ class InvoicesTest extends TestCase
             'id' => $invoice->id,
         ]);
     }
+
+    public function test_authenticated_user_can_bulk_print_invoices(): void
+    {
+        $user = User::factory()->create();
+        $invoices = Invoices::factory()->count(3)->create(['printed_count' => 0]);
+
+        $ids = $invoices->pluck('id')->toArray();
+
+        $response = $this->actingAs($user)->postJson('/invoices/bulk-print', [
+            'ids' => $ids,
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'count' => 3,
+            ]);
+
+        foreach ($ids as $id) {
+            $this->assertDatabaseHas('invoices', [
+                'id' => $id,
+                'printed_count' => 1,
+            ]);
+        }
+    }
 }
