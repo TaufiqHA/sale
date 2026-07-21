@@ -228,7 +228,7 @@
 
     .print-document-invoice {
         width: 18cm !important;
-        min-height: 12cm !important;
+        height: 12cm !important;
         box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
         border: 1px solid #000000 !important;
         margin: 0 auto 1.5rem auto !important;
@@ -255,48 +255,71 @@
             color-adjust: exact !important;
         }
 
+        html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            overflow: hidden !important;
+            background: #ffffff !important;
+        }
+
         body * {
             visibility: hidden !important;
         }
+
         #document-modal,
         #document-modal * {
             visibility: visible !important;
         }
+
         #document-modal {
-            position: absolute !important;
+            position: fixed !important;
             left: 0 !important;
             top: 0 !important;
             width: 100% !important;
-            height: auto !important;
+            height: 100% !important;
             background: #ffffff !important;
             padding: 0 !important;
             margin: 0 !important;
             backdrop-filter: none !important;
             display: block !important;
             opacity: 1 !important;
+            overflow: hidden !important;
+            z-index: 99999 !important;
         }
+
         #modal-backdrop,
         #modal-panel > div > div.flex.items-center.justify-between,
         #modal-panel > div > div.flex.items-center.justify-end {
             display: none !important;
         }
+
         #modal-panel {
             max-width: none !important;
             width: 100% !important;
+            height: 100% !important;
             transform: none !important;
             box-shadow: none !important;
             border: none !important;
             background: transparent !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
+
         #modal-panel > div {
             border: none !important;
             box-shadow: none !important;
             background: transparent !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
         }
+
         #printable-area,
         .bulk-print-wrapper {
             max-height: none !important;
-            overflow: visible !important;
+            overflow: hidden !important;
             padding: 0 !important;
             margin: 0 !important;
             border: none !important;
@@ -305,8 +328,9 @@
             display: block !important;
             float: none !important;
             width: 100% !important;
-            height: auto !important;
+            height: 100% !important;
         }
+
         .bulk-doc-item {
             max-height: none !important;
             overflow: hidden !important;
@@ -318,36 +342,43 @@
             display: block !important;
             float: none !important;
             width: 100% !important;
-            height: auto !important;
+            height: 100% !important;
             page-break-inside: avoid !important;
             break-inside: avoid !important;
         }
-        .bulk-doc-item:not(:first-child) {
-            page-break-before: always !important;
-            break-before: page !important;
+
+        .bulk-doc-item:not(:last-child) {
+            page-break-after: always !important;
+            break-after: page !important;
         }
+
         .print-document-invoice {
             display: block !important;
-            width: 17.6cm !important;
-            height: 11.6cm !important;
-            max-height: 11.6cm !important;
-            margin: 0.2cm auto !important;
+            width: 18cm !important;
+            height: 12cm !important;
+            max-height: 12cm !important;
+            margin: 0 auto !important;
             box-sizing: border-box !important;
             box-shadow: none !important;
             page-break-inside: avoid !important;
             break-inside: avoid !important;
+            page-break-after: avoid !important;
+            break-after: avoid !important;
             overflow: hidden !important;
         }
+
         .print-document-resi {
             display: block !important;
-            width: 8.8cm !important;
-            height: 7.8cm !important;
-            max-height: 7.8cm !important;
-            margin: 0.1cm auto !important;
+            width: 9cm !important;
+            height: 8cm !important;
+            max-height: 8cm !important;
+            margin: 0 auto !important;
             box-sizing: border-box !important;
             box-shadow: none !important;
             page-break-inside: avoid !important;
             break-inside: avoid !important;
+            page-break-after: avoid !important;
+            break-after: avoid !important;
             overflow: hidden !important;
         }
     }
@@ -840,7 +871,7 @@
         `;
 
         return `
-            <div class="print-document-invoice" style="width: 18cm; min-height: 12cm; background: #ffffff; border: 1px solid #000000; padding: 12px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 11px; color: #000000; line-height: 1.3;">
+            <div class="print-document-invoice" style="width: 18cm; height: 12cm; background: #ffffff; border: 1px solid #000000; padding: 12px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 11px; color: #000000; line-height: 1.3;">
                 <!-- Header Section -->
                 <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px;">
                     <tr>
