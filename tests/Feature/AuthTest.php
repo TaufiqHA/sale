@@ -23,7 +23,7 @@ class AuthTest extends TestCase
     }
 
     /**
-     * Test a user can login with valid credentials and is redirected to /me (if admin).
+     * Test a user with admin role can login with valid credentials and is redirected to /administrator/invoice.
      */
     public function test_user_can_login_with_valid_credentials(): void
     {
@@ -38,7 +38,7 @@ class AuthTest extends TestCase
             'password' => 'password',
         ]);
 
-        $response->assertRedirect('/me');
+        $response->assertRedirect('/administrator/invoice');
         $this->assertAuthenticatedAs($user);
     }
 

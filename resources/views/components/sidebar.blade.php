@@ -15,6 +15,7 @@
          </div>
 
          <ul class="space-y-1 font-medium">
+            @if(auth()->user()->role === 'administrator')
             <li class="pb-1.5 px-3">
                <span class="text-[10px] font-bold text-white/40 tracking-wider uppercase">Utama</span>
             </li>
@@ -47,10 +48,12 @@
                   <span class="flex-1 ms-3 whitespace-nowrap">Monitoring Stok</span>
                </a>
             </li>
+            @endif
 
-            <li class="pt-4 pb-1.5 px-3 mt-4 border-t border-white/10">
+            <li class="pb-1.5 px-3 {{ auth()->user()->role === 'administrator' ? 'pt-4 mt-4 border-t border-white/10' : '' }}">
                <span class="text-[10px] font-bold text-white/40 tracking-wider uppercase">Operasional</span>
             </li>
+            @if(auth()->user()->role === 'administrator')
              <li>
                 <a href="{{ route('sales.index') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('sales.*') ? 'bg-brand-hover text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-brand-hover hover:text-white font-medium' }}">
                    <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('sales.*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -67,6 +70,7 @@
                      <span class="flex-1 ms-3 whitespace-nowrap">Produksi</span>
                   </a>
              </li>
+             @endif
              <li>
                 <a href="{{ route('administrator.invoice') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('administrator.invoice*') ? 'bg-brand-hover text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-brand-hover hover:text-white font-medium' }}">
                    <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('administrator.invoice*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -75,6 +79,7 @@
                    <span class="flex-1 ms-3 whitespace-nowrap">Invoice / Resi</span>
                 </a>
              </li>
+            @if(auth()->user()->role === 'administrator')
             <li class="pt-4 pb-1.5 px-3 mt-4 border-t border-white/10">
                <span class="text-[10px] font-bold text-white/40 tracking-wider uppercase">Data Master</span>
             </li>
@@ -94,6 +99,7 @@
                   <span class="flex-1 ms-3 whitespace-nowrap">Data Counter</span>
                </a>
             </li>
+            @endif
          </ul>
       </div>
 
