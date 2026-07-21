@@ -51,22 +51,30 @@
             <li class="pt-4 pb-1.5 px-3 mt-4 border-t border-white/10">
                <span class="text-[10px] font-bold text-white/40 tracking-wider uppercase">Operasional</span>
             </li>
-            <li>
-               <a href="{{ route('sales.index') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('sales.*') ? 'bg-brand-hover text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-brand-hover hover:text-white font-medium' }}">
-                  <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('sales.*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M6 14h2m3 0h4m3 0h2M3 6h18a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Z"/>
-                  </svg>
-                  <span class="flex-1 ms-3 whitespace-nowrap">Penjualan</span>
-               </a>
-            </li>
-            <li>
-               <a href="{{ route('productions.index') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('productions.*') ? 'bg-brand-hover text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-brand-hover hover:text-white font-medium' }}">
-                  <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('productions.*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h8m-8 6h8m-8 6h8M4 6h4v4H4V6Zm0 6h4v4H4v-4Zm0 6h4v4H4v-4Z"/>
-                  </svg>
-                  <span class="flex-1 ms-3 whitespace-nowrap">Produksi</span>
-               </a>
-            </li>
+             <li>
+                <a href="{{ route('sales.index') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('sales.*') ? 'bg-brand-hover text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-brand-hover hover:text-white font-medium' }}">
+                   <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('sales.*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M6 14h2m3 0h4m3 0h2M3 6h18a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1Z"/>
+                   </svg>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Penjualan</span>
+                </a>
+             </li>
+             <li>
+                <a href="{{ route('administrator.invoice') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('administrator.invoice*') ? 'bg-brand-hover text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-brand-hover hover:text-white font-medium' }}">
+                   <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('administrator.invoice*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                   </svg>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Invoice / Resi</span>
+                </a>
+             </li>
+             <li>
+                <a href="{{ route('productions.index') }}" class="flex items-center px-3 py-2.5 rounded-md transition-all group {{ request()->routeIs('productions.*') ? 'bg-brand-hover text-white font-semibold shadow-sm' : 'text-white/85 hover:bg-brand-hover hover:text-white font-medium' }}">
+                   <svg class="shrink-0 w-5 h-5 transition duration-75 {{ request()->routeIs('productions.*') ? 'text-white' : 'text-white/70 group-hover:text-white' }}" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6h8m-8 6h8m-8 6h8M4 6h4v4H4V6Zm0 6h4v4H4v-4Zm0 6h4v4H4v-4Z"/>
+                   </svg>
+                   <span class="flex-1 ms-3 whitespace-nowrap">Produksi</span>
+                </a>
+             </li>
 
             <li class="pt-4 pb-1.5 px-3 mt-4 border-t border-white/10">
                <span class="text-[10px] font-bold text-white/40 tracking-wider uppercase">Data Master</span>

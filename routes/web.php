@@ -31,6 +31,7 @@ Route::get('/administrator/dashboard', [DashboardController::class, 'index'])->m
 Route::get('/administrator/dashboard/stats', [DashboardController::class, 'stats'])->middleware('auth')->name('administrator.dashboard.stats');
 
 Route::get('/administrator/stock-monitor', [ProductController::class, 'stockMonitor'])->middleware('auth')->name('administrator.stock-monitor');
+Route::get('/administrator/invoice', [InvoicesController::class, 'invoiceView'])->middleware('auth')->name('administrator.invoice');
 
 Route::apiResource('categories', CategoryController::class)->middleware('auth');
 Route::apiResource('units', UnitController::class)->middleware('auth');

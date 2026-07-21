@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invoices;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -13,7 +14,15 @@ class InvoicesController extends Controller
      */
     public function index(): JsonResponse
     {
-        return response()->json(Invoices::with('sale')->get());
+        return response()->json(Invoices::with(['sale.customer', 'sale.counter', 'sale.items.product'])->get());
+    }
+
+    /**
+     * Display the invoice view page.
+     */
+    public function invoiceView(): View
+    {
+        return view('administrator.invoice');
     }
 
     /**
@@ -30,7 +39,7 @@ class InvoicesController extends Controller
 
         $invoice = Invoices::create($validated);
 
-        return response()->json($invoice->load('sale'), 201);
+        return response()->json($invoice->load(['sale.customer', 'sale.counter', 'sale.items.product']), 201);
     }
 
     /**
@@ -46,7 +55,7 @@ class InvoicesController extends Controller
      */
     public function show(Invoices $invoice): JsonResponse
     {
-        return response()->json($invoice->load('sale'));
+        return response()->json($invoice->load(['sale.customer', 'sale.counter', 'sale.items.product']));
     }
 
     /**
@@ -63,7 +72,7 @@ class InvoicesController extends Controller
 
         $invoice->update($validated);
 
-        return response()->json($invoice->load('sale'));
+        return response()->json($invoice->load(['sale.customer', 'sale.counter', 'sale.items.product']));
     }
 
     /**

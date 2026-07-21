@@ -6,8 +6,10 @@ use App\Models\Counter;
 use App\Models\Courier;
 use App\Models\Customer;
 use App\Models\Expedition;
+use App\Models\Invoices;
 use App\Models\Marketplace;
 use App\Models\Product;
+use App\Models\Recipts;
 use App\Models\Sale;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -79,6 +81,22 @@ class SaleController extends Controller
                     }
                 }
             }
+
+            if ($sale->type === 'umum') {
+                Invoices::create([
+                    'sales_id' => $sale->id,
+                    'invoice_number' => 'INV-'.str_pad((string) $sale->id, 5, '0', STR_PAD_LEFT),
+                    'type' => 'umum',
+                    'printed_count' => 0,
+                ]);
+            }
+
+            Recipts::create([
+                'sales_id' => $sale->id,
+                'receipt_number' => 'RCP-'.str_pad((string) $sale->id, 5, '0', STR_PAD_LEFT),
+                'type' => $sale->type,
+                'printed_count' => 0,
+            ]);
 
             return $sale;
         });
