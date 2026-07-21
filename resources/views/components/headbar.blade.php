@@ -1,5 +1,5 @@
 <!-- Headbar -->
-<header class="sticky top-0 z-20 bg-white border-b border-slate-100 flex items-center justify-between h-20 px-6">
+<header class="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b border-slate-200/60 flex items-center justify-between h-20 px-6">
     <div class="flex items-center gap-3">
         <!-- Hamburger button for mobile & tablet (hidden on sm: ml-64 / desktop) -->
         <button data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar" aria-controls="default-sidebar" type="button" class="text-slate-500 bg-transparent hover:bg-slate-50 focus:ring-4 focus:ring-slate-100 font-medium rounded-lg text-sm p-2 focus:outline-none inline-flex sm:hidden cursor-pointer">

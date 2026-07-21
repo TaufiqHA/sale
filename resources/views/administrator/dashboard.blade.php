@@ -153,12 +153,12 @@
     <!-- Summary Widgets Row -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <!-- Card 1: Total Omset -->
-        <div class="bg-neutral-primary-soft p-6 rounded-xl border border-default shadow-xs flex items-center justify-between transition duration-200 hover:shadow-md">
+        <div class="bg-white p-6 rounded-xl border border-slate-200/70 shadow-xs flex items-center justify-between transition duration-200 hover:shadow-md">
             <div>
                 <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Omset</h3>
-                <p id="widget-total-omset" class="text-2xl font-bold text-heading mt-2">Rp 0</p>
+                <p id="widget-total-omset" class="text-2xl font-bold text-slate-900 mt-2">Rp 0</p>
             </div>
-            <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+            <div class="p-3 bg-emerald-500 text-white shadow-xs rounded-xl">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.307a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
                 </svg>
@@ -166,12 +166,12 @@
         </div>
 
         <!-- Card 2: Total Keuntungan -->
-        <div class="bg-neutral-primary-soft p-6 rounded-xl border border-default shadow-xs flex items-center justify-between transition duration-200 hover:shadow-md">
+        <div class="bg-white p-6 rounded-xl border border-slate-200/70 shadow-xs flex items-center justify-between transition duration-200 hover:shadow-md">
             <div>
                 <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Keuntungan (Estimasi)</h3>
-                <p id="widget-total-keuntungan" class="text-2xl font-bold text-heading mt-2">Rp 0</p>
+                <p id="widget-total-keuntungan" class="text-2xl font-bold text-slate-900 mt-2">Rp 0</p>
             </div>
-            <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+            <div class="p-3 bg-[#FF8A00] text-white shadow-xs rounded-xl">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-1.95-.58-1-.727-1-1.912 0-2.64.95-.69 2.583-.787 3.73-.245L14 9M12 3v3m0 12v3" />
                 </svg>
@@ -179,12 +179,12 @@
         </div>
 
         <!-- Card 3: Barang Terjual -->
-        <div class="bg-neutral-primary-soft p-6 rounded-xl border border-default shadow-xs flex items-center justify-between transition duration-200 hover:shadow-md">
+        <div class="bg-white p-6 rounded-xl border border-slate-200/70 shadow-xs flex items-center justify-between transition duration-200 hover:shadow-md">
             <div>
                 <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Barang Terjual</h3>
-                <p id="widget-total-qty" class="text-2xl font-bold text-heading mt-2">0 Unit</p>
+                <p id="widget-total-qty" class="text-2xl font-bold text-slate-900 mt-2">0 Unit</p>
             </div>
-            <div class="p-3 bg-blue-50 text-blue-600 rounded-xl">
+            <div class="p-3 bg-[#00B4D8] text-white shadow-xs rounded-xl">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"></path>
                 </svg>
@@ -193,9 +193,9 @@
     </div>
 
     <!-- Chart Row -->
-    <div class="bg-neutral-primary-soft border border-default rounded-xl p-6 mb-8 shadow-xs">
+    <div class="bg-white border border-slate-200/70 rounded-xl p-6 mb-8 shadow-xs">
         <div class="flex items-center gap-2 mb-6">
-            <span class="inline-block w-1.5 h-5 bg-emerald-500 rounded-full"></span>
+            <span class="inline-block w-1.5 h-5 bg-brand rounded-full"></span>
             <h2 class="text-sm font-bold text-heading uppercase tracking-wider">Grafik Penjualan</h2>
         </div>
         <div class="relative w-full h-80">
@@ -206,10 +206,10 @@
     <!-- Bottom Tables Row (Produk Terlaris & Detail Transaksi Terakhir) -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <!-- Left Column: Produk Terlaris -->
-        <div class="bg-neutral-primary-soft border border-default rounded-xl p-6 shadow-xs flex flex-col justify-between min-h-[300px]">
+        <div class="bg-white border border-slate-200/70 rounded-xl p-6 shadow-xs flex flex-col justify-between min-h-[300px]">
             <div>
                 <div class="flex items-center gap-2 mb-6">
-                    <span class="inline-block w-1.5 h-5 bg-emerald-500 rounded-full"></span>
+                    <span class="inline-block w-1.5 h-5 bg-brand rounded-full"></span>
                     <h2 class="text-sm font-bold text-heading uppercase tracking-wider">Produk Terlaris</h2>
                 </div>
                 <div class="overflow-x-auto">
@@ -233,10 +233,10 @@
         </div>
 
         <!-- Right Column: Detail Transaksi Terakhir -->
-        <div class="bg-neutral-primary-soft border border-default rounded-xl p-6 shadow-xs flex flex-col justify-between min-h-[300px]">
+        <div class="bg-white border border-slate-200/70 rounded-xl p-6 shadow-xs flex flex-col justify-between min-h-[300px]">
             <div>
                 <div class="flex items-center gap-2 mb-6">
-                    <span class="inline-block w-1.5 h-5 bg-emerald-500 rounded-full"></span>
+                    <span class="inline-block w-1.5 h-5 bg-brand rounded-full"></span>
                     <h2 class="text-sm font-bold text-heading uppercase tracking-wider">Detail Transaksi Terakhir</h2>
                 </div>
                 <div class="overflow-x-auto">
@@ -549,8 +549,8 @@
 
         const ctx = document.getElementById('salesChart').getContext('2d');
         const gradient = ctx.createLinearGradient(0, 0, 0, 320);
-        gradient.addColorStop(0, 'rgba(101, 147, 136, 0.2)');
-        gradient.addColorStop(1, 'rgba(101, 147, 136, 0.0)');
+        gradient.addColorStop(0, 'rgba(81, 86, 240, 0.25)');
+        gradient.addColorStop(1, 'rgba(81, 86, 240, 0.0)');
 
         salesChart = new Chart(ctx, {
             type: 'line',
@@ -559,9 +559,9 @@
                 datasets: [{
                     label: 'Omset',
                     data: dataPoints,
-                    borderColor: '#659388',
+                    borderColor: '#5156F0',
                     borderWidth: 3,
-                    pointBackgroundColor: '#659388',
+                    pointBackgroundColor: '#5156F0',
                     pointBorderColor: '#ffffff',
                     pointBorderWidth: 2,
                     pointRadius: 5,

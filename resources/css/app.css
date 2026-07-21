@@ -11,21 +11,23 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 
-    /* Custom Brand Colors */
-    --color-brand-50: #E7F2DE;
-    --color-brand-100: #D8EAE0;
-    --color-brand-200: #B2D4BA;
-    --color-brand-300: #89BEA5;
-    --color-brand-400: #659388;
-    --color-brand-500: #588b80;
-    --color-brand-600: #49756b;
-    --color-brand-700: #3c5f57;
-    --color-brand-800: #2f4a44;
-    --color-brand-900: #223631;
-    --color-brand-950: #16221f;
+    /* Custom Brand Colors (Periwinkle & Dashboard Accent Palette) */
+    --color-brand-50: #EEF2FF;
+    --color-brand-100: #E0E7FF;
+    --color-brand-200: #C7D2FE;
+    --color-brand-300: #A5B4FC;
+    --color-brand-400: #6366F1;
+    --color-brand-500: #5156F0;
+    --color-brand-600: #3F44D8;
+    --color-brand-700: #3135B3;
+    --color-brand-800: #25288E;
+    --color-brand-900: #1C1E6F;
+    --color-brand-950: #101147;
 
-    --color-brand: var(--color-brand-400);
+    --color-brand: var(--color-brand-500);
     --color-brand-hover: var(--color-brand-600);
-    --color-brand-strong: var(--color-brand-600);
+    --color-brand-strong: var(--color-brand-700);
     --color-brand-medium: var(--color-brand-200);
+
+    --color-app-bg: #F4F6FC;
 }

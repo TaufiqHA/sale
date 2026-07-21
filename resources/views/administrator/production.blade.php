@@ -14,7 +14,7 @@
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                         <svg class="w-4 h-4 text-slate-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/></svg>
                     </div>
-                    <input type="search" id="search-input" oninput="handleSearchChange()" class="block w-full p-3 ps-9 bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 shadow-sm placeholder:text-slate-400" placeholder="Cari Produksi (Produk, Counter...)" />
+                    <input type="search" id="search-input" oninput="handleSearchChange()" class="block w-full p-3 ps-9 bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-brand focus:border-brand shadow-sm placeholder:text-slate-400" placeholder="Cari Produksi (Produk, Counter...)" />
                 </div>
             </form>
         </div>
@@ -230,7 +230,7 @@
             <!-- Notes/Remarks -->
             <div class="mt-6">
                 <label for="input-notes" class="block mb-2 text-xs font-semibold text-slate-700">Catatan / Keterangan Tambahan</label>
-                <textarea id="input-notes" rows="2" class="block w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-sky-500 focus:border-sky-500 p-2.5" placeholder="Tambahkan catatan jika diperlukan..."></textarea>
+                <textarea id="input-notes" rows="2" class="block w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-lg focus:ring-brand focus:border-brand p-2.5" placeholder="Tambahkan catatan jika diperlukan..."></textarea>
                 <p id="error-notes" class="mt-1 text-xs text-rose-500 hidden"></p>
             </div>
 

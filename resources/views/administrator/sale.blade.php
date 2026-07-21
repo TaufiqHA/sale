@@ -153,7 +153,7 @@
                                         <option value="{{ $customer->id }}" data-counter-id="{{ $customer->counter_id }}" data-phone="{{ $customer->phone }}" data-address="{{ $customer->address }}">{{ $customer->name }}</option>
                                     @endforeach
                                 </select>
-                                <button type="button" id="btn-manage-customers" onclick="openManageCustomers()" class="inline-flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
+                                <button type="button" id="btn-manage-customers" onclick="openManageCustomers()" class="inline-flex items-center justify-center text-white bg-brand hover:bg-brand-hover px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
                                     Kelola
                                 </button>
                             </div>
@@ -176,7 +176,7 @@
                                         <option value="{{ $expedition->id }}">{{ $expedition->name }}</option>
                                     @endforeach
                                 </select>
-                                <button type="button" onclick="openManageExpeditions()" class="inline-flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
+                                <button type="button" onclick="openManageExpeditions()" class="inline-flex items-center justify-center text-white bg-brand hover:bg-brand-hover px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
                                     Kelola
                                 </button>
                             </div>
@@ -225,7 +225,7 @@
                                             <option value="{{ $courier->id }}">{{ $courier->name }} ({{ $courier->type }})</option>
                                         @endforeach
                                     </select>
-                                    <button type="button" onclick="openManageCouriers()" class="inline-flex items-center justify-center text-white bg-teal-600 hover:bg-teal-700 px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
+                                    <button type="button" onclick="openManageCouriers()" class="inline-flex items-center justify-center text-white bg-brand hover:bg-brand-hover px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
                                         Kelola
                                     </button>
                                 </div>

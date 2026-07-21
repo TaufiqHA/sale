@@ -15,41 +15,41 @@
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <!-- Total Products Card -->
-        <div class="bg-neutral-primary-soft p-5 rounded-base border border-default shadow-xs flex items-center gap-4">
-            <div class="p-3.5 bg-blue-50 text-blue-600 rounded-xl">
+        <div class="bg-white p-5 rounded-xl border border-slate-200/70 shadow-xs flex items-center gap-4">
+            <div class="p-3.5 bg-[#00B4D8] text-white shadow-xs rounded-xl">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"></path>
                 </svg>
             </div>
             <div>
                 <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Produk</h3>
-                <p id="summary-total-products" class="text-2xl font-bold text-heading mt-1">0</p>
+                <p id="summary-total-products" class="text-2xl font-bold text-slate-900 mt-1">0</p>
             </div>
         </div>
 
         <!-- Low Stock Card -->
-        <div class="bg-neutral-primary-soft p-5 rounded-base border border-default shadow-xs flex items-center gap-4">
-            <div class="p-3.5 bg-amber-50 text-amber-600 rounded-xl">
+        <div class="bg-white p-5 rounded-xl border border-slate-200/70 shadow-xs flex items-center gap-4">
+            <div class="p-3.5 bg-[#FF8A00] text-white shadow-xs rounded-xl">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                 </svg>
             </div>
             <div>
                 <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Stok Menipis (≤ 5)</h3>
-                <p id="summary-low-stock" class="text-2xl font-bold text-amber-600 mt-1">0</p>
+                <p id="summary-low-stock" class="text-2xl font-bold text-[#FF8A00] mt-1">0</p>
             </div>
         </div>
 
         <!-- Out of Stock Card -->
-        <div class="bg-neutral-primary-soft p-5 rounded-base border border-default shadow-xs flex items-center gap-4">
-            <div class="p-3.5 bg-rose-50 text-rose-600 rounded-xl">
+        <div class="bg-white p-5 rounded-xl border border-slate-200/70 shadow-xs flex items-center gap-4">
+            <div class="p-3.5 bg-[#FF5252] text-white shadow-xs rounded-xl">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path>
                 </svg>
             </div>
             <div>
                 <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Habis</h3>
-                <p id="summary-out-stock" class="text-2xl font-bold text-rose-600 mt-1">0</p>
+                <p id="summary-out-stock" class="text-2xl font-bold text-[#FF5252] mt-1">0</p>
             </div>
         </div>
     </div>
