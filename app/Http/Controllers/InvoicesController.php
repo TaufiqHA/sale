@@ -14,7 +14,7 @@ class InvoicesController extends Controller
      */
     public function index(): JsonResponse
     {
-        return response()->json(Invoices::with(['sale.customer', 'sale.counter', 'sale.items.product'])->get());
+        return response()->json(Invoices::with(['sale.customer', 'sale.counter', 'sale.expedition', 'sale.items.product.unit'])->get());
     }
 
     /**
@@ -39,7 +39,7 @@ class InvoicesController extends Controller
 
         $invoice = Invoices::create($validated);
 
-        return response()->json($invoice->load(['sale.customer', 'sale.counter', 'sale.items.product']), 201);
+        return response()->json($invoice->load(['sale.customer', 'sale.counter', 'sale.expedition', 'sale.items.product.unit']), 201);
     }
 
     /**
@@ -55,7 +55,7 @@ class InvoicesController extends Controller
      */
     public function show(Invoices $invoice): JsonResponse
     {
-        return response()->json($invoice->load(['sale.customer', 'sale.counter', 'sale.items.product']));
+        return response()->json($invoice->load(['sale.customer', 'sale.counter', 'sale.expedition', 'sale.items.product.unit']));
     }
 
     /**
@@ -72,7 +72,7 @@ class InvoicesController extends Controller
 
         $invoice->update($validated);
 
-        return response()->json($invoice->load(['sale.customer', 'sale.counter', 'sale.items.product']));
+        return response()->json($invoice->load(['sale.customer', 'sale.counter', 'sale.expedition', 'sale.items.product.unit']));
     }
 
     /**

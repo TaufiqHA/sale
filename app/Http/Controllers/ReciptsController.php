@@ -13,7 +13,7 @@ class ReciptsController extends Controller
      */
     public function index(): JsonResponse
     {
-        return response()->json(Recipts::with(['sale.customer', 'sale.counter', 'sale.marketplace', 'sale.courier', 'sale.expedition', 'sale.items.product'])->get());
+        return response()->json(Recipts::with(['sale.customer', 'sale.counter', 'sale.marketplace', 'sale.courier', 'sale.expedition', 'sale.items.product.unit'])->get());
     }
 
     /**
@@ -30,7 +30,7 @@ class ReciptsController extends Controller
 
         $recipt = Recipts::create($validated);
 
-        return response()->json($recipt->load(['sale.customer', 'sale.counter', 'sale.marketplace', 'sale.courier', 'sale.expedition', 'sale.items.product']), 201);
+        return response()->json($recipt->load(['sale.customer', 'sale.counter', 'sale.marketplace', 'sale.courier', 'sale.expedition', 'sale.items.product.unit']), 201);
     }
 
     /**
@@ -46,7 +46,7 @@ class ReciptsController extends Controller
      */
     public function show(Recipts $recipt): JsonResponse
     {
-        return response()->json($recipt->load(['sale.customer', 'sale.counter', 'sale.marketplace', 'sale.courier', 'sale.expedition', 'sale.items.product']));
+        return response()->json($recipt->load(['sale.customer', 'sale.counter', 'sale.marketplace', 'sale.courier', 'sale.expedition', 'sale.items.product.unit']));
     }
 
     /**
@@ -63,7 +63,7 @@ class ReciptsController extends Controller
 
         $recipt->update($validated);
 
-        return response()->json($recipt->load(['sale.customer', 'sale.counter', 'sale.marketplace', 'sale.courier', 'sale.expedition', 'sale.items.product']));
+        return response()->json($recipt->load(['sale.customer', 'sale.counter', 'sale.marketplace', 'sale.courier', 'sale.expedition', 'sale.items.product.unit']));
     }
 
     /**

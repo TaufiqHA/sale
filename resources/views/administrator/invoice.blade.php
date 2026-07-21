@@ -130,7 +130,7 @@
 <div id="document-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" role="dialog" aria-modal="true">
     <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 opacity-0" id="modal-backdrop" onclick="closeModal()"></div>
 
-    <div class="relative w-full max-w-2xl max-h-[90vh] flex flex-col transform scale-95 opacity-0 transition-all duration-300 z-10" id="modal-panel">
+    <div class="relative w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95 opacity-0 transition-all duration-300 z-10" id="modal-panel">
         <div class="bg-white border border-slate-200 rounded-2xl shadow-xl flex flex-col overflow-hidden">
             <!-- Modal Header -->
             <div class="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/80">
@@ -146,7 +146,7 @@
             </div>
 
             <!-- Modal Printable Body -->
-            <div id="printable-area" class="p-6 overflow-y-auto max-h-[60vh] space-y-6 text-slate-800 bg-white">
+            <div id="printable-area" class="p-6 overflow-y-auto max-h-[75vh] flex justify-center items-center text-slate-800 bg-slate-100/60">
                 <!-- Content dynamically injected -->
             </div>
 
@@ -166,6 +166,94 @@
     </div>
 </div>
 
+<style>
+    *,
+    *::before,
+    *::after {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+
+    @media print {
+        *,
+        *::before,
+        *::after {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+
+        body * {
+            visibility: hidden !important;
+        }
+        #document-modal,
+        #document-modal * {
+            visibility: visible !important;
+        }
+        #document-modal {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            height: auto !important;
+            background: #ffffff !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            backdrop-filter: none !important;
+            display: block !important;
+            opacity: 1 !important;
+        }
+        #modal-backdrop,
+        #modal-panel > div > div.flex.items-center.justify-between,
+        #modal-panel > div > div.flex.items-center.justify-end {
+            display: none !important;
+        }
+        #modal-panel {
+            max-width: none !important;
+            width: 100% !important;
+            transform: none !important;
+            box-shadow: none !important;
+            border: none !important;
+            background: transparent !important;
+        }
+        #modal-panel > div {
+            border: none !important;
+            box-shadow: none !important;
+            background: transparent !important;
+        }
+        #printable-area {
+            max-height: none !important;
+            overflow: visible !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            background: transparent !important;
+            display: block !important;
+        }
+        .print-document-invoice {
+            width: 18cm !important;
+            min-height: 12cm !important;
+            box-shadow: none !important;
+            border: 1px solid #000000 !important;
+            margin: 0 auto !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            page-break-after: always;
+        }
+        .print-document-resi {
+            width: 9cm !important;
+            height: 8cm !important;
+            box-shadow: none !important;
+            border: 1px solid #000000 !important;
+            margin: 0 auto !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            page-break-after: always;
+        }
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 <script>
     let activeTab = 'invoice';
     let rawInvoices = [];
@@ -386,6 +474,12 @@
         });
     }
 
+    function formatIndoNumber(val) {
+        if (val === null || val === undefined || isNaN(val)) return '0';
+        const num = Number(val);
+        return num.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    }
+
     function previewDocument(type, id) {
         if (type === 'invoice') {
             activeDocumentItem = rawInvoices.find(x => x.id === id);
@@ -397,128 +491,265 @@
 
         activeDocumentItem._type = type;
         const area = document.getElementById('printable-area');
-        document.getElementById('modal-title').textContent = type === 'invoice' ? 'Invoice Penjualan' : 'Resi Pengiriman';
-        document.getElementById('modal-subtitle').textContent = type === 'invoice'
-            ? `No. Invoice: ${activeDocumentItem.invoice_number}`
-            : `No. Resi: ${activeDocumentItem.receipt_number}`;
+
+        const isResiMarketplace = type === 'resi' && activeDocumentItem.type === 'marketplace';
+        const isResiUmum = type === 'resi' && activeDocumentItem.type !== 'marketplace';
+
+        if (type === 'invoice') {
+            document.getElementById('modal-title').textContent = 'Invoice Penjualan (Umum)';
+            document.getElementById('modal-subtitle').textContent = `No. Invoice: ${activeDocumentItem.invoice_number} | Ukuran Fisik Cetak: 18cm x 12cm`;
+        } else if (isResiMarketplace) {
+            document.getElementById('modal-title').textContent = 'Resi Pengiriman (Marketplace)';
+            document.getElementById('modal-subtitle').textContent = `No. Resi: ${activeDocumentItem.receipt_number} | Ukuran Fisik Cetak: 9cm x 8cm`;
+        } else {
+            document.getElementById('modal-title').textContent = 'Resi Pengiriman (Umum)';
+            document.getElementById('modal-subtitle').textContent = `No. Resi: ${activeDocumentItem.receipt_number} | Ukuran Fisik Cetak: 9cm x 8cm`;
+        }
 
         const sale = activeDocumentItem.sale || {};
         const items = sale.items || [];
-        const createdDate = activeDocumentItem.created_at ? new Date(activeDocumentItem.created_at).toLocaleDateString('id-ID', {
-            year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
-        }) : '-';
+
+        const createdDateStr = activeDocumentItem.created_at ? new Date(activeDocumentItem.created_at).toLocaleDateString('id-ID', {
+            day: '2-digit', month: '2-digit', year: 'numeric'
+        }) : (sale.date ? new Date(sale.date).toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '-');
+
+        const customerName = sale.customer?.name || 'Ibu / Bapak / kakak';
+        const customerPhone = sale.customer?.phone || '';
+        const customerAddress = sale.customer?.address || 'Jl. Madava II, RESIDEN CITY, jakarta Utara';
+        const expeditionName = sale.expedition?.name || sale.courier?.name || 'KALOG';
+        const counterName = sale.counter?.name || 'COUNTER';
+        const marketplaceName = sale.marketplace?.name || 'Marketplace';
+        const courierName = sale.courier?.name || sale.expedition?.name || 'Kurir';
 
         if (type === 'invoice') {
-            let itemsHtml = items.map((item, idx) => `
-                <tr class="border-b border-slate-100">
-                    <td class="py-2 text-xs text-slate-500">${idx + 1}</td>
-                    <td class="py-2 text-sm font-medium text-slate-800">${escapeHtml(item.product?.name || 'Produk')}</td>
-                    <td class="py-2 text-sm text-center text-slate-600">${item.qty}</td>
-                    <td class="py-2 text-sm text-right text-slate-600">Rp ${Number(item.price).toLocaleString('id-ID')}</td>
-                    <td class="py-2 text-sm text-right font-semibold text-slate-800">Rp ${Number(item.subtotal).toLocaleString('id-ID')}</td>
+            const subtotalNum = Number(sale.subtotal || 0);
+            const shippingNum = Number(sale.shipping_cost || 0);
+            const totalWithShippingNum = subtotalNum + shippingNum;
+            const discountNum = Number(sale.discount || 0);
+            const grandTotalNum = Number(sale.grand_total || (totalWithShippingNum - discountNum));
+
+            let itemsRows = items.length > 0 ? items.map((item, idx) => {
+                const qtyVal = Number(item.qty || 0);
+                const unitName = item.product?.unit?.name || 'Kg';
+                const priceNum = Number(item.price || 0);
+                const subtotalItemNum = Number(item.subtotal || (qtyVal * priceNum));
+
+                return `
+                    <tr>
+                        <td style="border: 1px solid #000000; padding: 4px 6px; text-align: center;">${idx + 1}</td>
+                        <td style="border: 1px solid #000000; padding: 4px 6px; font-style: italic;">${escapeHtml(item.product?.name || 'Produk')}</td>
+                        <td style="border: 1px solid #000000; padding: 4px 6px; text-align: right;">${formatIndoNumber(qtyVal)}</td>
+                        <td style="border: 1px solid #000000; padding: 4px 6px; text-align: center;">${escapeHtml(unitName)}</td>
+                        <td style="border: 1px solid #000000; padding: 4px 6px; text-align: right;">${priceNum > 0 ? formatIndoNumber(priceNum) : '-'}</td>
+                        <td style="border: 1px solid #000000; padding: 4px 6px; text-align: right;">${subtotalItemNum > 0 ? formatIndoNumber(subtotalItemNum) : '-'}</td>
+                    </tr>
+                `;
+            }).join('') : `
+                <tr>
+                    <td colspan="6" style="border: 1px solid #000000; padding: 8px; text-align: center; color: #6b7280;">Tidak ada detail item</td>
                 </tr>
-            `).join('');
+            `;
 
             area.innerHTML = `
-                <div class="border border-slate-200 rounded-xl p-6 bg-slate-50/50">
-                    <div class="flex justify-between items-start border-b border-slate-200 pb-4 mb-4">
-                        <div>
-                            <h2 class="text-xl font-bold text-brand">INVOICE</h2>
-                            <p class="text-xs font-mono text-slate-500 mt-1">${escapeHtml(activeDocumentItem.invoice_number)}</p>
-                            <p class="text-xs text-slate-400">Barcode: ${escapeHtml(sale.barcode || '-')}</p>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xs text-slate-400">Tanggal Transaksi</p>
-                            <p class="text-sm font-semibold text-slate-700">${createdDate}</p>
-                        </div>
-                    </div>
+                <div class="print-document-invoice" style="width: 18cm; min-height: 12cm; background: #ffffff; border: 1px solid #000000; padding: 12px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 11px; color: #000000; line-height: 1.3; margin: 0 auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                    <!-- Header Section -->
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px;">
+                        <tr>
+                            <td style="vertical-align: top; width: 60%; padding: 0;">
+                                <div style="font-size: 11px;">Kepada Yth : &nbsp; Ibu / Bapak / kakak</div>
+                                <div style="font-size: 13px; font-weight: bold; margin-top: 2px;">
+                                    ${escapeHtml(customerName)} 
+                                    <span style="font-weight: bold; margin-left: 12px;">${escapeHtml(customerPhone)}</span>
+                                </div>
+                                <div style="font-size: 11px; margin-top: 2px; line-height: 1.2;">${escapeHtml(customerAddress)}</div>
+                            </td>
+                            <td style="vertical-align: top; width: 40%; padding: 0;">
+                                <table style="margin-left: auto; border-collapse: collapse; text-align: center; font-size: 11px;">
+                                    <tr>
+                                        <td style="background-color: #ffff00; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #000000; padding: 3px 12px; font-weight: bold; min-width: 150px;">
+                                            Tanggal : &nbsp; ${createdDateStr}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color: #ffff00; -webkit-print-color-adjust: exact; print-color-adjust: exact; border: 1px solid #000000; border-top: none; padding: 3px 12px; font-weight: bold; text-align: right;">
+                                            No Transaksi : &nbsp; ${escapeHtml(activeDocumentItem.invoice_number || sale.barcode || '-')}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
 
-                    <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
-                        <div>
-                            <p class="text-xs text-slate-400 font-medium">Pelanggan</p>
-                            <p class="font-bold text-slate-800">${escapeHtml(sale.customer?.name || 'Umum')}</p>
-                            ${sale.customer?.phone ? `<p class="text-xs text-slate-500">${escapeHtml(sale.customer.phone)}</p>` : ''}
-                        </div>
-                        <div class="text-right">
-                            <p class="text-xs text-slate-400 font-medium">Metode Pembayaran</p>
-                            <p class="font-bold text-slate-800 uppercase">${escapeHtml(sale.payment_method || 'Tunai')}</p>
-                        </div>
-                    </div>
-
-                    <table class="w-full text-left mb-6">
+                    <!-- Table Items -->
+                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px; font-size: 11px; border: 1px solid #000000;">
                         <thead>
-                            <tr class="border-b border-slate-200 text-xs font-semibold text-slate-400 uppercase">
-                                <th class="py-2">#</th>
-                                <th class="py-2">Item</th>
-                                <th class="py-2 text-center">Qty</th>
-                                <th class="py-2 text-right">Harga</th>
-                                <th class="py-2 text-right">Subtotal</th>
+                            <tr style="background-color: #ffc000; -webkit-print-color-adjust: exact; print-color-adjust: exact; text-align: center; font-weight: bold;">
+                                <th style="border: 1px solid #000000; padding: 4px 6px; width: 6%;">No</th>
+                                <th style="border: 1px solid #000000; padding: 4px 6px; text-align: center; width: 38%;">Nama Barang</th>
+                                <th style="border: 1px solid #000000; padding: 4px 6px; width: 10%;">Qty</th>
+                                <th style="border: 1px solid #000000; padding: 4px 6px; width: 22%;" colspan="2">Satuan</th>
+                                <th style="border: 1px solid #000000; padding: 4px 6px; width: 24%;">Total</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${itemsHtml || '<tr><td colspan="5" class="py-4 text-center text-xs text-slate-400">Tidak ada detail item</td></tr>'}
+                            ${itemsRows}
+                            <!-- Ongkir Row -->
+                            <tr>
+                                <td colspan="5" style="border: 1px solid #000000; text-align: right; padding: 3px 8px; font-weight: normal;">Ongkir</td>
+                                <td style="border: 1px solid #000000; text-align: right; padding: 3px 8px;">${formatIndoNumber(shippingNum)}</td>
+                            </tr>
+                            <!-- Total Row -->
+                            <tr>
+                                <td colspan="5" style="border: 1px solid #000000; text-align: right; padding: 3px 8px; font-weight: normal;">Total</td>
+                                <td style="border: 1px solid #000000; text-align: right; padding: 3px 8px;">${formatIndoNumber(totalWithShippingNum)}</td>
+                            </tr>
+                            <!-- Disc Row -->
+                            <tr style="-webkit-print-color-adjust: exact; print-color-adjust: exact;">
+                                <td colspan="5" style="border: 1px solid #000000; text-align: right; padding: 3px 8px; color: #ff0000; font-weight: normal;">Disc</td>
+                                <td style="border: 1px solid #000000; text-align: right; padding: 3px 8px; color: #ff0000;">${discountNum > 0 ? formatIndoNumber(discountNum) : '-'}</td>
+                            </tr>
+                            <!-- Sub Total Row -->
+                            <tr style="background-color: #dce6f1; -webkit-print-color-adjust: exact; print-color-adjust: exact; font-weight: bold;">
+                                <td colspan="5" style="border: 1px solid #000000; text-align: right; padding: 4px 8px;">Sub Total</td>
+                                <td style="border: 1px solid #000000; text-align: right; padding: 4px 8px;">${formatIndoNumber(grandTotalNum)}</td>
+                            </tr>
                         </tbody>
                     </table>
 
-                    <div class="border-t border-slate-200 pt-4 space-y-1.5 text-sm text-right">
-                        <div class="flex justify-between text-slate-600">
-                            <span>Subtotal:</span>
-                            <span>Rp ${Number(sale.subtotal || 0).toLocaleString('id-ID')}</span>
-                        </div>
-                        ${Number(sale.discount || 0) > 0 ? `
-                        <div class="flex justify-between text-rose-600">
-                            <span>Diskon:</span>
-                            <span>- Rp ${Number(sale.discount).toLocaleString('id-ID')}</span>
-                        </div>` : ''}
-                        ${Number(sale.shipping_cost || 0) > 0 ? `
-                        <div class="flex justify-between text-slate-600">
-                            <span>Ongkos Kirim:</span>
-                            <span>Rp ${Number(sale.shipping_cost).toLocaleString('id-ID')}</span>
-                        </div>` : ''}
-                        <div class="flex justify-between text-lg font-bold text-slate-900 border-t border-slate-200 pt-2 mt-2">
-                            <span>Grand Total:</span>
-                            <span class="text-brand">Rp ${Number(sale.grand_total || 0).toLocaleString('id-ID')}</span>
-                        </div>
+                    <!-- Footer Section -->
+                    <table style="width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 12px;">
+                        <tr>
+                            <td style="vertical-align: bottom; width: 65%; padding: 0;">
+                                <div style="font-style: italic; color: #111827; margin-bottom: 12px;">Pembayaran dianggap lunas setelah adanya bukti transfer</div>
+                                <div style="font-weight: normal;">Expedisi &nbsp; : &nbsp;&nbsp;&nbsp;&nbsp; <span style="font-weight: normal; text-transform: uppercase;">${escapeHtml(expeditionName)}</span></div>
+                            </td>
+                            <td style="vertical-align: bottom; width: 35%; padding: 0; text-align: center;">
+                                <div style="margin-bottom: 24px;">Hormat Kami</div>
+                                <div style="font-weight: normal; text-transform: uppercase;">${escapeHtml(counterName)}</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            `;
+        } else if (isResiUmum) {
+            let itemsRowsResi = items.length > 0 ? items.map(item => `
+                <tr>
+                    <td style="border: 1px solid #000000; padding: 3px 6px; text-transform: lowercase;">${escapeHtml(item.product?.name || 'Barang')}</td>
+                    <td style="border: 1px solid #000000; padding: 3px 6px; text-align: right; width: 75px;">${formatIndoNumber(item.qty)} ${escapeHtml(item.product?.unit?.name || 'Kg')}</td>
+                    <td style="border: 1px solid #000000; padding: 3px 6px; text-align: center; width: 45px; font-weight: bold;">${formatIndoNumber(item.qty)}</td>
+                </tr>
+            `).join('') : `
+                <tr>
+                    <td colspan="3" style="border: 1px solid #000000; padding: 4px; text-align: center; color: #6b7280;">Tidak ada barang</td>
+                </tr>
+            `;
+
+            area.innerHTML = `
+                <div class="print-document-resi" style="width: 9cm; height: 8cm; background: #ffffff; border: 1px solid #000000; padding: 6px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 11px; color: #000000; display: flex; flex-direction: column; justify-content: space-between; margin: 0 auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                    <div>
+                        <!-- Recipient Box -->
+                        <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; margin-bottom: 4px; font-size: 11px;">
+                            <tr>
+                                <td style="width: 80px; padding: 2px 4px; border-bottom: 1px solid #000000;">Penerima</td>
+                                <td style="padding: 2px 4px; border-bottom: 1px solid #000000;">: ${escapeHtml(customerName)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 2px 4px; border-bottom: 1px solid #000000;">Alamat</td>
+                                <td style="padding: 2px 4px; border-bottom: 1px solid #000000;">: ${escapeHtml(customerAddress)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 2px 4px; border-bottom: 1px solid #000000;">No HP</td>
+                                <td style="padding: 2px 4px; border-bottom: 1px solid #000000;">: ${escapeHtml(customerPhone)}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 2px 4px;">No Transaksi</td>
+                                <td style="padding: 2px 4px;">: ${escapeHtml(sale.barcode || activeDocumentItem.receipt_number || '-')}</td>
+                            </tr>
+                        </table>
+
+                        <!-- Items Table -->
+                        <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; font-size: 11px;">
+                            <tbody>
+                                ${itemsRowsResi}
+                            </tbody>
+                        </table>
                     </div>
+
+                    <!-- Expedisi Bottom Row -->
+                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; font-size: 11px; margin-top: 4px;">
+                        <tr>
+                            <td style="text-align: center; padding: 4px; font-weight: normal;">
+                                Expedisi &nbsp;&nbsp; ${escapeHtml(expeditionName)}
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             `;
         } else {
+            // Resi Marketplace
+            let itemsRowsResi = items.length > 0 ? items.map(item => `
+                <tr>
+                    <td style="border: 1px solid #000000; padding: 3px 6px; text-transform: lowercase;">${escapeHtml(item.product?.name || 'Barang')}</td>
+                    <td style="border: 1px solid #000000; padding: 3px 6px; text-align: right; width: 75px;">${formatIndoNumber(item.qty)} ${escapeHtml(item.product?.unit?.name || 'Kg')}</td>
+                    <td style="border: 1px solid #000000; padding: 3px 6px; text-align: center; width: 45px; font-weight: bold;">${formatIndoNumber(item.qty)}</td>
+                </tr>
+            `).join('') : `
+                <tr>
+                    <td colspan="3" style="border: 1px solid #000000; padding: 4px; text-align: center; color: #6b7280;">Tidak ada barang</td>
+                </tr>
+            `;
+
+            const barcodeVal = activeDocumentItem.receipt_number || sale.barcode || 'RESI-001';
+
             area.innerHTML = `
-                <div class="border-2 border-dashed border-slate-300 rounded-xl p-6 bg-slate-50/50">
-                    <div class="flex justify-between items-center border-b border-slate-200 pb-4 mb-4">
-                        <div>
-                            <span class="px-2.5 py-1 text-xs font-bold rounded-full ${activeDocumentItem.type === 'marketplace' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'}">
-                                RESI PENGIRIMAN (${activeDocumentItem.type.toUpperCase()})
-                            </span>
-                            <h2 class="text-2xl font-black text-slate-800 tracking-wider mt-2">${escapeHtml(activeDocumentItem.receipt_number)}</h2>
+                <div class="print-document-resi" style="width: 9cm; height: 8cm; background: #ffffff; border: 1px solid #000000; padding: 6px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 11px; color: #000000; display: flex; flex-direction: column; justify-content: space-between; margin: 0 auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                    <div>
+                        <!-- No RESI Header -->
+                        <div style="border: 1px solid #000000; text-align: center; padding: 4px; font-weight: bold; font-size: 12px; background-color: #ffffff;">
+                            No RESI &nbsp; ${escapeHtml(barcodeVal)}
                         </div>
-                        <div class="text-right">
-                            <p class="text-xs text-slate-400">Barcode Penjualan</p>
-                            <p class="text-sm font-mono font-bold text-slate-700">${escapeHtml(sale.barcode || '-')}</p>
+
+                        <!-- Barcode Display -->
+                        <div style="border: 1px solid #000000; border-top: none; text-align: center; padding: 4px 0; background-color: #ffffff; display: flex; align-items: center; justify-content: center; min-height: 48px;">
+                            <svg id="resi-barcode-canvas" style="max-height: 42px; width: 85%;"></svg>
                         </div>
+
+                        <!-- Items Table -->
+                        <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; border-top: none; font-size: 11px;">
+                            <tbody>
+                                ${itemsRowsResi}
+                            </tbody>
+                        </table>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4 text-sm mb-6">
-                        <div class="bg-white p-3 rounded-lg border border-slate-200">
-                            <p class="text-xs text-slate-400 font-medium">Penerima / Tujuan</p>
-                            <p class="font-bold text-slate-800 mt-1">${escapeHtml(sale.customer?.name || sale.marketplace?.name || 'Pelanggan Umum')}</p>
-                            <p class="text-xs text-slate-500 mt-0.5">${escapeHtml(sale.customer?.address || 'Alamat tidak dicantumkan')}</p>
-                        </div>
-                        <div class="bg-white p-3 rounded-lg border border-slate-200">
-                            <p class="text-xs text-slate-400 font-medium">Kurir / Ekspedisi</p>
-                            <p class="font-bold text-slate-800 mt-1">${escapeHtml(sale.expedition?.name || sale.courier?.name || 'Pengiriman Langsung')}</p>
-                            <p class="text-xs text-slate-500 mt-0.5">Tanggal: ${createdDate}</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-white p-4 rounded-lg border border-slate-200">
-                        <p class="text-xs font-bold text-slate-400 uppercase mb-2">Ringkasan Barang</p>
-                        <ul class="text-sm divide-y divide-slate-100">
-                            ${items.map(i => `<li class="py-1.5 flex justify-between"><span>${escapeHtml(i.product?.name || 'Item')}</span><span class="font-semibold text-slate-700">x${i.qty}</span></li>`).join('')}
-                        </ul>
-                    </div>
+                    <!-- Marketplace & Courier Bottom Row -->
+                    <table style="width: 100%; border-collapse: collapse; border: 1px solid #000000; font-size: 11px; margin-top: 4px;">
+                        <tr>
+                            <td style="width: 50%; border-right: 1px solid #000000; text-align: center; padding: 4px; font-weight: normal;">
+                                ${escapeHtml(marketplaceName)}
+                            </td>
+                            <td style="width: 50%; text-align: center; padding: 4px; font-weight: normal;">
+                                ${escapeHtml(courierName)}
+                            </td>
+                        </tr>
+                    </table>
                 </div>
             `;
+
+            setTimeout(() => {
+                try {
+                    if (window.JsBarcode) {
+                        JsBarcode("#resi-barcode-canvas", barcodeVal, {
+                            format: "CODE128",
+                            height: 38,
+                            displayValue: false,
+                            margin: 0
+                        });
+                    }
+                } catch (e) {
+                    console.error("Barcode render error:", e);
+                }
+            }, 50);
         }
 
         openModal();
@@ -530,6 +761,20 @@
         const type = activeDocumentItem._type;
         const id = activeDocumentItem.id;
         const updatedCount = (activeDocumentItem.printed_count || 0) + 1;
+
+        // Set dynamic printer page size CSS
+        let dynamicPageStyle = document.getElementById('dynamic-page-style');
+        if (!dynamicPageStyle) {
+            dynamicPageStyle = document.createElement('style');
+            dynamicPageStyle.id = 'dynamic-page-style';
+            document.head.appendChild(dynamicPageStyle);
+        }
+
+        if (type === 'invoice') {
+            dynamicPageStyle.innerHTML = '@page { size: 18cm 12cm; margin: 0; }';
+        } else {
+            dynamicPageStyle.innerHTML = '@page { size: 9cm 8cm; margin: 0; }';
+        }
 
         // Perform API update to increment printed_count
         const endpoint = type === 'invoice' ? `/invoices/${id}` : `/recipts/${id}`;
