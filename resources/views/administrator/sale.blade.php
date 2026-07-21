@@ -711,11 +711,21 @@
                 paymentBadge = `<span class="px-2.5 py-1 text-xs font-semibold text-amber-700 bg-amber-50 rounded-full">Compliment</span>`;
             }
 
+            // Barcode display (only for marketplace)
+            const barcodeDisplay = (sale.type === 'marketplace' && sale.barcode)
+                ? `<div class="flex flex-col items-center justify-center gap-1.5 text-center">
+                     <span class="font-mono text-xs font-bold text-heading tracking-wider">${escapeHtml(sale.barcode)}</span>
+                     <div class="p-1.5 bg-white border border-slate-200 rounded-base flex items-center justify-center w-full max-w-[160px]">
+                       ${generateBarcodeSVG(sale.barcode, 'w-full h-9')}
+                     </div>
+                   </div>`
+                : '<span class="text-body opacity-50 font-normal">-</span>';
+
             row.innerHTML = `
                 <td class="px-6 py-4 font-semibold text-body">#${sale.id}</td>
                 <td class="px-6 py-4 font-medium text-heading">${counterName}</td>
                 <td class="px-6 py-4 font-medium text-heading">${customerName}</td>
-                <td class="px-6 py-4 text-xs font-semibold text-body">${escapeHtml(sale.barcode)}</td>
+                <td class="px-6 py-4 text-xs font-semibold text-body">${barcodeDisplay}</td>
                 <td class="px-6 py-4">${typeBadge}</td>
                 <td class="px-6 py-4 text-xs text-body">${formattedDate}</td>
                 <td class="px-6 py-4 font-bold text-slate-800">${formatCurrency(sale.grand_total)}</td>
@@ -939,21 +949,21 @@
         return barcode;
     }
 
-    function generateBarcodeSVG(text) {
+    function generateBarcodeSVG(text, svgClass = 'w-48 h-12') {
         if (!text) return '';
-        let svg = `<svg class="w-48 h-12" viewBox="0 0 100 40" preserveAspectRatio="none">`;
+        let rects = '';
         let x = 2;
         for (let i = 0; i < text.length; i++) {
             const charCode = text.charCodeAt(i);
             const w1 = ((charCode * 7) % 3) + 1;
             const w2 = ((charCode * 13) % 2) + 1;
-            svg += `<rect x="${x}" y="2" width="${w1 * 0.4}" height="36" fill="#1e293b"/>`;
+            rects += `<rect x="${x}" y="2" width="${w1 * 0.4}" height="36" fill="#1e293b"/>`;
             x += w1 * 0.7;
-            svg += `<rect x="${x}" y="2" width="${w2 * 0.4}" height="36" fill="#1e293b"/>`;
+            rects += `<rect x="${x}" y="2" width="${w2 * 0.4}" height="36" fill="#1e293b"/>`;
             x += w2 * 0.7 + 1.2;
         }
-        svg += `</svg>`;
-        return svg;
+        x += 1;
+        return `<svg class="${svgClass} mx-auto" viewBox="0 0 ${x} 40" preserveAspectRatio="none">${rects}</svg>`;
     }
 
     function onBarcodeChange() {
