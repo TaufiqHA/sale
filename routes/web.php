@@ -13,6 +13,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductionController;
 use App\Http\Controllers\ProductionItemController;
 use App\Http\Controllers\ProductWholepriceController;
+use App\Http\Controllers\ReciptsController;
 use App\Http\Controllers\SaleController;
 use App\Http\Controllers\SaleItemController;
 use App\Http\Controllers\UnitController;
@@ -46,3 +47,4 @@ Route::apiResource('productions', ProductionController::class)->middleware('auth
 Route::apiResource('production-items', ProductionItemController::class)->except(['index'])->middleware('auth');
 Route::apiResource('product-wholeprices', ProductWholepriceController::class)->except(['index'])->middleware('auth');
 Route::apiResource('invoices', InvoicesController::class)->middleware('auth');
+Route::apiResource('recipts', ReciptsController::class)->middleware('auth');

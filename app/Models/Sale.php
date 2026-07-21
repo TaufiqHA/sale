@@ -115,4 +115,14 @@ class Sale extends Model
     {
         return $this->hasOne(Invoices::class, 'sales_id');
     }
+
+    /**
+     * Get the receipt associated with the sale.
+     *
+     * @return HasOne<Recipts, $this>
+     */
+    public function recipt(): HasOne
+    {
+        return $this->hasOne(Recipts::class, 'sales_id');
+    }
 }
