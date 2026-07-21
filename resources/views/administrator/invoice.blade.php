@@ -4,31 +4,49 @@
 
 @section('content')
 <div class="relative min-h-[calc(100vh-8rem)]">
-    <!-- Header -->
+    <!-- Header & Main Document Tabs -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
             <h1 class="text-2xl font-bold text-heading">Invoice & Resi Pengiriman</h1>
             <p class="text-sm text-body mt-1">Kelola dan cetak invoice (penjualan umum) serta resi pengiriman (umum & marketplace).</p>
         </div>
-    </div>
 
-    <!-- Tab Bar & Controls -->
-    <div class="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm mb-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
-        <!-- Tabs -->
-        <div class="flex items-center gap-2 p-1.5 bg-slate-100/80 rounded-xl shrink-0">
-            <button id="tab-btn-invoice" onclick="switchTab('invoice')" class="flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all cursor-pointer bg-brand text-white shadow-xs">
+        <!-- Tier 1: Main Document Tabs -->
+        <div class="flex items-center gap-2 p-1.5 bg-slate-200/80 rounded-2xl shrink-0 self-start md:self-auto">
+            <button id="main-tab-invoice" onclick="switchMainTab('invoice')" class="flex items-center gap-2.5 px-5 py-2.5 text-sm font-bold rounded-xl transition-all cursor-pointer bg-brand text-white shadow-xs">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
                 Invoice Penjualan
-                <span id="badge-invoice-count" class="px-2 py-0.5 text-xs rounded-full bg-white/20 text-white font-bold">0</span>
+                <span id="badge-invoice-total" class="px-2 py-0.5 text-xs rounded-full bg-white/20 text-white font-extrabold">0</span>
             </button>
-            <button id="tab-btn-resi" onclick="switchTab('resi')" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 rounded-lg transition-all cursor-pointer">
+            <button id="main-tab-resi" onclick="switchMainTab('resi')" class="flex items-center gap-2.5 px-5 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-900 rounded-xl transition-all cursor-pointer">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 2v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
                 Resi Pengiriman
-                <span id="badge-resi-count" class="px-2 py-0.5 text-xs rounded-full bg-slate-200 text-slate-700 font-bold">0</span>
+                <span id="badge-resi-total" class="px-2 py-0.5 text-xs rounded-full bg-slate-300/80 text-slate-800 font-extrabold">0</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Controls Bar (Tier 2 Status Filters & Search) -->
+    <div class="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm mb-6 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+        <!-- Tier 2: Status Filter Segmented Control -->
+        <div class="flex items-center gap-1.5 p-1 bg-slate-100/90 rounded-xl shrink-0 overflow-x-auto">
+            <button id="status-pill-unprinted" onclick="switchStatusFilter('unprinted')" class="flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer bg-amber-500 text-white shadow-xs whitespace-nowrap">
+                <span class="w-2 h-2 rounded-full bg-amber-200 animate-pulse"></span>
+                Belum Dicetak
+                <span id="badge-status-unprinted" class="px-1.5 py-0.5 text-[11px] rounded-full bg-white/20 text-white font-extrabold">0</span>
+            </button>
+            <button id="status-pill-printed" onclick="switchStatusFilter('printed')" class="flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-lg transition-all cursor-pointer whitespace-nowrap">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                Sudah Dicetak
+                <span id="badge-status-printed" class="px-1.5 py-0.5 text-[11px] rounded-full bg-slate-200 text-slate-700 font-bold">0</span>
+            </button>
+            <button id="status-pill-all" onclick="switchStatusFilter('all')" class="flex items-center gap-2 px-3.5 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-900 rounded-lg transition-all cursor-pointer whitespace-nowrap">
+                Semua
+                <span id="badge-status-all" class="px-1.5 py-0.5 text-[11px] rounded-full bg-slate-200 text-slate-700 font-bold">0</span>
             </button>
         </div>
 
@@ -255,7 +273,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 <script>
-    let activeTab = 'invoice';
+    let activeMainTab = 'invoice'; // 'invoice' | 'resi'
+    let activeStatusFilter = 'unprinted'; // 'unprinted' | 'printed' | 'all'
     let rawInvoices = [];
     let rawResis = [];
     let activeDocumentItem = null;
@@ -279,10 +298,11 @@
                 rawResis = await rcpRes.json();
             }
 
-            // Update badge counts
-            document.getElementById('badge-invoice-count').textContent = rawInvoices.length;
-            document.getElementById('badge-resi-count').textContent = rawResis.length;
+            // Update main tab badges
+            document.getElementById('badge-invoice-total').textContent = rawInvoices.length;
+            document.getElementById('badge-resi-total').textContent = rawResis.length;
 
+            updateStatusBadges();
             renderActiveTab();
         } catch (error) {
             console.error('Gagal memuat data:', error);
@@ -291,30 +311,82 @@
         }
     }
 
-    function switchTab(tabName) {
-        activeTab = tabName;
-        const btnInvoice = document.getElementById('tab-btn-invoice');
-        const btnResi = document.getElementById('tab-btn-resi');
-        const badgeInv = document.getElementById('badge-invoice-count');
-        const badgeResi = document.getElementById('badge-resi-count');
+    function updateStatusBadges() {
+        const dataset = activeMainTab === 'invoice' ? rawInvoices : rawResis;
+        const unprinted = dataset.filter(i => (i.printed_count || 0) === 0).length;
+        const printed = dataset.filter(i => (i.printed_count || 0) > 0).length;
+        const total = dataset.length;
+
+        document.getElementById('badge-status-unprinted').textContent = unprinted;
+        document.getElementById('badge-status-printed').textContent = printed;
+        document.getElementById('badge-status-all').textContent = total;
+    }
+
+    function switchMainTab(tabName) {
+        activeMainTab = tabName;
+        const btnInv = document.getElementById('main-tab-invoice');
+        const btnResi = document.getElementById('main-tab-resi');
+        const badgeInv = document.getElementById('badge-invoice-total');
+        const badgeResi = document.getElementById('badge-resi-total');
         const resiFilterWrapper = document.getElementById('resi-type-filter-wrapper');
 
+        const activeMainClass = 'flex items-center gap-2.5 px-5 py-2.5 text-sm font-bold rounded-xl transition-all cursor-pointer bg-brand text-white shadow-xs';
+        const inactiveMainClass = 'flex items-center gap-2.5 px-5 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-900 rounded-xl transition-all cursor-pointer';
+
+        const activeMainBadgeClass = 'px-2 py-0.5 text-xs rounded-full bg-white/20 text-white font-extrabold';
+        const inactiveMainBadgeClass = 'px-2 py-0.5 text-xs rounded-full bg-slate-300/80 text-slate-800 font-extrabold';
+
         if (tabName === 'invoice') {
-            btnInvoice.className = 'flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all cursor-pointer bg-brand text-white shadow-xs';
-            badgeInv.className = 'px-2 py-0.5 text-xs rounded-full bg-white/20 text-white font-bold';
-
-            btnResi.className = 'flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 rounded-lg transition-all cursor-pointer';
-            badgeResi.className = 'px-2 py-0.5 text-xs rounded-full bg-slate-200 text-slate-700 font-bold';
-
+            btnInv.className = activeMainClass;
+            badgeInv.className = activeMainBadgeClass;
+            btnResi.className = inactiveMainClass;
+            badgeResi.className = inactiveMainBadgeClass;
             resiFilterWrapper.classList.add('hidden');
         } else {
-            btnResi.className = 'flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-lg transition-all cursor-pointer bg-brand text-white shadow-xs';
-            badgeResi.className = 'px-2 py-0.5 text-xs rounded-full bg-white/20 text-white font-bold';
-
-            btnInvoice.className = 'flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 rounded-lg transition-all cursor-pointer';
-            badgeInv.className = 'px-2 py-0.5 text-xs rounded-full bg-slate-200 text-slate-700 font-bold';
-
+            btnResi.className = activeMainClass;
+            badgeResi.className = activeMainBadgeClass;
+            btnInv.className = inactiveMainClass;
+            badgeInv.className = inactiveMainBadgeClass;
             resiFilterWrapper.classList.remove('hidden');
+        }
+
+        updateStatusBadges();
+        renderActiveTab();
+    }
+
+    function switchStatusFilter(status) {
+        activeStatusFilter = status;
+
+        const pillUnprinted = document.getElementById('status-pill-unprinted');
+        const pillPrinted = document.getElementById('status-pill-printed');
+        const pillAll = document.getElementById('status-pill-all');
+
+        const badgeUnprinted = document.getElementById('badge-status-unprinted');
+        const badgePrinted = document.getElementById('badge-status-printed');
+        const badgeAll = document.getElementById('badge-status-all');
+
+        if (status === 'unprinted') {
+            pillUnprinted.className = 'flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer bg-amber-500 text-white shadow-xs whitespace-nowrap';
+            badgeUnprinted.className = 'px-1.5 py-0.5 text-[11px] rounded-full bg-white/20 text-white font-extrabold';
+        } else {
+            pillUnprinted.className = 'flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 rounded-lg transition-all cursor-pointer whitespace-nowrap';
+            badgeUnprinted.className = 'px-1.5 py-0.5 text-[11px] rounded-full bg-amber-100 text-amber-800 font-bold';
+        }
+
+        if (status === 'printed') {
+            pillPrinted.className = 'flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer bg-emerald-600 text-white shadow-xs whitespace-nowrap';
+            badgePrinted.className = 'px-1.5 py-0.5 text-[11px] rounded-full bg-white/20 text-white font-extrabold';
+        } else {
+            pillPrinted.className = 'flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 rounded-lg transition-all cursor-pointer whitespace-nowrap';
+            badgePrinted.className = 'px-1.5 py-0.5 text-[11px] rounded-full bg-emerald-100 text-emerald-800 font-bold';
+        }
+
+        if (status === 'all') {
+            pillAll.className = 'flex items-center gap-2 px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all cursor-pointer bg-slate-800 text-white shadow-xs whitespace-nowrap';
+            badgeAll.className = 'px-1.5 py-0.5 text-[11px] rounded-full bg-white/20 text-white font-extrabold';
+        } else {
+            pillAll.className = 'flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 rounded-lg transition-all cursor-pointer whitespace-nowrap';
+            badgeAll.className = 'px-1.5 py-0.5 text-[11px] rounded-full bg-slate-200 text-slate-700 font-bold';
         }
 
         renderActiveTab();
@@ -334,22 +406,38 @@
         const resiWrapper = document.getElementById('resi-table-wrapper');
         const emptyState = document.getElementById('empty-state');
 
-        if (activeTab === 'invoice') {
+        if (activeMainTab === 'invoice') {
             resiWrapper.classList.add('hidden');
+
             let filtered = rawInvoices.filter(item => {
+                const printedCount = item.printed_count || 0;
+                let matchesStatus = true;
+                if (activeStatusFilter === 'unprinted') matchesStatus = printedCount === 0;
+                if (activeStatusFilter === 'printed') matchesStatus = printedCount > 0;
+
                 const invNo = (item.invoice_number || '').toLowerCase();
                 const barcode = (item.sale?.barcode || '').toLowerCase();
                 const cust = (item.sale?.customer?.name || '').toLowerCase();
                 const counter = (item.sale?.counter?.name || '').toLowerCase();
-                return invNo.includes(query) || barcode.includes(query) || cust.includes(query) || counter.includes(query);
+
+                const matchesQuery = invNo.includes(query) || barcode.includes(query) || cust.includes(query) || counter.includes(query);
+                return matchesStatus && matchesQuery;
             });
 
             if (filtered.length === 0) {
                 invoiceWrapper.classList.add('hidden');
                 emptyState.classList.remove('hidden');
                 emptyState.classList.add('flex');
-                document.getElementById('empty-title').textContent = 'Tidak Ada Invoice';
-                document.getElementById('empty-desc').textContent = 'Belum ada data invoice penjualan umum.';
+                if (activeStatusFilter === 'printed') {
+                    document.getElementById('empty-title').textContent = 'Tidak Ada Invoice Sudah Dicetak';
+                    document.getElementById('empty-desc').textContent = 'Belum ada invoice yang pernah dicetak.';
+                } else if (activeStatusFilter === 'unprinted') {
+                    document.getElementById('empty-title').textContent = 'Tidak Ada Invoice Belum Dicetak';
+                    document.getElementById('empty-desc').textContent = 'Semua invoice penjualan telah dicetak.';
+                } else {
+                    document.getElementById('empty-title').textContent = 'Tidak Ada Invoice';
+                    document.getElementById('empty-desc').textContent = 'Belum ada data invoice penjualan.';
+                }
             } else {
                 emptyState.classList.add('hidden');
                 emptyState.classList.remove('flex');
@@ -359,7 +447,13 @@
         } else {
             invoiceWrapper.classList.add('hidden');
             const typeFilter = document.getElementById('resi-type-filter').value;
+
             let filtered = rawResis.filter(item => {
+                const printedCount = item.printed_count || 0;
+                let matchesStatus = true;
+                if (activeStatusFilter === 'unprinted') matchesStatus = printedCount === 0;
+                if (activeStatusFilter === 'printed') matchesStatus = printedCount > 0;
+
                 const resiNo = (item.receipt_number || '').toLowerCase();
                 const barcode = (item.sale?.barcode || '').toLowerCase();
                 const type = (item.type || '').toLowerCase();
@@ -369,15 +463,23 @@
                 const matchesQuery = resiNo.includes(query) || barcode.includes(query) || type.includes(query) || cust.includes(query) || mp.includes(query);
                 const matchesFilter = typeFilter === 'all' || item.type === typeFilter;
 
-                return matchesQuery && matchesFilter;
+                return matchesStatus && matchesQuery && matchesFilter;
             });
 
             if (filtered.length === 0) {
                 resiWrapper.classList.add('hidden');
                 emptyState.classList.remove('hidden');
                 emptyState.classList.add('flex');
-                document.getElementById('empty-title').textContent = 'Tidak Ada Resi';
-                document.getElementById('empty-desc').textContent = 'Belum ada data resi pengiriman.';
+                if (activeStatusFilter === 'printed') {
+                    document.getElementById('empty-title').textContent = 'Tidak Ada Resi Sudah Dicetak';
+                    document.getElementById('empty-desc').textContent = 'Belum ada resi pengiriman yang pernah dicetak.';
+                } else if (activeStatusFilter === 'unprinted') {
+                    document.getElementById('empty-title').textContent = 'Tidak Ada Resi Belum Dicetak';
+                    document.getElementById('empty-desc').textContent = 'Semua resi pengiriman telah dicetak.';
+                } else {
+                    document.getElementById('empty-title').textContent = 'Tidak Ada Resi';
+                    document.getElementById('empty-desc').textContent = 'Belum ada data resi pengiriman.';
+                }
             } else {
                 emptyState.classList.add('hidden');
                 emptyState.classList.remove('flex');
@@ -402,6 +504,13 @@
             const grandTotal = item.sale?.grand_total ? 'Rp ' + Number(item.sale.grand_total).toLocaleString('id-ID') : 'Rp 0';
             const customerName = item.sale?.customer?.name || item.sale?.counter?.name || 'Umum';
 
+            const printedCount = item.printed_count || 0;
+            const badgeClass = printedCount > 0 
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                : 'bg-amber-50 text-amber-700 border border-amber-200';
+            const badgeText = printedCount > 0 ? `${printedCount}x Dicetak` : 'Belum Dicetak';
+            const buttonLabel = printedCount > 0 ? 'Detail / Cetak Ulang' : 'Detail / Cetak';
+
             tr.innerHTML = `
                 <td class="px-6 py-4 text-xs font-semibold text-slate-400">${index + 1}</td>
                 <td class="px-6 py-4 font-bold text-brand">${escapeHtml(item.invoice_number)}</td>
@@ -410,15 +519,15 @@
                 <td class="px-6 py-4 text-xs text-slate-500">${createdDate}</td>
                 <td class="px-6 py-4 font-semibold text-slate-900">${grandTotal}</td>
                 <td class="px-6 py-4">
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${item.printed_count > 0 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">
-                        ${item.printed_count || 0}x Dicetak
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${badgeClass}">
+                        ${badgeText}
                     </span>
                 </td>
                 <td class="px-6 py-4 text-right">
                     <div class="flex items-center justify-end gap-2">
                         <button onclick="previewDocument('invoice', ${item.id})" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition cursor-pointer">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                            Detail / Cetak
+                            ${buttonLabel}
                         </button>
                     </div>
                 </td>
@@ -449,6 +558,13 @@
                 item.sale?.courier?.name
             ].filter(Boolean).join(' - ') || 'Reguler';
 
+            const printedCount = item.printed_count || 0;
+            const badgeClass = printedCount > 0 
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                : 'bg-amber-50 text-amber-700 border border-amber-200';
+            const badgeText = printedCount > 0 ? `${printedCount}x Dicetak` : 'Belum Dicetak';
+            const buttonLabel = printedCount > 0 ? 'Detail / Cetak Ulang' : 'Detail / Cetak';
+
             tr.innerHTML = `
                 <td class="px-6 py-4 text-xs font-semibold text-slate-400">${index + 1}</td>
                 <td class="px-6 py-4 font-bold text-brand">${escapeHtml(item.receipt_number)}</td>
@@ -457,15 +573,15 @@
                 <td class="px-6 py-4 font-medium text-slate-800">${escapeHtml(courierExpedition)}</td>
                 <td class="px-6 py-4 text-xs text-slate-500">${createdDate}</td>
                 <td class="px-6 py-4">
-                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${item.printed_count > 0 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">
-                        ${item.printed_count || 0}x Dicetak
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${badgeClass}">
+                        ${badgeText}
                     </span>
                 </td>
                 <td class="px-6 py-4 text-right">
                     <div class="flex items-center justify-end gap-2">
                         <button onclick="previewDocument('resi', ${item.id})" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition cursor-pointer">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                            Detail / Cetak
+                            ${buttonLabel}
                         </button>
                     </div>
                 </td>
@@ -496,14 +612,17 @@
         const isResiUmum = type === 'resi' && activeDocumentItem.type !== 'marketplace';
 
         if (type === 'invoice') {
-            document.getElementById('modal-title').textContent = 'Invoice Penjualan (Umum)';
-            document.getElementById('modal-subtitle').textContent = `No. Invoice: ${activeDocumentItem.invoice_number} | Ukuran Fisik Cetak: 18cm x 12cm`;
+            const isPrinted = (activeDocumentItem.printed_count || 0) > 0;
+            document.getElementById('modal-title').textContent = isPrinted ? 'Invoice Penjualan (Cetak Ulang)' : 'Invoice Penjualan (Umum)';
+            document.getElementById('modal-subtitle').textContent = `No. Invoice: ${activeDocumentItem.invoice_number} | Ukuran Fisik Cetak: 18cm x 12cm${isPrinted ? ` | Sudah dicetak ${activeDocumentItem.printed_count}x` : ''}`;
         } else if (isResiMarketplace) {
-            document.getElementById('modal-title').textContent = 'Resi Pengiriman (Marketplace)';
-            document.getElementById('modal-subtitle').textContent = `No. Resi: ${activeDocumentItem.receipt_number} | Ukuran Fisik Cetak: 9cm x 8cm`;
+            const isPrinted = (activeDocumentItem.printed_count || 0) > 0;
+            document.getElementById('modal-title').textContent = isPrinted ? 'Resi Pengiriman (Marketplace - Cetak Ulang)' : 'Resi Pengiriman (Marketplace)';
+            document.getElementById('modal-subtitle').textContent = `No. Resi: ${activeDocumentItem.receipt_number} | Ukuran Fisik Cetak: 9cm x 8cm${isPrinted ? ` | Sudah dicetak ${activeDocumentItem.printed_count}x` : ''}`;
         } else {
-            document.getElementById('modal-title').textContent = 'Resi Pengiriman (Umum)';
-            document.getElementById('modal-subtitle').textContent = `No. Resi: ${activeDocumentItem.receipt_number} | Ukuran Fisik Cetak: 9cm x 8cm`;
+            const isPrinted = (activeDocumentItem.printed_count || 0) > 0;
+            document.getElementById('modal-title').textContent = isPrinted ? 'Resi Pengiriman (Umum - Cetak Ulang)' : 'Resi Pengiriman (Umum)';
+            document.getElementById('modal-subtitle').textContent = `No. Resi: ${activeDocumentItem.receipt_number} | Ukuran Fisik Cetak: 9cm x 8cm${isPrinted ? ` | Sudah dicetak ${activeDocumentItem.printed_count}x` : ''}`;
         }
 
         const sale = activeDocumentItem.sale || {};
