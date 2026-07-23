@@ -63,6 +63,10 @@ class ProductionController extends Controller
                 $product = Product::find($production->product_id);
                 if ($product) {
                     $product->increment('stock', $production->total_result);
+                    $product->update([
+                        'buy_price' => $production->hpp,
+                        'sell_price' => $production->selling_price,
+                    ]);
                 }
             }
 
@@ -136,6 +140,10 @@ class ProductionController extends Controller
                 $newProduct = Product::find($production->product_id);
                 if ($newProduct) {
                     $newProduct->increment('stock', $production->total_result);
+                    $newProduct->update([
+                        'buy_price' => $production->hpp,
+                        'sell_price' => $production->selling_price,
+                    ]);
                 }
             }
         });

@@ -117,6 +117,8 @@ class ProductionTest extends TestCase
         ]);
 
         $this->assertEquals(25, $product->fresh()->stock);
+        $this->assertEquals(10.00, $product->fresh()->buy_price);
+        $this->assertEquals(15.00, $product->fresh()->sell_price);
     }
 
     public function test_authenticated_user_can_show_production(): void
@@ -174,6 +176,8 @@ class ProductionTest extends TestCase
         // After update, oldProduct stock reverts to 10, newProduct increases to 5 + 30 = 35
         $this->assertEquals(10, $oldProduct->fresh()->stock);
         $this->assertEquals(35, $newProduct->fresh()->stock);
+        $this->assertEquals(10.00, $newProduct->fresh()->buy_price);
+        $this->assertEquals(12.00, $newProduct->fresh()->sell_price);
     }
 
     public function test_authenticated_user_can_delete_production(): void
