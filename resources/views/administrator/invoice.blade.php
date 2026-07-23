@@ -15,19 +15,19 @@
 
         <!-- Tab Selector: Invoice vs Resi -->
         <div class="flex items-center gap-2 p-1.5 bg-slate-200/80 rounded-2xl shrink-0 self-start md:self-auto">
-            <button id="main-tab-invoice" onclick="switchMainTab('invoice')" class="flex items-center gap-2.5 px-5 py-2.5 text-sm font-bold rounded-xl transition-all cursor-pointer bg-brand text-white shadow-xs">
+            <button id="main-tab-invoice" onclick="switchMainTab('invoice')" class="flex items-center gap-2.5 px-5 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-900 rounded-xl transition-all cursor-pointer">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
                 Invoice Penjualan
-                <span id="badge-invoice-total" class="px-2 py-0.5 text-xs rounded-full bg-white/20 text-white font-extrabold">0</span>
+                <span id="badge-invoice-total" class="px-2 py-0.5 text-xs rounded-full bg-slate-300/80 text-slate-800 font-extrabold">0</span>
             </button>
-            <button id="main-tab-resi" onclick="switchMainTab('resi')" class="flex items-center gap-2.5 px-5 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-900 rounded-xl transition-all cursor-pointer">
+            <button id="main-tab-resi" onclick="switchMainTab('resi')" class="flex items-center gap-2.5 px-5 py-2.5 text-sm font-bold rounded-xl transition-all cursor-pointer bg-brand text-white shadow-xs">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 2v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                 </svg>
                 Resi Pengiriman
-                <span id="badge-resi-total" class="px-2 py-0.5 text-xs rounded-full bg-slate-300/80 text-slate-800 font-extrabold">0</span>
+                <span id="badge-resi-total" class="px-2 py-0.5 text-xs rounded-full bg-white/20 text-white font-extrabold">0</span>
             </button>
         </div>
     </div>
@@ -66,7 +66,7 @@
             </button>
 
             <!-- Filter Tipe Resi (Resi tab specific) -->
-            <div id="resi-type-filter-wrapper" class="hidden w-full sm:w-48">
+            <div id="resi-type-filter-wrapper" class="w-full sm:w-48">
                 <select id="resi-type-filter" onchange="handleFilterChange()" class="block w-full p-2.5 bg-slate-50 border border-slate-200 text-slate-800 text-sm rounded-xl focus:ring-brand focus:border-brand">
                     <option value="all">Semua Tipe Resi</option>
                     <option value="umum">Umum (Toko)</option>
@@ -386,7 +386,7 @@
     /* ==========================================================================
        GLOBAL STATE & UTILITIES
        ========================================================================== */
-    let activeMainTab = 'invoice'; // 'invoice' | 'resi'
+    let activeMainTab = 'resi'; // 'invoice' | 'resi'
     let activeStatusFilter = 'unprinted'; // 'unprinted' | 'printed' | 'all'
     let activePrintItems = [];
     let activePrintType = 'invoice';

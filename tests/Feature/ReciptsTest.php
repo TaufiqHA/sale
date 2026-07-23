@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Invoices;
 use App\Models\Recipts;
 use App\Models\Sale;
 use App\Models\User;
@@ -126,6 +127,14 @@ class ReciptsTest extends TestCase
         $user = User::factory()->create();
         $recipts = Recipts::factory()->count(3)->create(['printed_count' => 0]);
 
+        // Create corresponding invoices for each receipt's sale
+        foreach ($recipts as $recipt) {
+            Invoices::factory()->create([
+                'sales_id' => $recipt->sales_id,
+                'printed_count' => 0,
+            ]);
+        }
+
         $ids = $recipts->pluck('id')->toArray();
 
         $response = $this->actingAs($user)->postJson('/recipts/bulk-print', [
@@ -140,6 +149,13 @@ class ReciptsTest extends TestCase
         foreach ($ids as $id) {
             $this->assertDatabaseHas('recipts', [
                 'id' => $id,
+                'printed_count' => 1,
+            ]);
+        }
+
+        foreach ($recipts as $recipt) {
+            $this->assertDatabaseHas('invoices', [
+                'sales_id' => $recipt->sales_id,
                 'printed_count' => 1,
             ]);
         }

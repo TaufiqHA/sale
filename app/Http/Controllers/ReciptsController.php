@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Invoices;
 use App\Models\Recipts;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -94,7 +95,11 @@ class ReciptsController extends Controller
             'ids.*' => ['exists:recipts,id'],
         ]);
 
+        $salesIds = Recipts::whereIn('id', $validated['ids'])->pluck('sales_id');
+
         Recipts::whereIn('id', $validated['ids'])->increment('printed_count');
+
+        Invoices::whereIn('sales_id', $salesIds)->increment('printed_count');
 
         return response()->json([
             'message' => 'Receipt printed count updated successfully.',
