@@ -170,13 +170,13 @@
                         <div class="col-span-2 md:col-span-1">
                             <label for="input-expedition-id" class="block mb-2 text-sm font-medium text-heading">Ekspedisi</label>
                             <div class="flex gap-2">
-                                <select id="input-expedition-id" name="expedition_id" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs">
+                                <select id="input-expedition-id" name="courier_id" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs">
                                     <option value="">Pilih Ekspedisi...</option>
-                                    @foreach($expeditions as $expedition)
-                                        <option value="{{ $expedition->id }}">{{ $expedition->name }}</option>
+                                    @foreach($couriers->whereIn('type', ['umum', 'keduanya']) as $courier)
+                                        <option value="{{ $courier->id }}">{{ $courier->name }}</option>
                                     @endforeach
                                 </select>
-                                <button type="button" onclick="openManageExpeditions()" class="inline-flex items-center justify-center text-white bg-brand hover:bg-brand-hover px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
+                                <button type="button" onclick="openManageCouriers()" class="inline-flex items-center justify-center text-white bg-brand hover:bg-brand-hover px-3 py-2 sm:px-4 sm:py-2.5 rounded-base text-xs sm:text-sm font-medium focus:outline-none cursor-pointer shrink-0">
                                     Kelola
                                 </button>
                             </div>
@@ -221,7 +221,7 @@
                                 <div class="flex gap-2">
                                     <select id="input-courier-id" name="courier_id" class="bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand block w-full px-3 py-2.5 shadow-xs">
                                         <option value="">Pilih Kurir...</option>
-                                        @foreach($couriers as $courier)
+                                        @foreach($couriers->whereIn('type', ['marketplace', 'keduanya']) as $courier)
                                             <option value="{{ $courier->id }}">{{ $courier->name }} ({{ $courier->type }})</option>
                                         @endforeach
                                     </select>
@@ -1458,14 +1458,14 @@
         const currentSelectedVal = expeditionSelect.value;
         
         expeditionSelect.innerHTML = '<option value="">Pilih Ekspedisi...</option>';
-        activeExpeditions.forEach(e => {
+        activeCouriers.filter(c => c.type === 'umum' || c.type === 'keduanya').forEach(c => {
             const opt = document.createElement("option");
-            opt.value = e.id;
-            opt.innerText = e.name;
+            opt.value = c.id;
+            opt.innerText = c.name;
             expeditionSelect.appendChild(opt);
         });
         
-        if (activeExpeditions.some(e => String(e.id) === String(currentSelectedVal))) {
+        if (activeCouriers.some(c => String(c.id) === String(currentSelectedVal) && (c.type === 'umum' || c.type === 'keduanya'))) {
             expeditionSelect.value = currentSelectedVal;
         } else {
             expeditionSelect.value = "";
@@ -1555,7 +1555,18 @@
             showToast("Kurir berhasil ditambahkan!", "success");
             
             renderCourierOptions();
-            document.getElementById("input-courier-id").value = result.id;
+            renderExpeditionOptions();
+            
+            const saleType = document.getElementById("input-type").value;
+            if (saleType === 'umum') {
+                if (result.type === 'umum' || result.type === 'keduanya') {
+                    document.getElementById("input-expedition-id").value = result.id;
+                }
+            } else {
+                if (result.type === 'marketplace' || result.type === 'keduanya') {
+                    document.getElementById("input-courier-id").value = result.id;
+                }
+            }
             
             closeManageCouriers();
         } catch (error) {
@@ -1568,14 +1579,14 @@
         const currentSelectedVal = courierSelect.value;
         
         courierSelect.innerHTML = '<option value="">Pilih Kurir...</option>';
-        activeCouriers.forEach(c => {
+        activeCouriers.filter(c => c.type === 'marketplace' || c.type === 'keduanya').forEach(c => {
             const opt = document.createElement("option");
             opt.value = c.id;
             opt.innerText = `${c.name} (${c.type})`;
             courierSelect.appendChild(opt);
         });
         
-        if (activeCouriers.some(c => String(c.id) === String(currentSelectedVal))) {
+        if (activeCouriers.some(c => String(c.id) === String(currentSelectedVal) && (c.type === 'marketplace' || c.type === 'keduanya'))) {
             courierSelect.value = currentSelectedVal;
         } else {
             courierSelect.value = "";
@@ -1628,10 +1639,15 @@
          
          renderProductOptions();
          renderExpeditionOptions();
-        document.getElementById("input-expedition-id").value = sale.expedition_id || "";
-        
-        renderCourierOptions();
-        document.getElementById("input-courier-id").value = sale.courier_id || "";
+         renderCourierOptions();
+         
+         if (sale.type === 'umum') {
+             document.getElementById("input-expedition-id").value = sale.courier_id || "";
+             document.getElementById("input-courier-id").value = "";
+         } else {
+             document.getElementById("input-courier-id").value = sale.courier_id || "";
+             document.getElementById("input-expedition-id").value = "";
+         }
         
         document.getElementById("input-barcode").value = sale.barcode || "";
         
@@ -1722,13 +1738,15 @@
         const id = document.getElementById("sale-id").value;
         const counter_id = document.getElementById("input-counter-id").value;
         const customer_id = document.getElementById("input-customer-id").value || null;
-        const expedition_id = document.getElementById("input-expedition-id").value || null;
         const barcode = document.getElementById("input-barcode").value;
         const date = document.getElementById("input-date").value;
         const type = document.getElementById("input-type").value;
         const payment_method = document.getElementById("input-payment-method").value;
         const marketplace_id = document.getElementById("input-marketplace-id").value || null;
-        const courier_id = document.getElementById("input-courier-id").value || null;
+        const courier_id = type === 'umum'
+            ? (document.getElementById("input-expedition-id").value || null)
+            : (document.getElementById("input-courier-id").value || null);
+        const expedition_id = null;
         const subtotal = parseFormattedNumber(document.getElementById("input-subtotal").value);
         const discount = parseFormattedNumber(document.getElementById("input-discount").value || "0");
         const shipping_cost = parseFormattedNumber(document.getElementById("input-shipping-cost").value || "0");
@@ -1800,8 +1818,14 @@
     // Validation Display
     function showValidationErrors(errors) {
         Object.keys(errors).forEach(key => {
-            const errorEl = document.getElementById(`error-${key}`);
-            const inputEl = document.getElementById(`input-${key.replace('_', '-')}`);
+            let errorEl = document.getElementById(`error-${key}`);
+            let inputEl = document.getElementById(`input-${key.replace('_', '-')}`);
+            
+            if (key === 'courier_id' && document.getElementById("input-type").value === 'umum') {
+                errorEl = document.getElementById("error-expedition_id");
+                inputEl = document.getElementById("input-expedition-id");
+            }
+
             if (errorEl) {
                 errorEl.innerText = errors[key].join(", ");
                 errorEl.classList.remove("hidden");
