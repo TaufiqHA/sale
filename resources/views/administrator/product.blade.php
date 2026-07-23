@@ -666,8 +666,8 @@
         document.getElementById("input-unit_id").value = product.unit_id;
         document.getElementById("input-counter_id").value = product.counter_id;
         document.getElementById("input-stock").value = product.stock;
-        document.getElementById("input-buy_price").value = formatThousandSeparator(Math.round(parseFloat(product.buy_price)));
-        document.getElementById("input-sell_price").value = formatThousandSeparator(Math.round(parseFloat(product.sell_price)));
+        document.getElementById("input-buy_price").value = formatThousandSeparator(Math.ceil(parseFloat(product.buy_price)));
+        document.getElementById("input-sell_price").value = formatThousandSeparator(Math.ceil(parseFloat(product.sell_price)));
         const descInput = document.getElementById("input-description");
         if (descInput) {
             descInput.value = product.description || "";
@@ -681,7 +681,7 @@
         toggleWholepriceSection(isWholeprice);
         if (isWholeprice && product.wholeprices) {
             product.wholeprices.forEach(tier => {
-                addWholepriceRow(tier.minimum_qty, formatThousandSeparator(Math.round(parseFloat(tier.wholeprice_price))));
+                addWholepriceRow(tier.minimum_qty, formatThousandSeparator(Math.ceil(parseFloat(tier.wholeprice_price))));
             });
         }
 
@@ -1319,12 +1319,13 @@
 
     function formatRupiah(amount) {
         if (amount == null) return "Rp 0";
+        const rounded = Math.ceil(parseFloat(amount));
         return new Intl.NumberFormat('id-ID', {
             style: 'currency',
             currency: 'IDR',
             minimumFractionDigits: 0,
-            maximumFractionDigits: 2
-        }).format(amount);
+            maximumFractionDigits: 0
+        }).format(rounded);
     }
 
     function escapeHtml(str) {
